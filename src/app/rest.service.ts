@@ -153,12 +153,11 @@ export class RestService {
 		this.session = null;
 		this.permission = null;
 		this.store = null;
-		if (typeof localStorage !== 'undefined') {
-			localStorage.removeItem('user');
-			localStorage.removeItem('session');
-			localStorage.removeItem('permission');
-			localStorage.removeItem('store');
-		}
+
+		localStorage.removeItem('user');
+		localStorage.removeItem('session');
+		localStorage.removeItem('permission');
+		localStorage.removeItem('store');
 	}
 
 	getUser(): any {

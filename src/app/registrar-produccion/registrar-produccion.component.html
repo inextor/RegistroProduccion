@@ -1,71 +1,68 @@
 <div class="almacen-container">
-  <div class="almacen-header">
-    <h2>Almacen</h2>
-    <span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
-  </div>
+	<div class="almacen-header">
+		<h2>Almacen</h2>
+		<span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
+	</div>
 
-  <div class="almacen-location">
-    <span>Ubicación</span>
-    <span>A1-B2-C3</span>
-  </div>
+	<div class="almacen-location">
+		<span>Ubicación</span>
+		<span>{{rest_service.store.name}}</span>
+	</div>
 
-  <!-- Autocomplete for Buscar equipo -->
-  <div class="search-container autocomplete-container">
-    <input 
-      type="text" 
-      placeholder="Buscar equipo (Área de Producción)" 
-      class="input-search" 
-      [(ngModel)]="search_term"
-      (ngModelChange)="filterProductionAreas()"
-      (focus)="onSearchFocus()"
-    />
-    <div *ngIf="show_autocomplete && filtered_production_areas.length > 0" class="autocomplete-dropdown">
-      <div 
-        *ngFor="let area of filtered_production_areas" 
-        class="autocomplete-item"
-        (click)="selectProductionArea(area)"
-      >
-        {{ area.name }} <!-- Assuming 'name' is the property to display -->
-      </div>
-    </div>
-    <div *ngIf="show_autocomplete && filtered_production_areas.length === 0 && search_term.trim() !== ''" class="autocomplete-no-results">
-      No se encontraron áreas
-    </div>
-  </div>
-  
-  <div *ngIf="is_loading" class="loading-indicator">
-    Cargando áreas de producción...
-  </div>
-  <div *ngIf="error_message" class="error-message">
-    {{ error_message }}
-  </div>
+	<!-- Autocomplete for Buscar equipo -->
+	<div class="search-container autocomplete-container">
+		<input
+			type="text"
+			placeholder="Buscar equipo (Área de Producción)"
+			class="input-search"
+			[(ngModel)]="search_term"
+			(ngModelChange)="filterProductionAreas()"
+			(focus)="onSearchFocus()"
+		/>
+		<div *ngIf="show_autocomplete && filtered_production_areas.length > 0" class="autocomplete-dropdown">
+			<div *ngFor="let area of filtered_production_areas" class="autocomplete-item" (click)="selectProductionArea(area)" >
+				{{area.name }}
+			</div>
+		</div>
+		<div *ngIf="show_autocomplete && filtered_production_areas.length === 0 && search_term.trim() !== ''" class="autocomplete-no-results">
+			No se encontraron áreas
+		</div>
+	</div>
 
-  <!-- Display selected production area details (optional) -->
-  <div *ngIf="selected_production_area" class="selected-area-details">
-    <h4>Área Seleccionada:</h4>
-    <p>ID: {{ selected_production_area.id }}</p>
-    <p>Nombre: {{ selected_production_area.name }}</p>
-    <!-- Add more details if needed -->
-  </div>
+	<div *ngIf="is_loading" class="loading-indicator">
+		Cargando áreas de producción...
+	</div>
+	<div *ngIf="error_message" class="error-message">
+		{{ error_message }}
+	</div>
 
-  <div class="equipos-list">
-    <!-- Example items, replace or remove as needed -->
-    <div class="equipo">
-      <img src="https://via.placeholder.com/40" alt="Equipo 1">
-      <div>
-        <div class="equipo-nombre">Equipo 1</div>
-        <div class="equipo-producto">Producto: 123456</div>
-      </div>
-    </div>
-    <!-- More equipo items -->
-  </div>
+	<!-- Display selected production area details (optional) -->
+	<div *ngIf="selected_production_area" class="selected-area-details">
+		<h4>Área Seleccionada:</h4>
+		<p>ID: {{ selected_production_area.id }}</p>
+		<p>Nombre: {{ selected_production_area.name }}</p>
+		<!-- Add more details if needed -->
+	</div>
 
-  <select class="input-select">
-    <option>Producto</option>
-    <!-- Add product options here -->
-  </select>
-  <input type="text" placeholder="Piezas" class="input-text">
-  <input type="text" placeholder="Kilos" class="input-text">
+	<div class="equipos-list">
+		<!-- Example items, replace or remove as needed -->
+		<div class="equipo">
+			<img src="https://via.placeholder.com/40" alt="Equipo 1">
+			<div>
+				<div class="equipo-nombre">Equipo 1</div>
+				<div class="equipo-producto">Producto: 123456</div>
+			</div>
+		</div>
+		<!-- More equipo items -->
+	</div>
 
-  <button class="btn-guardar" (click)="onGuardar()">Guardar</button>
+	<select class="input-select">
+		<option>Producto</option>
+		<option *ngFor="let item of item_array" [value]="item.id">{{item.name}}</option>
+		<!-- Add product options here -->
+	</select>
+	<input type="text" placeholder="Piezas" class="input-text">
+	<input type="text" placeholder="Kilos" class="input-text">
+
+	<button class="btn-guardar" (click)="onGuardar()">Guardar</button>
 </div>

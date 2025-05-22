@@ -19,7 +19,7 @@ export class LoginComponent
 	loginSuccess: string | null = null;
 
 	constructor(
-		private restService: RestService,
+		public rest_service: RestService,
 		private router: Router // Inject Router
 	) {}
 
@@ -32,27 +32,51 @@ export class LoginComponent
 		try {
 			console.log('Attempting login with:', loginData);
 
-			const response = await this.restService.postLogin(loginData);
+			let login_promise = this.rest_service.postLogin(loginData);
+			let store_promise = this.rest_service.getStores();
+
+			Promise.all([login_promise, store_promise])
+			.then(values =>
+			{
+				let response = values[0];
+
+				let stores = values[1];
+
+				if( stores.length > 0 )
+				{
+					//localStorage.setItem('store', JSON.stringify(stores));
+				}
+
+				if (response && response.user && response.session && response.user_permission)
+				{
+					this.loginSuccess = `Login successful! Welcome ${response.user.name}. Redirecting...`;
+
+					if( response.user.store_id )
+					{
+						this.rest_service.store = stores.find((s:any) => s.id === response.user.store_id);
+						localStorage.setItem('store', JSON.stringify(this.rest_service.store));
+					}
+
+					// Redirect to registrar-produccion
+					this.router.navigate(['/registrar-produccion']);
+				}
+				else
+				{
+					this.loginError = 'Login successful, but received unexpected data from server.';
+					console.warn('Unexpected login response:', response);
+				}
+
+			});
+
+			const response = await this.rest_service.postLogin(loginData);
 			console.log('Login successful, response:', response);
 
-			if (response && response.user && response.session && response.user_permission)
-			{
-				this.loginSuccess = `Login successful! Welcome ${response.user.name}. Redirecting...`;
-				console.log('User data in RestService:', this.restService.getUser());
-
-				// Redirect to registrar-produccion
-				this.router.navigate(['/registrar-produccion']);
-
-			}
-			else {
-				this.loginError = 'Login successful, but received unexpected data from server.';
-				console.warn('Unexpected login response:', response);
-				// Do not redirect if the response is not as expected
-			}
-		} catch (error: any) {
+		}
+		catch (error: any)
+		{
 			console.error('Login failed:', error);
 			this.loginError = `Login failed: ${error.message || 'Server error'}`;
-			this.restService.clearAuthData();
+			this.rest_service.clearAuthData();
 		}
 	}
 }
