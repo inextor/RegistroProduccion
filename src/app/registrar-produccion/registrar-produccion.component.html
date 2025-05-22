@@ -46,10 +46,10 @@
 
 	<div class="equipos-list">
 		<!-- Example items, replace or remove as needed -->
-		<div class="equipo">
+		<div class="equipo" *ngFor="let user of users">
 			<img src="https://via.placeholder.com/40" alt="Equipo 1">
 			<div>
-				<div class="equipo-nombre">Equipo 1</div>
+				<div class="equipo-nombre">{{user.name}}</div>
 				<div class="equipo-producto">Producto: 123456</div>
 			</div>
 		</div>

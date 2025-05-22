@@ -21,6 +21,7 @@ export class RegistrarProduccionComponent implements OnInit
 	show_autocomplete = false;
 	selected_production_area: any = null; // To store the selected area object
     item_array: any[] = [];
+    users: any[] = [];
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef) {}
 
@@ -83,10 +84,20 @@ export class RegistrarProduccionComponent implements OnInit
 		this.show_autocomplete = false;
 		this.filtered_production_areas = [];
 		console.log('Selected production area:', area);
-		this.rest_service.getProductionAreaItems(area.id).then(items =>
+
+		Promise.all
+		([
+			this.rest_service.getUserFromProductionArea(area.id),
+			this.rest_service.getProductionAreaItems(area.id)
+		])
+		.then(([users, items]) =>
 		{
-				this.item_array = items;
-			console.log('Production area items:', items);
+			this.users = users;
+			this.item_array = items;
+		})
+		.catch(error =>
+		{
+			console.error('Error loading production area items:', error);
 		});
 	}
 
