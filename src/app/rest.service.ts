@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 	providedIn: 'root'
 })
 export class RestService {
+
 	private baseUrl = 'https://mollusca.integranet.xyz/api';
 
 	public user: any = null;
@@ -20,7 +21,7 @@ export class RestService {
 	}
 
 	async postLogin(data: any): Promise<any>
-{
+	{
 		const url = `${this.baseUrl}/login.php`;
 		try {
 			const response = await fetch(url, {
@@ -57,7 +58,15 @@ export class RestService {
 		this.saveAuthDataToLocalStorage(user, session, permission, store);
 	}
 
-	saveAuthDataToLocalStorage(user: any, session: any, permission: any, store: any): void {
+	getStores(): any
+	{
+		return fetch(`${this.baseUrl}/store.php?limit=999999`)
+			.then(response => response.json())
+			.then(data => data.data);
+	}
+
+	saveAuthDataToLocalStorage(user: any, session: any, permission: any, store: any): void
+	{
 		if (typeof localStorage !== 'undefined') {
 			localStorage.setItem('user', JSON.stringify(user));
 			localStorage.setItem('session', JSON.stringify(session));
@@ -115,22 +124,25 @@ export class RestService {
 		}
 	}
 
-	async getProductionAreas(storeId: number): Promise<any> {
+	async getProductionAreas(storeId: number): Promise<any>
+	{
 		const url = `${this.baseUrl}/production_area.php?store_id=${storeId}&limit=999999`;
-		try {
-			const response = await fetch(url, {
-				method: 'GET',
-				headers: {
-					// Add any necessary headers, e.g., Authorization if your API requires it
-					// 'Authorization': `Bearer ${this.session?.id}` // Example if session token is needed
-				}
-			});
-			if (!response.ok) {
+		try
+		{
+			let headers =  { 'Authorization': `Bearer ${this.session.id}` };
+
+			const response = await fetch(url, { method: 'GET', headers: headers });
+
+			if (!response.ok)
+			{
 				const errorData = await response.text();
 				throw new Error(`HTTP error fetching production areas: ${response.status}, message: ${errorData}`);
 			}
+
 			return await response.json();
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error(`Error in getProductionAreas for store ID ${storeId}:`, error);
 			throw error; // Re-throw to be handled by the component
 		}
@@ -160,4 +172,20 @@ export class RestService {
 	isLoggedIn(): boolean {
 		return !!this.session && !!this.user;
 	}
+	getProductionAreaItems(production_area_id: any):Promise<any[]>
+	{
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.session.id}` } };
+		const url = `${this.baseUrl}/production_area_item.php?store_id=${production_area_id}&limit=999999`;
+		return fetch(url, options )
+			.then(response => response.json())
+			.then(data => data.data)
+			.then(items =>
+			{
+				let item_ids = items.map((item:any) => item.id);
+				let url_items = `${this.baseUrl}/item.php?id,=${item_ids.join(',')}&limit=999999`;
+				return fetch( url_items , options )
+					.then(response => response.json())
+					.then(data => data.data)
+			})
+    }
 }
