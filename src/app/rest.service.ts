@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 @Injectable({
 	providedIn: 'root'
 })
-export class RestService {
-    	private baseUrl = 'https://mollusca.integranet.xyz/api';
+export class RestService
+{
+    private base_url = 'https://mollusca.integranet.xyz/api';
 
 	public user: any = null;
 	public session: any = null;
@@ -218,7 +219,7 @@ export class RestService {
 	getUserFromProductionArea(production_area_id: any): Promise<any>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.session.id}` } };
-		const url = `${this.baseUrl}/user.php?production_area_id=${production_area_id}&limit=999999`;
+		const url = `${this.base_url}/user.php?production_area_id=${production_area_id}&limit=999999`;
 		return fetch(url, options )
 			.then(response => response.json())
 			.then(data => data.data)
