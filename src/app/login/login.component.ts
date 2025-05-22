@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // Import Router
 import { RestService } from '../rest.service';
-// import { Router } from '@angular/router'; // Import Router if you want to navigate
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,7 @@ export class LoginComponent {
 
   constructor(
     private restService: RestService,
-    // private router: Router // Inject Router if you want to navigate
+    private router: Router // Inject Router
   ) {}
 
   async onSubmit() {
@@ -32,20 +32,20 @@ export class LoginComponent {
       console.log('Login successful, response:', response);
 
       if (response && response.user && response.session && response.user_permission) {
-        this.loginSuccess = `Login successful! Welcome ${response.user.name}.`;
-        // Data is now saved to localStorage and set in RestService automatically by postLogin
+        this.loginSuccess = `Login successful! Welcome ${response.user.name}. Redirecting...`;
         console.log('User data in RestService:', this.restService.getUser());
-        // Example navigation:
-        // this.router.navigate(['/dashboard']); // Navigate to a dashboard or home page
+        
+        // Redirect to registrar-produccion
+        this.router.navigate(['/registrar-produccion']);
+
       } else {
-        // Handle cases where the server response is OK but doesn't contain expected data
         this.loginError = 'Login successful, but received unexpected data from server.';
         console.warn('Unexpected login response:', response);
+        // Do not redirect if the response is not as expected
       }
     } catch (error: any) {
       console.error('Login failed:', error);
       this.loginError = `Login failed: ${error.message || 'Server error'}`;
-      // Ensure any stale auth data is cleared if login fails critically
       this.restService.clearAuthData();
     }
   }
