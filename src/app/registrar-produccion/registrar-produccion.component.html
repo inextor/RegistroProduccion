@@ -15,36 +15,36 @@
       type="text" 
       placeholder="Buscar equipo (Área de Producción)" 
       class="input-search" 
-      [(ngModel)]="searchTerm"
+      [(ngModel)]="search_term"
       (ngModelChange)="filterProductionAreas()"
       (focus)="onSearchFocus()"
     />
-    <div *ngIf="showAutocomplete && filteredProductionAreas.length > 0" class="autocomplete-dropdown">
+    <div *ngIf="show_autocomplete && filtered_production_areas.length > 0" class="autocomplete-dropdown">
       <div 
-        *ngFor="let area of filteredProductionAreas" 
+        *ngFor="let area of filtered_production_areas" 
         class="autocomplete-item"
         (click)="selectProductionArea(area)"
       >
         {{ area.name }} <!-- Assuming 'name' is the property to display -->
       </div>
     </div>
-    <div *ngIf="showAutocomplete && filteredProductionAreas.length === 0 && searchTerm.trim() !== ''" class="autocomplete-no-results">
+    <div *ngIf="show_autocomplete && filtered_production_areas.length === 0 && search_term.trim() !== ''" class="autocomplete-no-results">
       No se encontraron áreas
     </div>
   </div>
   
-  <div *ngIf="isLoading" class="loading-indicator">
+  <div *ngIf="is_loading" class="loading-indicator">
     Cargando áreas de producción...
   </div>
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
+  <div *ngIf="error_message" class="error-message">
+    {{ error_message }}
   </div>
 
   <!-- Display selected production area details (optional) -->
-  <div *ngIf="selectedProductionArea" class="selected-area-details">
+  <div *ngIf="selected_production_area" class="selected-area-details">
     <h4>Área Seleccionada:</h4>
-    <p>ID: {{ selectedProductionArea.id }}</p>
-    <p>Nombre: {{ selectedProductionArea.name }}</p>
+    <p>ID: {{ selected_production_area.id }}</p>
+    <p>Nombre: {{ selected_production_area.name }}</p>
     <!-- Add more details if needed -->
   </div>
 

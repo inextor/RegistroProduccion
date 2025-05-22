@@ -11,14 +11,14 @@ import { RestService } from '../rest.service';
   styleUrls: ['./registrar-produccion.component.css']
 })
 export class RegistrarProduccionComponent implements OnInit {
-  productionAreas: any[] = [];
-  isLoading = false;
-  errorMessage: string | null = null;
+  production_areas: any[] = [];
+  is_loading = false;
+  error_message: string | null = null;
 
-  searchTerm: string = '';
-  filteredProductionAreas: any[] = [];
-  showAutocomplete = false;
-  selectedProductionArea: any = null; // To store the selected area object
+  search_term: string = '';
+  filtered_production_areas: any[] = [];
+  show_autocomplete = false;
+  selected_production_area: any = null; // To store the selected area object
 
   constructor(private restService: RestService, private elementRef: ElementRef) {}
 
@@ -29,64 +29,61 @@ export class RegistrarProduccionComponent implements OnInit {
   async loadProductionAreas(): Promise<void> {
     const currentStore = this.restService.getStore();
     if (currentStore && currentStore.id) {
-      this.isLoading = true;
-      this.errorMessage = null;
+      this.is_loading = true;
+      this.error_message = null;
       try {
-        // Assuming the API returns an array of objects, each with at least a 'name' property
         const areas = await this.restService.getProductionAreas(currentStore.id);
-        this.productionAreas = areas.data || areas; // Adjust if areas are nested under a 'data' property
-        console.log('Production areas loaded:', this.productionAreas);
+        this.production_areas = areas.data || areas;
+        console.log('Production areas loaded:', this.production_areas);
       } catch (error: any) {
-        this.errorMessage = `Failed to load production areas: ${error.message}`;
-        console.error(this.errorMessage, error);
-        this.productionAreas = []; // Ensure it's an empty array on error
+        this.error_message = `Failed to load production areas: ${error.message}`;
+        console.error(this.error_message, error);
+        this.production_areas = [];
       } finally {
-        this.isLoading = false;
+        this.is_loading = false;
       }
     } else {
-      this.errorMessage = 'Store information is not available. Cannot load production areas.';
-      console.warn(this.errorMessage);
-      this.productionAreas = [];
+      this.error_message = 'Store information is not available. Cannot load production areas.';
+      console.warn(this.error_message);
+      this.production_areas = [];
     }
   }
 
   filterProductionAreas(): void {
-    if (this.searchTerm.trim() === '') {
-      this.filteredProductionAreas = [];
-      this.showAutocomplete = false;
+    if (this.search_term.trim() === '') {
+      this.filtered_production_areas = [];
+      this.show_autocomplete = false;
       return;
     }
-    this.filteredProductionAreas = this.productionAreas.filter(area =>
-      area.name && area.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    this.filtered_production_areas = this.production_areas.filter(area =>
+      area.name && area.name.toLowerCase().includes(this.search_term.toLowerCase())
     );
-    this.showAutocomplete = this.filteredProductionAreas.length > 0;
+    this.show_autocomplete = this.filtered_production_areas.length > 0;
   }
 
   selectProductionArea(area: any): void {
-    this.selectedProductionArea = area;
-    this.searchTerm = area.name; // Update input with selected area name
-    this.showAutocomplete = false;
-    this.filteredProductionAreas = []; // Clear suggestions
+    this.selected_production_area = area;
+    this.search_term = area.name;
+    this.show_autocomplete = false;
+    this.filtered_production_areas = [];
     console.log('Selected production area:', area);
-    // You can now use this.selectedProductionArea for further actions
   }
 
   onSearchFocus(): void {
-    if (this.searchTerm.trim() !== '' && this.filteredProductionAreas.length > 0) {
-        this.showAutocomplete = true;
+    if (this.search_term.trim() !== '' && this.filtered_production_areas.length > 0) {
+        this.show_autocomplete = true;
     }
   }
 
-  // Hide autocomplete when clicking outside
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.showAutocomplete = false;
+      this.show_autocomplete = false;
     }
   }
 
   onGuardar(): void {
     console.log('Guardar button clicked');
-    // Implement save logic here, potentially using this.selectedProductionArea
+    // Implement save logic here, potentially using this.selected_production_area
   }
 }
