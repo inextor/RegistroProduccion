@@ -20,19 +20,22 @@ export class RegistrarProduccionComponent implements OnInit {
 	show_autocomplete = false;
 	selected_production_area: any = null; // To store the selected area object
 
-	constructor(private restService: RestService, private elementRef: ElementRef) {}
+	constructor(public rest_service: RestService, private elementRef: ElementRef) {}
 
-	ngOnInit(): void {
+	ngOnInit(): void
+	{
 		this.loadProductionAreas();
 	}
 
-	async loadProductionAreas(): Promise<void> {
-		const currentStore = this.restService.getStore();
-		if (currentStore && currentStore.id) {
+	async loadProductionAreas(): Promise<void>
+	{
+		const currentStore = this.rest_service.getStore();
+		if (currentStore && currentStore.id)
+		{
 			this.is_loading = true;
 			this.error_message = null;
 			try {
-				const areas = await this.restService.getProductionAreas(currentStore.id);
+				const areas = await this.rest_service.getProductionAreas(currentStore.id);
 				this.production_areas = areas.data || areas;
 				console.log('Production areas loaded:', this.production_areas);
 			} catch (error: any) {
@@ -49,8 +52,10 @@ export class RegistrarProduccionComponent implements OnInit {
 		}
 	}
 
-	filterProductionAreas(): void {
-		if (this.search_term.trim() === '') {
+	filterProductionAreas(): void
+	{
+		if (this.search_term.trim() === '')
+		{
 			this.filtered_production_areas = [];
 			this.show_autocomplete = false;
 			return;
@@ -67,6 +72,8 @@ export class RegistrarProduccionComponent implements OnInit {
 		this.show_autocomplete = false;
 		this.filtered_production_areas = [];
 		console.log('Selected production area:', area);
+
+
 	}
 
 	onSearchFocus(): void {
