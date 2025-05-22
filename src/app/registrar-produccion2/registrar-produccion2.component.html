@@ -1,0 +1,63 @@
+<div class="container">
+  <header>
+    <h1>Almacen</h1>
+    <div class="settings-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.09-.73-1.71-.99l-.37-2.65C14.06 2.1 13.91 2 13.75 2h-3.5c-.15 0-.3.1-.36.22l-.37 2.65c-.62.26-1.19.59-1.71.99l-2.49-1c-.23-.09-.49-.01-.61.22l-2 3.46c-.13.22-.08.49.12.64l2.11 1.65c-.04.32-.07.64-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.09.73 1.71.99l.37 2.65c.06.12.21.22.36.22h3.5c.15 0-.3-.1-.36-.22l-.37-2.65c.62-.26 1.19-.59 1.71-.99l2.49 1c.23.09.49.01.61-.22l2-3.46c.12-.22.08-.49-.12-.64l-2.11-1.65zm-2.03-5.83l-.58-.45c-.45-.35-.96-.63-1.5-.82l-.34-.13-.16-.92-.28-1.61h-1.7l-.28 1.61-.16.92-.34.13c-.54.19-1.05.47-1.5.82l-.58.45-1.34-1.05-1.46 2.53 1.3 1.02.07.05-.01.09-.07.27c-.3.92-.46 1.92-.46 2.97s.16 2.05.46 2.97l.07.27-.01.09-.07.05-1.3 1.02 1.46 2.53 1.34-1.05.58-.45c.45.35.96.63 1.5.82l.34.13.16.92.28 1.61h1.7l.28-1.61.16-.92.34-.13c.54-.19 1.05-.47 1.5-.82l.58-.45 1.34 1.05 1.46-2.53-1.3-1.02-.07-.05.01-.09.07-.27c.3-.92.46-1.92.46-2.97s-.16-2.05-.46-2.97l-.07-.27.01-.09.07-.05 1.3-1.02-1.46-2.53zm-2.01 7.4c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    </div>
+  </header>
+
+  <section class="location">
+    <label>Ubicación</label>
+    <div class="location-value">A1-B2-C3</div>
+  </section>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Buscar equipo">
+  </div>
+
+  <div class="equipment-list">
+    <div class="equipment-item">
+      <img src="https://via.placeholder.com/50" alt="Equipo 1">
+      <div class="equipment-details">
+        <h3>Equipo 1</h3>
+        <p>Producto: 123456</p>
+      </div>
+    </div>
+    <div class="equipment-item">
+      <img src="https://via.placeholder.com/50" alt="Equipo 2">
+      <div class="equipment-details">
+        <h3>Equipo 2</h3>
+        <p>Producto: 789012</p>
+      </div>
+    </div>
+    <div class="equipment-item">
+      <img src="https://via.placeholder.com/50" alt="Equipo 3">
+      <div class="equipment-details">
+        <h3>Equipo 3</h3>
+        <p>Producto: 345678</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-inputs">
+    <div class="form-group">
+      <label for="producto">Producto</label>
+      <select id="producto">
+        <option value="">Seleccionar producto</option>
+        </select>
+      <div class="select-arrow"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="piezas">Piezas</label>
+      <input type="number" id="piezas" placeholder="Piezas">
+    </div>
+
+    <div class="form-group">
+      <label for="kilos">Kilos</label>
+      <input type="number" id="kilos" placeholder="Kilos">
+    </div>
+  </div>
+
+  <button class="save-button">Guardar</button>
+</div>

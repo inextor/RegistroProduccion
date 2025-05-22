@@ -1,0 +1,101 @@
+/* Overall container styles */
+.container {
+  padding: 20px;
+  font-family: sans-serif; /* Or whatever font is used in the design */
+  background-color: #f0f0f0; /* Light gray background */
+  min-height: 100vh;
+}
+
+/* Header styles */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+/* Location section styles */
+.location {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.location span {
+  font-weight: bold;
+}
+
+/* Search input styles */
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-sizing: border-box; /* Include padding in the element's total width */
+}
+
+/* Equipment list styles */
+.equipment-list {
+  margin-bottom: 20px;
+}
+
+.equipment-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee; /* Light border between items */
+}
+
+.equipment-item:last-child {
+  border-bottom: none; /* No border for the last item */
+}
+
+.equipment-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.equipment-details span {
+  display: block;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* Input fields and dropdown styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Save button styles */
+.save-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  cursor: pointer;
+  text-align: center;
+}
+
+.save-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
