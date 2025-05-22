@@ -1,49 +1,71 @@
-
 <div class="almacen-container">
   <div class="almacen-header">
     <h2>Almacen</h2>
-    <i class="icon-settings">&#9881;</i>
+    <span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
   </div>
 
   <div class="almacen-location">
-    <span class="label">Ubicación</span>
-    <span class="value">A1-B2-C3</span>
+    <span>Ubicación</span>
+    <span>A1-B2-C3</span>
   </div>
 
-  <input type="text" placeholder="Buscar equipo" class="input-search" />
+  <!-- Autocomplete for Buscar equipo -->
+  <div class="search-container autocomplete-container">
+    <input 
+      type="text" 
+      placeholder="Buscar equipo (Área de Producción)" 
+      class="input-search" 
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="filterProductionAreas()"
+      (focus)="onSearchFocus()"
+    />
+    <div *ngIf="showAutocomplete && filteredProductionAreas.length > 0" class="autocomplete-dropdown">
+      <div 
+        *ngFor="let area of filteredProductionAreas" 
+        class="autocomplete-item"
+        (click)="selectProductionArea(area)"
+      >
+        {{ area.name }} <!-- Assuming 'name' is the property to display -->
+      </div>
+    </div>
+    <div *ngIf="showAutocomplete && filteredProductionAreas.length === 0 && searchTerm.trim() !== ''" class="autocomplete-no-results">
+      No se encontraron áreas
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading-indicator">
+    Cargando áreas de producción...
+  </div>
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Display selected production area details (optional) -->
+  <div *ngIf="selectedProductionArea" class="selected-area-details">
+    <h4>Área Seleccionada:</h4>
+    <p>ID: {{ selectedProductionArea.id }}</p>
+    <p>Nombre: {{ selectedProductionArea.name }}</p>
+    <!-- Add more details if needed -->
+  </div>
 
   <div class="equipos-list">
+    <!-- Example items, replace or remove as needed -->
     <div class="equipo">
-      <img src="https://i.pravatar.cc/48?img=1" alt="Avatar" />
+      <img src="https://via.placeholder.com/40" alt="Equipo 1">
       <div>
         <div class="equipo-nombre">Equipo 1</div>
         <div class="equipo-producto">Producto: 123456</div>
       </div>
     </div>
-    <div class="equipo">
-      <img src="https://i.pravatar.cc/48?img=2" alt="Avatar" />
-      <div>
-        <div class="equipo-nombre">Equipo 2</div>
-        <div class="equipo-producto">Producto: 789012</div>
-      </div>
-    </div>
-    <div class="equipo">
-      <img src="https://i.pravatar.cc/48?img=3" alt="Avatar" />
-      <div>
-        <div class="equipo-nombre">Equipo 3</div>
-        <div class="equipo-producto">Producto: 345678</div>
-      </div>
-    </div>
+    <!-- More equipo items -->
   </div>
 
   <select class="input-select">
-    <option disabled selected>Producto</option>
-    <option value="1">Producto A</option>
-    <option value="2">Producto B</option>
+    <option>Producto</option>
+    <!-- Add product options here -->
   </select>
+  <input type="text" placeholder="Piezas" class="input-text">
+  <input type="text" placeholder="Kilos" class="input-text">
 
-  <input type="number" placeholder="Piezas" class="input-text" />
-  <input type="number" placeholder="Kilos" class="input-text" />
-
-  <button class="btn-guardar">Guardar</button>
+  <button class="btn-guardar" (click)="onGuardar()">Guardar</button>
 </div>
