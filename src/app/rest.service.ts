@@ -1,29 +1,32 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
-export class RestService {
-
-	private baseUrl = 'https://mollusca.integranet.xyz/api';
+export class RestService
+{
+	private base_url = 'https://mollusca.integranet.xyz/api';
 
 	public user: any = null;
 	public session: any = null;
 	public permission: any = null;
 	public store: any = null;
 
-	constructor() {
+	constructor()
+	{
 		this.loadAuthDataFromLocalStorage();
 	}
 
-	getBaseUrl(): string {
-		return this.baseUrl;
+	getBaseUrl(): string
+	{
+		return this.base_url;
 	}
 
 	async postLogin(data: any): Promise<any>
 	{
-		const url = `${this.baseUrl}/login.php`;
-		try {
+		const url = `${this.base_url}/login.php`;
+		try
+		{
 			const response = await fetch(url, {
 				method: 'POST',
 				headers: {
@@ -32,25 +35,32 @@ export class RestService {
 				body: new URLSearchParams(data).toString()
 			});
 
-			if (!response.ok) {
+			if (!response.ok)
+			{
 				const errorData = await response.text();
 				throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
 			}
 			const responseData = await response.json();
-			if (responseData && responseData.user && responseData.session && responseData.user_permission && responseData.store) {
+			if (responseData && responseData.user && responseData.session && responseData.user_permission && responseData.store)
+			{
 				this.setAuthData(responseData.user, responseData.session, responseData.user_permission, responseData.store);
-			} else if (responseData && responseData.user && responseData.session && responseData.user_permission) {
+			}
+			else if (responseData && responseData.user && responseData.session && responseData.user_permission)
+			{
 				this.setAuthData(responseData.user, responseData.session, responseData.user_permission, null);
 			}
 			return responseData;
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error('Error in postLogin:', error);
 			this.clearAuthData();
 			throw error;
 		}
 	}
 
-	setAuthData(user: any, session: any, permission: any, store: any): void {
+	setAuthData(user: any, session: any, permission: any, store: any): void
+	{
 		this.user = user;
 		this.session = session;
 		this.permission = permission;
@@ -60,27 +70,33 @@ export class RestService {
 
 	getStores(): any
 	{
-		return fetch(`${this.baseUrl}/store.php?limit=999999`)
+		return fetch(`${this.base_url}/store.php?limit=999999`)
 			.then(response => response.json())
 			.then(data => data.data);
 	}
 
 	saveAuthDataToLocalStorage(user: any, session: any, permission: any, store: any): void
 	{
-		if (typeof localStorage !== 'undefined') {
+		if (typeof localStorage !== 'undefined')
+		{
 			localStorage.setItem('user', JSON.stringify(user));
 			localStorage.setItem('session', JSON.stringify(session));
 			localStorage.setItem('permission', JSON.stringify(permission));
-			if (store) {
+			if (store)
+			{
 				localStorage.setItem('store', JSON.stringify(store));
-			} else {
+			}
+			else
+			{
 				localStorage.removeItem('store');
 			}
 		}
 	}
 
-	loadAuthDataFromLocalStorage(): void {
-		if (typeof localStorage !== 'undefined') {
+	loadAuthDataFromLocalStorage(): void
+	{
+		if (typeof localStorage !== 'undefined')
+		{
 			const userStr = localStorage.getItem('user');
 			const sessionStr = localStorage.getItem('session');
 			const permissionStr = localStorage.getItem('permission');
@@ -93,32 +109,40 @@ export class RestService {
 		}
 	}
 
-	async setStore(store_id: number): Promise<any> {
-		const url = `${this.baseUrl}/store.php?store_id=${store_id}`;
-		try {
+	async setStore(store_id: number): Promise<any>
+	{
+		const url = `${this.base_url}/store.php?store_id=${store_id}`;
+		try
+		{
 			const response = await fetch(url, {
 				method: 'GET',
 				headers: {
 					// 'Authorization': `Bearer ${this.session?.id}`
 				}
 			});
-			if (!response.ok) {
+			if (!response.ok)
+			{
 				const errorData = await response.text();
 				throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
 			}
 			const storeData = await response.json();
-			if (storeData) {
+			if (storeData)
+			{
 				this.store = storeData;
-				if (typeof localStorage !== 'undefined') {
+				if (typeof localStorage !== 'undefined')
+				{
 					localStorage.setItem('store', JSON.stringify(storeData));
 				}
 			}
 			return storeData;
-		} catch (error) {
+		}
+		catch (error)
+		{
 			console.error(`Error fetching store (ID: ${store_id}):`, error);
 			this.store = null;
-			if (typeof localStorage !== 'undefined') {
-					localStorage.removeItem('store');
+			if (typeof localStorage !== 'undefined')
+			{
+				localStorage.removeItem('store');
 			}
 			throw error;
 		}
@@ -126,7 +150,7 @@ export class RestService {
 
 	async getProductionAreas(storeId: number): Promise<any>
 	{
-		const url = `${this.baseUrl}/production_area.php?store_id=${storeId}&limit=999999`;
+		const url = `${this.base_url}/production_area.php?store_id=${storeId}&limit=999999`;
 		try
 		{
 			let headers =  { 'Authorization': `Bearer ${this.session.id}` };
@@ -148,7 +172,8 @@ export class RestService {
 		}
 	}
 
-	clearAuthData(): void {
+	clearAuthData(): void
+	{
 		this.user = null;
 		this.session = null;
 		this.permission = null;
@@ -160,31 +185,35 @@ export class RestService {
 		localStorage.removeItem('store');
 	}
 
-	getUser(): any {
+	getUser(): any
+	{
 		return this.user;
 	}
 
-	getStore(): any {
+	getStore(): any
+	{
 		return this.store;
 	}
 
-	isLoggedIn(): boolean {
+	isLoggedIn(): boolean
+	{
 		return !!this.session && !!this.user;
 	}
+
 	getProductionAreaItems(production_area_id: any):Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.session.id}` } };
-		const url = `${this.baseUrl}/production_area_item.php?store_id=${production_area_id}&limit=999999`;
+		const url = `${this.base_url}/production_area_item.php?store_id=${production_area_id}&limit=999999`;
 		return fetch(url, options )
 			.then(response => response.json())
 			.then(data => data.data)
 			.then(items =>
 			{
 				let item_ids = items.map((item:any) => item.id);
-				let url_items = `${this.baseUrl}/item.php?id,=${item_ids.join(',')}&limit=999999`;
+				let url_items = `${this.base_url}/item.php?id,=${item_ids.join(',')}&limit=999999`;
 				return fetch( url_items , options )
 					.then(response => response.json())
 					.then(data => data.data)
 			})
-    }
+	}
 }
