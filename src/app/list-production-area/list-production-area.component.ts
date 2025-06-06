@@ -15,7 +15,7 @@ export class ListProductionAreaComponent implements OnInit
 {
 	production: Production;
 
-	production_area:any[] = [];
+	production_area_list:any[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute)
 	{
@@ -55,8 +55,7 @@ export class ListProductionAreaComponent implements OnInit
     }
 ]
 			*/
-			this.production_area = data;
-			console.log(this.production_area);
+			this.production_area_list = data;
 		});
 	}
 }
