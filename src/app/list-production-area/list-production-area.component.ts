@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Production } from '../RestClases/Production';
 import { RestService } from '../rest.service';
 import { ActivatedRoute } from '@angular/router';
-import { HeaderComponent } from "../header/header.component";
 
 @Component({
 	selector: 'app-list-production-area',
-	imports: [HeaderComponent],
+	imports: [],
 	templateUrl: './list-production-area.component.html',
 	styleUrl: './list-production-area.component.css'
 })
