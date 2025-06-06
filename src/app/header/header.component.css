@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 0;
+  background-color: #f5f9fc;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #4a6c8a;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.menu-item svg {
+  margin-bottom: 5px;
+  fill: currentColor;
+}
+
+.menu-item.active {
+  color: black;
+}

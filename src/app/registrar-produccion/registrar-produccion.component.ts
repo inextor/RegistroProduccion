@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
 import { Production } from '../RestClases/Production';
 import { GetEmpty } from '../RestClases/GetEmpty';
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
 	selector: 'app-registrar-produccion',
 	standalone: true,
-	imports: [FormsModule, CommonModule],
+	imports: [FormsModule, CommonModule, HeaderComponent],
 	templateUrl: './registrar-produccion.component.html',
 	styleUrls: ['./registrar-produccion.component.css']
 })

@@ -6,6 +6,8 @@ import { environment } from '../environments/environment.development';
 })
 export class RestService
 {
+
+
     private base_url = environment.base_url;
 
 
@@ -177,4 +179,5 @@ export class RestService
 	{
 		return !!this.session && !!this.user;
 	}
+
 }
