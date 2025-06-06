@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../environments/environment.development';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class RestService
 {
-    private base_url = 'https://mollusca.integranet.xyz/api';
+    private base_url = environment.base_url;
+
 
 	public user: any = null;
 	public session: any = null;
@@ -148,30 +150,6 @@ export class RestService
 		}
 	}
 
-	async getProductionAreas(storeId: number): Promise<any>
-	{
-		const url = `${this.base_url}/production_area.php?store_id=${storeId}&limit=999999`;
-		try
-		{
-			let headers =  { 'Authorization': `Bearer ${this.session.id}` };
-
-			const response = await fetch(url, { method: 'GET', headers: headers });
-
-			if (!response.ok)
-			{
-				const errorData = await response.text();
-				throw new Error(`HTTP error fetching production areas: ${response.status}, message: ${errorData}`);
-			}
-
-			return await response.json();
-		}
-		catch (error)
-		{
-			console.error(`Error in getProductionAreas for store ID ${storeId}:`, error);
-			throw error; // Re-throw to be handled by the component
-		}
-	}
-
 	clearAuthData(): void
 	{
 		this.user = null;
@@ -199,29 +177,4 @@ export class RestService
 	{
 		return !!this.session && !!this.user;
 	}
-
-	getProductionAreaItems(production_area_id: any):Promise<any[]>
-	{
-		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.session.id}` } };
-		const url = `${this.base_url}/production_area_item.php?store_id=${production_area_id}&limit=999999`;
-		return fetch(url, options )
-			.then(response => response.json())
-			.then(data => data.data)
-			.then(items =>
-			{
-				let item_ids = items.map((item:any) => item.id);
-				let url_items = `${this.base_url}/item.php?id,=${item_ids.join(',')}&limit=999999`;
-				return fetch( url_items , options )
-					.then(response => response.json())
-					.then(data => data.data)
-			})
-    }
-	getUserFromProductionArea(production_area_id: any): Promise<any>
-	{
-		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.session.id}` } };
-		const url = `${this.base_url}/user.php?production_area_id=${production_area_id}&limit=999999`;
-		return fetch(url, options )
-			.then(response => response.json())
-			.then(data => data.data)
-    }
 }

@@ -2,6 +2,8 @@ import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
+import { Production } from '../RestClases/Production';
+import { GetEmpty } from '../RestClases/GetEmpty';
 
 @Component({
 	selector: 'app-registrar-produccion',
@@ -15,15 +17,24 @@ export class RegistrarProduccionComponent implements OnInit
 	production_areas: any[] = [];
 	is_loading = false;
 	error_message: string | null = null;
-
 	search_term: string = '';
 	filtered_production_areas: any[] = [];
 	show_autocomplete = false;
 	selected_production_area: any = null; // To store the selected area object
-    item_array: any[] = [];
-    users: any[] = [];
+	item_array: any[] = [];
+	users: any[] = [];
+	selected_item_id: number = 0;
+	production:Production;
+	extra_qty: number = 0; //pieces???
+	qty: number = 0; //kilos
+	store = GetEmpty.store();
+    production_role_prices: any;
 
-	constructor(public rest_service: RestService, private elementRef: ElementRef) {}
+	constructor(public rest_service: RestService, private elementRef: ElementRef)
+	{
+
+		this.production = new Production(rest_service);
+	}
 
 	ngOnInit(): void
 	{
@@ -40,7 +51,7 @@ export class RegistrarProduccionComponent implements OnInit
 			this.error_message = null;
 			try
 			{
-				const areas = await this.rest_service.getProductionAreas(currentStore.id);
+				const areas = await this.production.getProductionAreas(currentStore.id);
 				this.production_areas = areas.data || areas;
 				console.log('Production areas loaded:', this.production_areas);
 			}
@@ -74,6 +85,7 @@ export class RegistrarProduccionComponent implements OnInit
 		this.filtered_production_areas = this.production_areas.filter(area =>
 			area.name && area.name.toLowerCase().includes(this.search_term.toLowerCase())
 		);
+
 		this.show_autocomplete = this.filtered_production_areas.length > 0;
 	}
 
@@ -85,15 +97,34 @@ export class RegistrarProduccionComponent implements OnInit
 		this.filtered_production_areas = [];
 		console.log('Selected production area:', area);
 
+		this.is_loading = true;
+
 		Promise.all
 		([
-			this.rest_service.getUserFromProductionArea(area.id),
-			this.rest_service.getProductionAreaItems(area.id)
+			this.production.getUsersFromProductionArea(area.id),
+			this.production.getProductionAreaItems(area.id),
+			this.production.getAllRoles()
 		])
-		.then(([users, items]) =>
+		.then(([users, items, roles]) =>
 		{
-			this.users = users;
+			this.users = users.map((u:any)=>
+			{
+				u.role = roles.find((r:any)=>r.id == u.role_id) || {name:'Sin Rol'};
+				return u;
+			});
+
 			this.item_array = items;
+			let role_ids = this.users.filter(user=>user.role_id).map(user => user.role_id) as number[];
+			return this.production.getRolesItemPrices(role_ids);
+		})
+		.then((production_role_prices) =>
+		{
+			this.production_role_prices = production_role_prices;
+
+			this.users.forEach(user =>
+			{
+				user.role_prices = this.production_role_prices.filter((prp:any)=>prp.role_id == user.role_id);
+			});
 		})
 		.catch(error =>
 		{
@@ -117,9 +148,67 @@ export class RegistrarProduccionComponent implements OnInit
 		}
 	}
 
-	onGuardar(): void
+	async onGuardar():Promise<any>
 	{
+		if( !this.selected_production_area )
+		{
+			alert('Por favor seleccione una área de producción');
+			//this.show_error('Por favor seleccione una área de producción');
+		}
+
+		if( !this.selected_item_id )
+		{
+			alert('Por favor seleccione un producto');
+			return;
+		}
+
 		console.log('Guardar button clicked');
 		// Implement save logic here, potentially using this.selected_production_area
+		// Implement save logic here, potentially using this.selected_production_area
+
+		let users = this.users.map(user =>
+		{
+			let price = user?.role_prices?.find((prp:any) => prp.item_id == this.selected_item_id);
+
+			return {
+				user_id : user.id,
+				production_area_id : this.selected_production_area.id,
+				price : price?.price || 0,
+				currency_id : 'MXN',
+			}
+		});
+
+		//Lote
+
+		let zero = (x:number) => x < 10 ? '0'+x : x;
+		let date = new Date();
+		let lote = this.store.code+'-'+date.getFullYear()+'-'+zero(date.getMonth()+1)+'-'+zero(date.getDate());
+
+		let data = {
+			users, //Production_user
+			production :
+			{
+				lote,
+				item_id: this.selected_item_id,
+				production_area_id : this.selected_production_area.id,
+				store_id: this.selected_production_area.store_id,
+				qty: this.qty
+			}
+		};
+
+		this.production.addProduction(data).then(response =>
+		{
+			alert('Producto registrado correctamente');
+		})
+		.catch(error =>
+		{
+			alert('Error al registrar producto');
+			console.error('Error adding production:', error);
+		})
+	}
+
+	guraderProduction(event: Event):void
+	{
+		event.preventDefault();
 	}
 }

@@ -55,6 +55,7 @@ export class LoginComponent
 					{
 						this.rest_service.store = stores.find((s:any) => s.id === response.user.store_id);
 						localStorage.setItem('store', JSON.stringify(this.rest_service.store));
+						console.log('Store set');
 					}
 
 					// Redirect to registrar-produccion
@@ -67,10 +68,6 @@ export class LoginComponent
 				}
 
 			});
-
-			const response = await this.rest_service.postLogin(loginData);
-			console.log('Login successful, response:', response);
-
 		}
 		catch (error: any)
 		{
