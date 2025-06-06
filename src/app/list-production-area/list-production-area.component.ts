@@ -27,7 +27,36 @@ export class ListProductionAreaComponent implements OnInit
 		this.production.getAllProductionAreas()
 		.then((data:any) =>
 		{
+			/* data has
+			[
+    {
+        "id": 1,
+        "created": "2025-05-22 21:23:53",
+        "name": "TEST NESTOR",
+        "status": "ACTIVE",
+        "store_id": 1,
+        "updated": "2025-05-22 21:23:53"
+    },
+    {
+        "id": 2,
+        "created": "2025-06-05 21:58:11",
+        "name": "ALMEJA SAN FELIPE",
+        "status": "ACTIVE",
+        "store_id": 1,
+        "updated": "2025-06-05 21:58:11"
+    },
+    {
+        "id": 3,
+        "created": "2025-06-06 00:14:21",
+        "name": "EQUIPO OKYMI",
+        "status": "ACTIVE",
+        "store_id": 1,
+        "updated": "2025-06-06 00:14:21"
+    }
+]
+			*/
 			this.production_area = data;
+			console.log(this.production_area);
 		});
 	}
 }
