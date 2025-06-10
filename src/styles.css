@@ -1,4 +1,85 @@
 /* You can add global styles to this file, and also import other style files */
-.body{
+body
+{
 	margin: 0;
 }
+
+
+input[type="date"],
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"],
+input[type="email"]
+{
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+dialog
+{
+	border: 1px solid #ccc;
+	border-radius: 10px;
+}
+
+button,
+a.btn,
+button.btn
+{
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.3s;
+    box-sizing: border-box;
+}
+
+dialog::backdrop {
+
+    background-image: linear-gradient(45deg, rgba(255, 0, 255, 0.4), rgba(102, 51, 153, 0.4), rgba(0, 191, 255, 0.4), rgba(0, 128, 0, 0.4));
+    background-color: rgba(0, 0, 0, 0.1); /* optional: adds dimming effect */
+    backdrop-filter: blur(2px);       /* ✅ Standard property */
+    -webkit-backdrop-filter: blur(2px);
+	bacgkground-image: linear-gradient(
+		45deg,
+		magenta,
+		rebeccapurple,
+		dodgerblue,
+		green
+	);
+  }
+
+/* Grid System - Similar to Bootstrap */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px; /* Negative margin to offset column padding */
+}
+
+[class*="col-"] {
+  box-sizing: border-box;
+  padding: 0 10px; /* Horizontal gutter */
+  width: 100%; /* Default full width */
+}
+
+/* Column classes for 1-12 columns */
+.col-1 { flex: 0 0 calc(100% * 1/12); max-width: calc(100% * 1/12); }
+.col-2 { flex: 0 0 calc(100% * 2/12); max-width: calc(100% * 2/12); }
+.col-3 { flex: 0 0 calc(100% * 3/12); max-width: calc(100% * 3/12); }
+.col-4 { flex: 0 0 calc(100% * 4/12); max-width: calc(100% * 4/12); }
+.col-5 { flex: 0 0 calc(100% * 5/12); max-width: calc(100% * 5/12); }
+.col-6 { flex: 0 0 calc(100% * 6/12); max-width: calc(100% * 6/12); }
+.col-7 { flex: 0 0 calc(100% * 7/12); max-width: calc(100% * 7/12); }
+.col-8 { flex: 0 0 calc(100% * 8/12); max-width: calc(100% * 8/12); }
+.col-9 { flex: 0 0 calc(100% * 9/12); max-width: calc(100% * 9/12); }
+.col-10 { flex: 0 0 calc(100% * 10/12); max-width: calc(100% * 10/12); }
+.col-11 { flex: 0 0 calc(100% * 11/12); max-width: calc(100% * 11/12); }
+.col-12 { flex: 0 0 100%; max-width: 100%; }
