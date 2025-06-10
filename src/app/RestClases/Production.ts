@@ -3,6 +3,7 @@ import { RestService } from "../rest.service";
 
 export class Production
 {
+
 	constructor(private rest_service: RestService)
 	{
 
@@ -35,7 +36,7 @@ export class Production
 	getProductionAreaItems(production_area_id: any):Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?store_id=${production_area_id}&limit=999999`;
+		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id=${production_area_id}&limit=999999`;
 		return fetch(url, options )
 			.then(response => response.json())
 			.then(data => data.data)
@@ -69,7 +70,7 @@ export class Production
 		const url = `${this.rest_service.getBaseUrl()}/user.php?production_area_id=${production_area_id}&limit=999999`;
 
 		return fetch(url, options )
-			.then(response => response.json())
+			.then(this.getJsonLambda())
 			.then(data => data.data)
 		}
 
@@ -100,7 +101,7 @@ export class Production
 			.then(data => data.data)
 	}
 
-	getAllRoles()
+	getAllRoles():Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/role.php?limit=999999`;
@@ -122,7 +123,7 @@ export class Production
 		};
 	}
 
-	getAllProductionAreas()
+	getAllProductionAreas():Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_area.php?limit=999999`;
@@ -131,12 +132,52 @@ export class Production
 			.then(data => data.data);
 	}
 
-	getAllProduction()
+	getAllProduction():Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_info.php?limit=999999`;
 		return fetch(url, options )
 			.then(this.getJsonLambda())
 			.then(data => data.data);
+	}
+
+	getProductionItems():Promise<any[]>
+	{
+		return this.getAllRoles().then(roles =>
+		{
+			let role_ids = roles.filter((role:any)=>role.id).map((role:any) => role.id) as number[];
+			return this.getRolesItemPrices(role_ids);
+		})
+		.then((role_item_prices:any) =>
+		{
+			let item_ids = role_item_prices.map((role_item_price:any) => role_item_price.item_id);
+
+			let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+			let url = `${this.rest_service.getBaseUrl()}/item_info.php?limit=999999&id,=${item_ids.join(',')}`;
+			return fetch(url, options )
+		})
+		.then(this.getJsonLambda())
+		.then(data => data.data)
+	}
+
+	getProductionItemInfoByItemId(item_id: any,date:string):Promise<any[]>
+	{
+		let d = new Date();
+
+		//convert to UTC
+
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&limit=999999`;
+		return fetch(url, options )
+			.then(this.getJsonLambda())
+			.then(data => data.data)
+	}
+
+	getItemInfo(item_id: any): Promise<any>
+	{
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		const url = `${this.rest_service.getBaseUrl()}/item_info.php?id=${item_id}`;
+		return fetch(url, options )
+			.then(this.getJsonLambda())
 	}
 }
