@@ -4,12 +4,11 @@ import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
 import { Production } from '../RestClases/Production';
 import { GetEmpty } from '../RestClases/GetEmpty';
-import { HeaderComponent } from "../header/header.component";
 
 @Component({
 	selector: 'app-registrar-produccion',
 	standalone: true,
-	imports: [FormsModule, CommonModule, HeaderComponent],
+	imports: [FormsModule, CommonModule ],
 	templateUrl: './registrar-produccion.component.html',
 	styleUrls: ['./registrar-produccion.component.css']
 })
@@ -30,6 +29,7 @@ export class RegistrarProduccionComponent implements OnInit
 	qty: number = 0; //kilos
 	store = GetEmpty.store();
     production_role_prices: any;
+	alternate_qty: number | '' = '';;
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
@@ -121,6 +121,7 @@ export class RegistrarProduccionComponent implements OnInit
 		.then((production_role_prices) =>
 		{
 			this.production_role_prices = production_role_prices;
+			this.is_loading = false;
 
 			this.users.forEach(user =>
 			{
@@ -169,7 +170,10 @@ export class RegistrarProduccionComponent implements OnInit
 
 		let users = this.users.map(user =>
 		{
-			let price = user?.role_prices?.find((prp:any) => prp.item_id == this.selected_item_id);
+			let price = user?.role_prices?.find((prp:any) =>
+			{
+				return	prp.item_id == this.selected_item_id
+			});
 
 			return {
 				user_id : user.id,
@@ -193,7 +197,8 @@ export class RegistrarProduccionComponent implements OnInit
 				item_id: this.selected_item_id,
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_production_area.store_id,
-				qty: this.qty
+				qty: this.qty,
+				alternate_qty: this.alternate_qty
 			}
 		};
 
@@ -204,7 +209,7 @@ export class RegistrarProduccionComponent implements OnInit
 		.catch(error =>
 		{
 			alert('Error al registrar producto');
-			console.error('Error adding production:', error);
+			this.rest_service.showError(error);
 		})
 	}
 

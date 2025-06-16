@@ -1,4 +1,3 @@
-<app-header></app-header>
 <div class="almacen-container">
 	<div class="almacen-header">
 		<h2>Almacen</h2>
@@ -62,17 +61,16 @@
 	<form (submit)="onGuardar()" ngNativeValidate>
 		<select class="input-select" name="selected_item_id" [(ngModel)]="selected_item_id" required>
 			<option>Producto</option>
-			<option *ngFor="let item of item_array" [value]="item.id">{{item.name}}</option>
+			<option *ngFor="let item of item_array" [value]="item.id">{{item.id}} - {{item.name}}</option>
 		</select>
 		<div class="form-group">
 			<label for="pieces_qty">Piezas</label>
-			<input type="text" placeholder="Piezas" class="input-text" name="pieces_qty" [(ngModel)]="extra_qty" required>
+			<input type="text" placeholder="Piezas" class="input-text" name="pieces_qty" [(ngModel)]="alternate_qty" required>
 		</div>
 		<div class="form-group">
-			<label for="pieces_qty">Piezas</label>
+			<label for="pieces_qty">Kilos</label>
 			<input type="text" placeholder="Kilos" class="input-text" name="qty" [(ngModel)]="qty" required><!-- KILOS -->
 		</div>
-
 		<button class="btn-guardar" type="submit">Guardar</button>
 	</form>
 </div>
