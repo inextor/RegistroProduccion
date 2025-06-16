@@ -1,0 +1,30 @@
+<div class="container">
+	<h1>Producción de {{ item_info.item.name }}</h1>
+	<div>
+		<label>Fecha</label>
+		<input type="date" name="date" [ngModel]="date" (ngModelChange)="loadData(item_info.item.id, $event)" />
+	</div>
+
+	@if (is_loading)
+	{
+		<div class="spinner-grow text-primary" role="status" >
+			<span class="sr-only">Loading...</span>
+		</div>
+	}
+
+	@for (production_item_info of production_item_info_list; track item_info.id)
+	{
+		<div class="list-item">
+			<div class="list-item-icon">
+				<i class="material-icons"></i>
+			</div>
+			<div class="list-item-content">
+				<div class="list-item-title">{{ item_info.item.name }}</div>
+				<div class="list-item-subtitle">{{ item_info?.category?.name }}</div>
+				<label>Kilos</label>
+				<input type="text" [name]="'qty'+production_item_info.production.id" placeholder="Kilos" class="input-text" name="qty" [(ngModel)]="production_item_info.production.qty"><!-- KILOS -->
+				<button class="btn-guardar" type="button" (click)="update(production_item_info)">Guardar</button>
+			</div>
+		</div>
+	}
+</div>
