@@ -1,0 +1,65 @@
+.alert-modal
+{
+	position: fixed;
+	z-index: 1001;
+	bottom: 90px;
+	right: 20px;
+	min-width: 200px;
+}
+
+.alert-modal .red>span
+{
+	color: red;
+}
+.alert-modal .green>span
+{
+	color: green;
+}
+
+
+
+.alert
+{
+
+}
+
+.alert-danger {
+    position: relative;
+    padding: 10px 15px;
+    margin-bottom: var(5px);
+    color: #58151c;
+    background-color: #f8d7da;
+    border: 1px solid  #58151c;
+    border-radius: 3px;
+}
+
+.alert-success
+{
+    position: relative;
+    padding: 10px 15px;
+    margin-bottom: var(5px);
+    color: #0a3622;
+    background-color: #d1e7dd;
+    border: 1px solid #0a3622;
+    border-radius: 3px;
+
+}
+
+.alert-warning
+{
+	position: relative;
+    padding: 10px 15px;
+    margin-bottom: var(5px);
+	color:#664d03;
+	background-color: #ffe69c;
+    border: 1px solid #664d03;
+	border-radius: var(--bs-alert-border-radius);
+}
+
+.green > span {
+    color: green;
+}
+
+.yellow > span {
+    color: yellow;
+}
