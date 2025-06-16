@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Production } from '../RestClases/Production';
 import { RestService } from '../rest.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
 	selector: 'app-list-production-area',
-	imports: [],
+	imports: [RouterModule],
 	templateUrl: './list-production-area.component.html',
 	styleUrl: './list-production-area.component.css'
 })
@@ -16,7 +16,7 @@ export class ListProductionAreaComponent implements OnInit
 
 	production_area_list:any[] = [];
 
-	constructor(public rest_service: RestService, public route: ActivatedRoute)
+	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
 		this.production = new Production(rest_service);
 	}
