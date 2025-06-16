@@ -58,6 +58,7 @@ export class LoginComponent
 						console.log('Store set');
 					}
 
+					this.rest_service.is_logged_in = true;
 					// Redirect to registrar-produccion
 					this.router.navigate(['/registrar-produccion']);
 				}
