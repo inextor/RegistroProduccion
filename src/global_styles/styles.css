@@ -1,0 +1,71 @@
+/* You can add global styles to this file, and also import other style files */
+body
+{
+	margin: 0;
+}
+
+
+input[type="date"],
+input[type="text"],
+input[type="number"],
+input[type="datetime-local"],
+input[type="email"]
+{
+	width: 100%;
+	padding: 10px;
+	border-radius: 10px;
+	border: 1px solid #ddd;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+
+dialog
+{
+	border: 1px solid #ccc;
+	border-radius: 10px;
+}
+
+button,
+a.btn,
+button.btn
+{
+	width: 100%;
+	background-color: #007bff;
+	color: white;
+	font-weight: bold;
+	padding: 12px;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	font-size: 15px;
+	transition: background 0.3s;
+	box-sizing: border-box;
+}
+
+
+
+ @keyframes gradientShift {
+     0% {
+         background-position: 0% 50%;
+     }
+     50% {
+         background-position: 100% 50%;
+     }
+     100% {
+         background-position: 0% 50%;
+     }
+ }
+
+
+
+
+dialog::backdrop {
+
+	background: linear-gradient(45deg, rgba(255, 0, 255, 0.2), rgba(102, 51, 153, 0.2), rgba(0, 191, 255, 0.2), rgba(0, 128, 0, 0.2));
+    animation: gradientShift 15s ease infinite;
+	background-color: rgba(0, 0, 0, 0.1); /* optional: adds dimming effect */
+	backdrop-filter: blur(2px);	 /* ✅ Standard property */
+	-webkit-backdrop-filter: blur(2px);
+}
+
+
