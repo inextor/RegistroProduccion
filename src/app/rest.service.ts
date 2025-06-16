@@ -1,5 +1,34 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment.development';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+export class ErrorMessage
+{
+	count:number;
+	message:string;
+	type:string;
+	msg_button:string;
+	color:string;
+	auto_hide:boolean = true;
+	constructor(message:string,type:string, auto_hide:boolean=true)
+	{
+		this.message	= message;
+		this.type	= type;
+		this.count = 0;
+		this.auto_hide = auto_hide;
+
+		if( type == 'alert-success')
+		{
+			this.msg_button = '✔️';
+			this.color = 'green';
+		}
+		else
+		{
+			this.msg_button = '✖';
+			this.color = 'red';
+		}
+	}
+}
 
 @Injectable({
 	providedIn: 'root'
@@ -7,10 +36,10 @@ import { environment } from '../environments/environment.development';
 export class RestService
 {
 
+	error_behavior_subject = new BehaviorSubject<ErrorMessage>(new ErrorMessage('',''));
+	public error_observable = this.error_behavior_subject.asObservable();
 
-    private base_url = environment.base_url;
-
-
+	private base_url = environment.base_url;
 	public user: any = null;
 	public session: any = null;
 	public permission: any = null;
@@ -19,12 +48,15 @@ export class RestService
 	constructor()
 	{
 		this.loadAuthDataFromLocalStorage();
+		this.is_logged_in = localStorage.getItem('session') !== null;
 	}
 
 	getBaseUrl(): string
 	{
 		return this.base_url;
 	}
+
+	is_logged_in:boolean = false;
 
 	async postLogin(data: any): Promise<any>
 	{
@@ -86,6 +118,7 @@ export class RestService
 			localStorage.setItem('user', JSON.stringify(user));
 			localStorage.setItem('session', JSON.stringify(session));
 			localStorage.setItem('permission', JSON.stringify(permission));
+
 			if (store)
 			{
 				localStorage.setItem('store', JSON.stringify(store));
@@ -180,4 +213,46 @@ export class RestService
 		return !!this.session && !!this.user;
 	}
 
+
+
+	getErrorString(error:any):string
+	{
+		if (error == null || error === undefined)
+			return 'Error desconocido';
+
+		if (typeof error === "string")
+			return error;
+
+		if( 'error' in error )
+		{
+			if( typeof(error.error) == 'string' )
+			{
+				return error.error;
+			}
+
+			if( error.error && 'error' in error.error && error.error.error )
+			{
+				return error.error.error;
+			}
+		}
+		return 'Error desconocido';
+	}
+
+	showError(error: any, auto_hide:boolean = true)
+	{
+		console.log('Error to display is', error);
+		if( error instanceof ErrorMessage )
+		{
+			this.showErrorMessage(error);
+			return;
+		}
+		let str_error = this.getErrorString(error);
+
+		this.showErrorMessage(new ErrorMessage(str_error, 'alert-danger', auto_hide));
+	}
+
+	showErrorMessage(error: ErrorMessage)
+	{
+		this.error_behavior_subject.next(error);
+	}
 }

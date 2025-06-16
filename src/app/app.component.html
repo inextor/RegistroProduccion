@@ -1,1 +1,29 @@
+@if( rest_service.is_logged_in )
+{
+	<app-header></app-header>
+}
 <router-outlet />
+
+<dialog id="confirmation">
+	<h4>{{confirmation_service.title}}</h4>
+	<p>{{confirmation_service.description}}</p>
+	<div *ngIf="confirmation_note_required">
+		<label for="confirmation_note">{{confirmation_note_label}}:</label>
+		<textarea class="form-control" rows="5" placeholder="Nota" [(ngModel)]="confirmation_note"></textarea>
+	</div>
+	<div class="row">
+		<div class="col-6 text-center">
+			<button type="button" class="btn btn-secondary w-100"
+				(click)="confirmation_service.onCancel()">
+				{{confirmation_service.cancel_button}}
+			</button>
+		</div>
+		<div class="col-6">
+			<button type="button" class="btn btn-primary w-100"
+				(click)="confirmation_service.onAccept()" >
+				{{confirmation_service.ok_button}}
+			</button>
+		</div>
+	</div>
+</dialog>
+<app-toast-error></app-toast-error>
