@@ -1,4 +1,4 @@
-#!/bin/bashr
+#!/bin/bash
 
 # Prompt the user for confirmation
 read -p "Are you sure you want deploy TO Produccion? (YES/NO) " answer
@@ -20,4 +20,3 @@ fi
 
 rsync ~/Projects/RegistroProduccion/dist/myapp/browser/* pos:/var/www/html/integranet.xyz/subdomains/mol/
 
-popd
