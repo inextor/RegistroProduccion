@@ -19,11 +19,18 @@
 				<i class="material-icons"></i>
 			</div>
 			<div class="list-item-content">
-				<div class="list-item-title">{{ item_info.item.name }}</div>
-				<div class="list-item-subtitle">{{ item_info?.category?.name }}</div>
-				<label>Kilos</label>
-				<input type="text" [name]="'qty'+production_item_info.production.id" placeholder="Kilos" class="input-text" name="qty" [(ngModel)]="production_item_info.production.qty"><!-- KILOS -->
-				<button class="btn-guardar" type="button" (click)="update(production_item_info)">Guardar</button>
+				<div class="list-item-title">{{ production_item_info.production_area.name }}</div>
+				<div class="list-item-subtitle">{{ item_info.item.name }}</div>
+				<div class="row">
+					<div class="col-6 form-group">
+						<label>Kilos</label>
+						<input type="text" [name]="'qty'+production_item_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_item_info.production.qty"><!-- KILOS -->
+					</div>
+					<div class="col-6">
+						<label>&nbsp;</label>
+						<button class="btn btn-primary" type="button" (click)="update(production_item_info)">Guardar</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	}
