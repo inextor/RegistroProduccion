@@ -84,7 +84,7 @@
 @if( last_production_info_list.length > 0 )
 {
 	<div class="card m-3">
-		<div class="row border-bottom mx-0">
+		<div class="row border-bottom mx-0 fw-bold">
 			<div class="col-6"></div>
 			<div class="col-3 text-end">Piezas</div>
 			<div class="col-3 text-end">Kilos</div>
@@ -94,18 +94,18 @@
 		{
 			<div class="row border-bottom align-items-center mx-0">
 				<div class="col-6 px-1">{{production_info.item.name}}</div>
-				<div class="col-3 text-end">
+				<div class="col-2 text-end px-0">
 					{{production_info.production.alternate_qty | number}}
 				</div>
-				<div class="col-3 text-end">
+				<div class="col-4 text-end px-1">
 					{{production_info.production.qty | number:'1.3-3'}}
 				</div>
 			</div>
 		}
-		<div class="row border-bottom mx-0">
+		<div class="row border-bottom mx-0 fw-bold">
 			<div class="col-6"></div>
-			<div class="col-3 text-end">{{pieces_total | number}}</div>
-			<div class="col-3 text-end">{{kg_total|number:'1.3-3'}}</div>
+			<div class="col-2 text-end px-0">{{pieces_total | number}}</div>
+			<div class="col-4 text-end px-1">{{kg_total|number:'1.3-3'}}</div>
 		</div>
 	</div>
 }
