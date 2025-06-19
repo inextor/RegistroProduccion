@@ -26,10 +26,14 @@ export class RegistrarProduccionComponent implements OnInit
 	selected_item_id: number = 0;
 	production:Production;
 	extra_qty: number = 0; //pieces???
-	qty: number = 0; //kilos
+	qty: number | '' = ''; //kilos
 	store = GetEmpty.store();
     production_role_prices: any;
 	alternate_qty: number | '' = '';;
+	last_production_info_list:any[] = [];
+
+	kg_total = 0;
+	pieces_total = 0;
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
@@ -127,6 +131,8 @@ export class RegistrarProduccionComponent implements OnInit
 			{
 				user.role_prices = this.production_role_prices.filter((prp:any)=>prp.role_id == user.role_id);
 			});
+
+			this.last_production_info_list = [];
 		})
 		.catch(error =>
 		{
@@ -197,14 +203,32 @@ export class RegistrarProduccionComponent implements OnInit
 				item_id: this.selected_item_id,
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_production_area.store_id,
-				qty: this.qty,
+				qty: this.qty || parseInt( this.qty as '' ),
 				alternate_qty: this.alternate_qty
 			}
 		};
 
+		this.qty = '';
+
 		this.production.addProduction(data).then(response =>
 		{
-			alert('Producto registrado correctamente');
+				console.log('Production added:', response);
+			this.last_production_info_list.push({
+				production: response.production,
+				item: this.item_array.find(item => item.id == this.selected_item_id),
+				production_area: this.selected_production_area
+			})
+
+			let kg_total = 0;
+			let pieces_total = 0;
+
+			for( let production_info of this.last_production_info_list )
+			{
+				kg_total += production_info.production.qty;
+				pieces_total += production_info.production.alternate_qty;
+			}
+			this.kg_total = kg_total;
+			this.pieces_total = pieces_total;
 		})
 		.catch(error =>
 		{
