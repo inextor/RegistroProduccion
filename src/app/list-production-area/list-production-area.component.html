@@ -1,17 +1,15 @@
 <div class="container">
-	<h1>Production by Workgroup</h1>
+	<h1>Grupos de trabajo</h1>
 	@for (area of production_area_list; track area.id)
 	{
-		<div class="list-item">
-			<a [routerLink]="['/production-by-group', area.id]">
-				<div class="list-item-icon">
-					<i class="material-icons"></i>
-				</div>
-				<div class="list-item-content">
-					<div class="list-item-title">{{ area.name }}</div>
-					<div class="list-item-subtitle">{{ area.status }}</div>
-				</div>
-			</a>
-		</div>
+		<a [routerLink]="['/production-by-group', area.id]" class="list-item">
+			<div class="list-item-icon">
+				<i class="material-icons"></i>
+			</div>
+			<div class="list-item-content">
+				<div class="list-item-title">{{ area.name }}</div>
+				<div class="list-item-subtitle">{{ area.status }}</div>
+			</div>
+		</a>
 	}
 </div>

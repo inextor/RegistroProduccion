@@ -47,7 +47,10 @@ export class ConfirmationService {
 					if( this.show_permission )
 						this.onCancelPermission();
 
-					this.dialog.close();
+					if( this.dialog )
+					{
+						this.dialog.close();
+					}
 				}
 			},
 			error:(error)=>

@@ -6,7 +6,6 @@ import { ActivatedRoute, ParamMap, Router, RouterLink, RouterModule } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule} from '@angular/forms';
 
-
 interface LocationParameters
 {
 	query:ParamMap,
@@ -32,7 +31,10 @@ export class ProductionByGroupComponent
 	is_loading:boolean = false;
 
 	group_id:string = '';
+    production_area :any = { name: ''};
 
+
+	lists_by_product:any[] = [];
 
 
 	constructor(private rest_service:RestService,private route:ActivatedRoute,private router:Router)
@@ -99,9 +101,13 @@ export class ProductionByGroupComponent
 		let e = this.production.getDateFromLocalMysqlString(end_date);
 		e.setHours(23,59,59,59);
 
-		this.production.getProductionByGroup(group_id, s, e)
-		.then((data:any) =>
+		Promise.all([
+			this.production.getProductionByGroup(group_id, s, e),
+			this.production.getProductionArea(group_id)
+		])
+		.then(([data,production_area]) =>
 		{
+			this.production_area= production_area;
 			this.production_info_list = data;
 			let total_qty = 0;
 			let total_alternate_qty = 0;
@@ -115,6 +121,11 @@ export class ProductionByGroupComponent
 			this.total_qty = total_qty;
 			this.total_alternate_qty = total_alternate_qty;
 			this.total_average = total_qty/total_alternate_qty;
+		})
+		.then(()=>
+		{
+
+			this.is_loading = false;
 		})
 		.catch((error:any) =>
 		{

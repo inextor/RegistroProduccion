@@ -224,9 +224,10 @@ export class RegistrarProduccionComponent implements OnInit
 
 			for( let production_info of this.last_production_info_list )
 			{
-				kg_total += production_info.production.qty;
-				pieces_total += production_info.production.alternate_qty;
+				kg_total += parseInt( ''+production_info.production.qty);
+				pieces_total += parseInt( ''+production_info.production.alternate_qty);
 			}
+
 			this.kg_total = kg_total;
 			this.pieces_total = pieces_total;
 		})

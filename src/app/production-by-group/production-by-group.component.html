@@ -1,5 +1,20 @@
 <div class="container">
-	<h1>Produccion por area de trabajo</h1>
+	<h1>Produccion de {{production_area.name }}</h1>
+	<div class="card glovestrap p-3 mx-3 mb-3">
+		<div class="row">
+			<div class="col-6">
+				<label>Fecha de inicio</label>
+				<input type="date" name="start_date" [ngModel]="start_date" (ngModelChange)="onStartDateChange($event)" class="form-control">
+			</div>
+			<div class="col-6">
+				<label>Fecha de fin</label>
+				<input type="date" name="start_end" [ngModel]="end_date" (ngModelChange)="onEndDateChange($event)" class="form-control">
+			</div>
+		</div>
+	</div>
+	<div class="spinner-border" role="status" *ngIf="is_loading">
+		<span class="visually-hidden">Loading...</span>
+	</div>
 	<div class="card glovestrap p-3 mx-3">
 		<div class="c-row c-d-none c-d-md-block border-bottom">
 			<div class="c-row">
