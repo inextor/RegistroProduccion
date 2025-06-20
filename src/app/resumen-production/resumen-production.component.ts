@@ -168,6 +168,10 @@ export class ResumenProductionComponent {
 					production_by_item: Array.from(itemMap.values())
 				});
 			}
+			this.structuredProductionData.push({
+				production_area: production_area,
+				category_production: categoryProduction
+			});
 		}
 	}
 
