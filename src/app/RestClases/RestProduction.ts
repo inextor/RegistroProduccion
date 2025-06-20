@@ -38,23 +38,64 @@ export class RestProduction
 		}
 	}
 
-	getProductionAreaItems(production_area_id: any):Promise<any[]>
-	{
-		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id=${production_area_id}&limit=999999`;
-		return fetch(url, options )
-			.then(response => response.json())
-			.then(data => data.data)
-			.then(items =>
-			{
-				let item_ids = items.map((item:any) => item.item_id);
-				let url_items = `${this.rest_service.getBaseUrl()}/item.php?id,=${item_ids.join(',')}&limit=999999`;
+	/*
+	 * @param production_area_id: string|number|number[]
+	 * @returns Promise:<{total:number,data:ItemInfo[]}>
+	 */
 
-				return fetch( url_items , options )
-					.then(response => response.json())
-					.then(data => data.data)
-			})
-		}
+	getItemsByProductionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
+	{
+		let ids = Array.isArray(production_area_id) ? production_area_id.join(',') : production_area_id;
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+
+		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id,=${ids}&limit=999999`;
+		return fetch(url, options )
+		.then(response => response.json())
+		.then(data => data.data)
+		.then(items =>
+		{
+			let item_ids = items.map((item:any) => item.item_id);
+			let url_items = `${this.rest_service.getBaseUrl()}/item.php?id,=${item_ids.join(',')}&limit=999999`;
+
+			return fetch( url_items , options )
+				.then(response => response.json())
+				.then(data => data.data)
+		})
+	}
+
+	/*
+	 * @param production_area_id: string|number|number[]
+	 * @returns Promise:<{total:number,data:ItemInfo[]}>
+	 */
+
+	getItemInfoListByProductionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
+	{
+		let ids = Array.isArray(production_area_id) ? production_area_id.join(',') : production_area_id;
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+
+		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id,=${ids}&limit=999999`;
+		return fetch(url, options )
+		.then(response => response.json())
+		.then(data => data.data)
+		.then(items =>
+		{
+			let item_ids = items.map((item:any) => item.item_id);
+			let url_items = `${this.rest_service.getBaseUrl()}/item.php?id,=${item_ids.join(',')}&limit=999999`;
+
+			return fetch( url_items , options )
+				.then(response => response.json())
+				.then(data => data.data)
+		})
+	}
+
+	/*
+	 * @deprecated
+	 */
+
+	getProductionAreaItems(production_area_id: string|number|number[]):Promise<any[]>
+	{
+		return this.getItemInfoListByProductionAreaIds(production_area_id);
+	}
 
 	/*
 	* @returns Promise:<{total:number,data:{production_area:Object, users:Array, store:Object}[]>
