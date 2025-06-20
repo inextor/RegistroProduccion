@@ -24,7 +24,7 @@ export class RegistrarProduccionComponent implements OnInit
 	item_array: any[] = []; 
 	users: any[] = [];
 	selected_item_id: number = 0; // This will probably be the item info id
-	production:Production;
+	production: RestProduction;
 	extra_qty: number = 0; //pieces???
 	qty: number | '' = ''; //kilos
 	store = GetEmpty.store();

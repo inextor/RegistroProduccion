@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RestService } from '../rest.service';
-import { Production } from '../RestClases/Production';
 import { combineLatest, mergeMap, Observable, of, startWith } from 'rxjs';
+import { RestProduction } from '../RestClases/RestProduction';
 import { ActivatedRoute, ParamMap, Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule} from '@angular/forms';
@@ -20,7 +20,7 @@ interface LocationParameters
 })
 export class ProductionByGroupComponent
 {
-	production: Production;
+	rest_production: RestProduction;
 	production_info_list:any[] = [];
 	total_alternate:number = 0;
 	start_date: string = '';
@@ -39,21 +39,21 @@ export class ProductionByGroupComponent
 
 	constructor(private rest_service:RestService,private route:ActivatedRoute,private router:Router)
 	{
-		this.production = new Production(rest_service);
+		this.rest_production = new RestProduction(rest_service);
 	}
 
 	onStartDateChange(date_string:string)
 	{
 		this.start_date = date_string;
 		this.loadData(this.group_id, this.start_date, this.end_date);
-		console.log(this.start_date);
+		console.log(this.start_date); //TODO BORRAR
 	}
 
 	onEndDateChange(date_string:string)
 	{
 		this.end_date = date_string;
 		this.loadData(this.group_id, this.start_date, this.end_date);
-		console.log(this.end_date);
+		console.log(this.end_date); //TODO BORRAR
 	}
 
 	ngOnInit()
@@ -68,8 +68,8 @@ export class ProductionByGroupComponent
 				let end = new Date();
 				end.setHours(23,59,59,59);
 
-				this.start_date = this.production.getLocalMysqlStringFromDate(start).substring(0,10)
-				this.end_date = this.production.getLocalMysqlStringFromDate(end).substring(0,10)
+				this.start_date = this.rest_production.getLocalMysqlStringFromDate(start).substring(0,10)
+				this.end_date = this.rest_production.getLocalMysqlStringFromDate(end).substring(0,10)
 
 				this.group_id = data.params.get('id') as string;
 
@@ -94,19 +94,19 @@ export class ProductionByGroupComponent
 	loadData(group_id:string, start_date:string, end_date:string)
 	{
 
-		this.is_loading = true;
-		let s = this.production.getDateFromLocalMysqlString(start_date);
+		//this.is_loading = true; //TODO BORRAR
+		let s = this.rest_production.getDateFromLocalMysqlString(start_date);
 		s.setHours(0,0,0,0);
 
-		let e = this.production.getDateFromLocalMysqlString(end_date);
+		let e = this.rest_production.getDateFromLocalMysqlString(end_date);
 		e.setHours(23,59,59,59);
 
 		Promise.all([
-			this.production.getProductionByGroup(group_id, s, e),
-			this.production.getProductionArea(group_id)
+			this.rest_production.getProductionByGroup(group_id, s, e),
+			this.rest_production.getProductionArea(group_id)
 		])
 		.then(([data,production_area]) =>
-		{
+		{//TODO BORRAR
 			this.production_area= production_area;
 			this.production_info_list = data;
 			let total_qty = 0;
