@@ -123,16 +123,16 @@ export class ResumenProductionComponent {
 		{
 			let production_info_list = this.production_info_list.filter(info => info.production_area_id === production_area.id);
 
-			const categoryMap: Map<string, ProductionInfo[]> = new Map();
+			const category_map: Map<string, ProductionInfo[]> = new Map();
 
 			for (const productionInfo of production_info_list) {
 				const itemInfo = this.item_info_list.find(item => item.id === productionInfo.item_id);
 				if (itemInfo && itemInfo.category) {
 					const categoryName = itemInfo.category.name;
-					if (!categoryMap.has(categoryName)) {
-						categoryMap.set(categoryName, []);
+					if (!category_map.has(categoryName)) {
+						category_map.set(categoryName, []);
 					}
-					categoryMap.get(categoryName)!.push({
+					category_map.get(categoryName)!.push({
 						item: itemInfo,
 						total: productionInfo.qty,
 						pieces: productionInfo.alternate_qty,
@@ -143,7 +143,7 @@ export class ResumenProductionComponent {
 
 			const categoryProduction: CategoryProduction[] = [];
 
-			for (const [categoryName, productionByItem] of categoryMap.entries())
+			for (const [categoryName, productionByItem] of category_map.entries())
 			{
 				let categoryKgs = 0;
 				let categoryPieces = 0;
