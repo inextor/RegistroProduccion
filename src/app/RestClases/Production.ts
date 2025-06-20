@@ -60,13 +60,12 @@ export class Production
 	* @returns Promise:<{total:number,data:{production_area:Object, users:Array, store:Object}[]>
 	*/
 
-	getProductionAreaInfo(production_area_id: any):Promise<any>
+	getProductionArea(production_area_id: any):Promise<any>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_area.php?id=${production_area_id}`;
 		return fetch(url, options )
 			.then(response => response.json())
-			.then(data => data.data)
 	}
 
 	getUsersFromProductionArea(production_area_id: any): Promise<any>
@@ -94,7 +93,7 @@ export class Production
 		const url = `${this.rest_service.getBaseUrl()}/production_info.php`;
 		return fetch(url, { method, headers, body })
 			.then(this.getJsonLambda())
-			.then(data => data.data)
+			.then(data => data)
 		}
 
 	getRolesItemPrices(role_ids:number[]):Promise<any[]>
@@ -241,6 +240,33 @@ export class Production
 		f.push( components.length<6?0:parseInt(components[5]))
 
 		return new Date( f[0], f[1], f[2], f[3], f[4], f[5], 0);
+	}
+
+	getProductionInfo(p: URLSearchParams | Object):Promise<any[]>
+	{
+		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
+		const url = new URL(`${this.rest_service.getBaseUrl()}/production_info.php`);
+		url.search = params.toString(); // Handles '?' and encoding
+
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		return fetch(url, options )
+			.then(this.getJsonLambda());
+	}
+
+	getUrlParams(obj:any):URLSearchParams
+	{
+		if (obj === null || obj === undefined) {
+			obj = {};
+		}
+		const params = new URLSearchParams();
+		for (const key in obj)
+		{
+			if (obj.hasOwnProperty(key))
+			{
+				params.set(key, String(obj[key]));
+			}
+		}
+		return params;
 	}
 
 	getProductionByGroup(group_id:string, start_date:Date, end_date:Date):Promise<any[]>
