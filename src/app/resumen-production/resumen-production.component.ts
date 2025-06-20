@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { RestService } from '../rest.service';
-import { combineLatest, Observable, startWith } from 'rxjs';
+import { combineLatest, Observable, of, startWith } from 'rxjs';
 import { RestProduction } from '../RestClases/RestProduction';
 
 interface ProductionByArea
@@ -46,6 +46,7 @@ export class ResumenProductionComponent {
 	production_info_list:any[] = [];
 	is_loading: boolean = false;
 	item_info_list:any[] = [];
+	structuredProductionData: ProductionData = [];
 
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
@@ -99,6 +100,8 @@ export class ResumenProductionComponent {
 			.then(item_info_list =>
 			{
 				this.item_info_list = item_info_list;
+				console.log("item_info_list", this.item_info_list);
+				this.createStructures();
 
 			})
 			.catch(error =>
@@ -115,9 +118,54 @@ export class ResumenProductionComponent {
 
 	createStructures()
 	{
+		this.structuredProductionData = [];
 		for(let production_area of this.production_area_list)
 		{
 			let production_info_list = this.production_info_list.filter(info => info.production_area_id === production_area.id);
+
+			const categoryMap: Map<string, ProductionInfo[]> = new Map();
+
+			for (const productionInfo of production_info_list) {
+				const itemInfo = this.item_info_list.find(item => item.id === productionInfo.item_id);
+				if (itemInfo && itemInfo.category) {
+					const categoryName = itemInfo.category.name;
+					if (!categoryMap.has(categoryName)) {
+						categoryMap.set(categoryName, []);
+					}
+					categoryMap.get(categoryName)!.push({
+						item: itemInfo,
+						total: productionInfo.qty,
+						pieces: productionInfo.alternate_qty,
+						production_info_list: [productionInfo] // Store the original production info object
+					});
+				}
+			}
+
+			const categoryProduction: CategoryProduction[] = [];
+
+			for (const [categoryName, productionByItem] of categoryMap.entries()) {
+				let categoryKgs = 0;
+				let categoryPieces = 0;
+
+				// Further group by item within category
+				const itemMap = new Map<number, ProductionInfo>();
+				for(const prodInfo of productionByItem){
+					if(!itemMap.has(prodInfo.item.id)){
+						itemMap.set(prodInfo.item.id, {item: prodInfo.item, total: 0, pieces: 0, production_info_list: []});
+					}
+					itemMap.get(prodInfo.item.id)!.total += prodInfo.total;
+					itemMap.get(prodInfo.item.id)!.pieces += prodInfo.pieces;
+					itemMap.get(prodInfo.item.id)!.production_info_list.push(...prodInfo.production_info_list);
+					categoryKgs += prodInfo.total;
+					categoryPieces += prodInfo.pieces;
+				}
+
+				categoryProduction.push({
+					category: productionByItem[0].item.category, // Assuming all items in a category have the same category object
+					kgs: categoryKgs,
+					pieces: categoryPieces,
+					production_by_item: Array.from(itemMap.values())
+				});
 
 		}
 	}
