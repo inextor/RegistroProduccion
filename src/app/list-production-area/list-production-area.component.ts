@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Production } from '../RestClases/Production';
+import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
@@ -12,18 +12,18 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 export class ListProductionAreaComponent implements OnInit
 {
-	production: Production;
+	rest_production: RestProduction;
 
 	production_area_list:any[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
-		this.production = new Production(rest_service);
+		this.rest_production = new RestProduction(rest_service);
 	}
 
 	ngOnInit()
 	{
-		this.production.getAllProductionAreas()
+		this.rest_production.getAllProductionAreas()
 		.then((data:any) =>
 		{
 			/* data has

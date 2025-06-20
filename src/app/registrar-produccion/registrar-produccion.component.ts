@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
-import { Production } from '../RestClases/Production';
+import { RestProduction } from '../RestClases/RestProduction';
 import { GetEmpty } from '../RestClases/GetEmpty';
 
 @Component({
@@ -23,7 +23,7 @@ export class RegistrarProduccionComponent implements OnInit
 	selected_production_area: any = null; // To store the selected area object
 	item_array: any[] = [];
 	users: any[] = [];
-	selected_item_id: number = 0;
+	selected_item_id: number = 0; // This will probably be the item info id
 	production:Production;
 	extra_qty: number = 0; //pieces???
 	qty: number | '' = ''; //kilos
@@ -37,7 +37,7 @@ export class RegistrarProduccionComponent implements OnInit
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
-
+		// Production is actually RestProduction
 		this.production = new Production(rest_service);
 	}
 
