@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Production } from '../RestClases/Production';
 import { RestService } from '../rest.service';
+import { RestProduction } from '../RestClases/RestProduction';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { filter, mergeMap } from 'rxjs/operators';
@@ -25,7 +25,7 @@ export class ListItemProductionComponent implements OnInit
 	};
 
 
-	production: Production;
+	rest_production: RestProduction;
 	production_item_info_list: any[] = [];
 
 	date:string = '';
@@ -33,7 +33,7 @@ export class ListItemProductionComponent implements OnInit
 
 	constructor(private rest_service: RestService, private route: ActivatedRoute, public confirmation_service:ConfirmationService)
 	{
-		this.production = new Production(rest_service);
+		this.rest_production = new RestProduction(rest_service);
 		let d = new Date();
 		this.date = d.getFullYear() + '-' + this.zero(d	.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes();
 	}
@@ -69,8 +69,8 @@ export class ListItemProductionComponent implements OnInit
 
 		Promise.all
 		([
-			this.production.getItemInfo(item_id),
-			this.production.getProductionItemInfoByItemId(item_id, date),
+			this.rest_production.getItemInfo(item_id),
+			this.rest_production.getProductionItemInfoByItemId(item_id, date),
 		])
 		.then(([item_info, production_item_info]) =>
 		{
@@ -107,7 +107,7 @@ export class ListItemProductionComponent implements OnInit
 			mergeMap((result:ConfirmationResult) =>
 			{
 				console.log('Confirmed');
-				return from(this.production.updateProduction(production_item_info.production));
+				return from(this.rest_production.updateProduction(production_item_info.production));
 			})
 		)
 		.subscribe

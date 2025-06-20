@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Production } from '../RestClases/Production';
 import { RestService } from '../rest.service';
 import { RouterLink } from '@angular/router';
+import { RestProduction } from '../RestClases/RestProduction';
 
 import { Observable, combineLatest } from 'rxjs';
 
@@ -13,17 +13,17 @@ import { Observable, combineLatest } from 'rxjs';
 })
 export class ListItemComponent
 {
-    production: Production;
+    rest_production: RestProduction;
     item_info_list: any[] = [];
 
 	constructor(private rest_service: RestService)
 	{
-		this.production = new Production(rest_service);
+		this.rest_production = new RestProduction(rest_service);
 	}
 
 	ngOnInit()
 	{
-		this.production.getProductionItems()
+		this.rest_production.getProductionItems()
 		.then((data:any) =>
 		{
 			this.item_info_list = data;

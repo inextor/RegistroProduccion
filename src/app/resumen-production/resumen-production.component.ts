@@ -11,8 +11,8 @@ import { combineLatest, Observable, startWith } from 'rxjs';
 	styleUrl: './resumen-production.component.css'
 })
 export class ResumenProductionComponent {
+    rest_production: RestProduction;
 
-	rest_production: Production;
 	production_area_list:any[] = [];
 	production_info_list:any[] = [];
 	is_loading: boolean = false;

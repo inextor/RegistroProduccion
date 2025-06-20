@@ -2,7 +2,7 @@ import { Utils } from "../classes/DateUtils";
 import { RestService } from "../rest.service";
 
 
-export class Production
+export class RestProduction
 {
 	constructor(private rest_service: RestService)
 	{
