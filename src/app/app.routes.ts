@@ -25,5 +25,9 @@ export const routes: Routes = [
 		path: 'production-by-group/:id',
 		loadComponent: () => import('./production-by-group/production-by-group.component').then(m => m.ProductionByGroupComponent),
 	},
+	{
+		path: 'resumen-production',
+		loadComponent: () => import('./resumen-production/resumen-production.component').then(m => m.ResumenProductionComponent),
+	},
 
 ];

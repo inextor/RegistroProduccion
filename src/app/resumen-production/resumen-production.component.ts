@@ -1,8 +1,37 @@
 import { Component } from '@angular/core';
-import { Production } from '../RestClases/Production';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { RestService } from '../rest.service';
 import { combineLatest, Observable, startWith } from 'rxjs';
+import { RestProduction } from '../RestClases/RestProduction';
+
+interface ProductionByArea
+{
+	production_area:any;
+	production_info:any[];
+}
+
+
+interface ProductionInfo {
+	item: any;
+	total: number;
+	pieces: number;
+	production_info_list: any[];
+}
+
+interface CategoryProduction {
+	category: any;
+	kgs: number;
+	pieces: number;
+	production_by_item: ProductionInfo[];
+}
+
+interface ProductionArea {
+	production_area: any;
+	category_production: CategoryProduction[];
+}
+
+type ProductionData = ProductionArea[];
+
 
 @Component({
 	selector: 'app-resumen-production',
@@ -11,15 +40,17 @@ import { combineLatest, Observable, startWith } from 'rxjs';
 	styleUrl: './resumen-production.component.css'
 })
 export class ResumenProductionComponent {
-    rest_production: RestProduction;
+	rest_production: RestProduction;
 
 	production_area_list:any[] = [];
 	production_info_list:any[] = [];
 	is_loading: boolean = false;
+	item_info_list:any[] = [];
+
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
-		this.rest_production = new Production(rest_service);
+		this.rest_production = new RestProduction(rest_service);
 	}
 
 	ngOnInit()
@@ -53,10 +84,22 @@ export class ResumenProductionComponent {
 				obj['created<'] = d.toISOString().substring(0,19).replace('T',' ');
 			}
 
-			this.rest_production.getProductionInfo(obj)
-			.then(production_info_list =>
+			Promise.all
+			([
+				this.rest_production.getProductionInfo(obj),
+				this.rest_production.getAllProductionAreas(),
+			])
+			.then(([production_info_list, production_area_list]) =>
 			{
 				this.production_info_list = production_info_list;
+				this.production_area_list = production_area_list;
+
+				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));
+			})
+			.then(item_info_list =>
+			{
+				this.item_info_list = item_info_list;
+
 			})
 			.catch(error =>
 			{
@@ -66,14 +109,47 @@ export class ResumenProductionComponent {
 			{
 				this.is_loading = false;
 			});
-
 		});
 	}
 
 
-
-	getUrlParams(obj:any):URLSearchParams
+	createStructures()
 	{
+		for(let production_area of this.production_area_list)
+		{
+			let production_info_list = this.production_info_list.filter(info => info.production_area_id === production_area.id);
+
+		}
+	}
+
+	/*
+	let x = [
+		{
+a			production_area:any;
+			category_production: [
+				{
+					category: any,
+					kgs:number,
+					pieces:number,
+					production_by_item:[
+						{
+							item:any,
+							total:number,
+							pieces:number
+							production_info_list:any[]
+						}
+					]
+				}
+			]
+		}
+	]
+	*/
+
+
+	getUrlParams(x_obj:any):URLSearchParams
+	{
+		let obj = x_obj;
+
 		if (obj === null || obj === undefined) {
 			obj = {};
 		}
