@@ -90,9 +90,9 @@ export class ResumenProductionComponent {
 				this.rest_production.getProductionInfo(obj),
 				this.rest_production.getAllProductionAreas(),
 			])
-			.then(([production_info_list, production_area_list]) =>
+			.then(([production_info_response, production_area_list]) =>
 			{
-				this.production_info_list = production_info_list;
+				this.production_info_list = production_info_response.data;
 				this.production_area_list = production_area_list;
 
 				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));
@@ -168,6 +168,10 @@ export class ResumenProductionComponent {
 					production_by_item: Array.from(itemMap.values())
 				});
 			}
+			this.structuredProductionData.push({
+				production_area: production_area,
+				category_production: categoryProduction
+			});
 		}
 	}
 
