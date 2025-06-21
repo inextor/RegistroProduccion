@@ -304,7 +304,7 @@ export class RestProduction
 		return new Date( f[0], f[1], f[2], f[3], f[4], f[5], 0);
 	}
 
-	getProductionInfo(p: URLSearchParams | Object):Promise<any[]>
+	getProductionInfo(p: URLSearchParams | Object):Promise<any>
 	{
 		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
 		const url = new URL(`${this.rest_service.getBaseUrl()}/production_info.php`);

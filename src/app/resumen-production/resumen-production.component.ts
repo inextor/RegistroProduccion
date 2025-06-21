@@ -125,7 +125,8 @@ export class ResumenProductionComponent {
 
 			const category_map: Map<string, ProductionInfo[]> = new Map();
 
-			for (const productionInfo of production_info_list) {
+			for (const productionInfo of production_info_list)
+			{
 				const itemInfo = this.item_info_list.find(item => item.id === productionInfo.item_id);
 				if (itemInfo && itemInfo.category) {
 					const categoryName = itemInfo.category.name;
@@ -143,35 +144,42 @@ export class ResumenProductionComponent {
 
 			const categoryProduction: CategoryProduction[] = [];
 
-			for (const [categoryName, productionByItem] of category_map.entries())
+			for (const [category_name, production_by_item] of category_map.entries())
 			{
 				let categoryKgs = 0;
 				let categoryPieces = 0;
 
 				// Further group by item within category
 				const itemMap = new Map<number, ProductionInfo>();
-				for(const prodInfo of productionByItem){
-					if(!itemMap.has(prodInfo.item.id)){
-						itemMap.set(prodInfo.item.id, {item: prodInfo.item, total: 0, pieces: 0, production_info_list: []});
+				for(const prod_info of production_by_item){
+					if(!itemMap.has(prod_info.item.id))
+					{
+						itemMap.set(prod_info.item.id, {item: prod_info.item, total: 0, pieces: 0, production_info_list: []});
 					}
-					itemMap.get(prodInfo.item.id)!.total += prodInfo.total;
-					itemMap.get(prodInfo.item.id)!.pieces += prodInfo.pieces;
-					itemMap.get(prodInfo.item.id)!.production_info_list.push(...prodInfo.production_info_list);
-					categoryKgs += prodInfo.total;
-					categoryPieces += prodInfo.pieces;
+					itemMap.get(prod_info.item.id)!.total += prod_info.total;
+					itemMap.get(prod_info.item.id)!.pieces += prod_info.pieces;
+					itemMap.get(prod_info.item.id)!.production_info_list.push(...prod_info.production_info_list);
+					categoryKgs += prod_info.total;
+					categoryPieces += prod_info.pieces;
 				}
 
 				categoryProduction.push({
-					category: productionByItem[0].item.category, // Assuming all items in a category have the same category object
+					category: production_by_item[0].item.category, // Assuming all items in a category have the same category object
 					kgs: categoryKgs,
 					pieces: categoryPieces,
 					production_by_item: Array.from(itemMap.values())
 				});
 			}
-			this.structuredProductionData.push({
-				production_area: production_area,
-				category_production: categoryProduction
-			});
+
+			if( categoryProduction.length > 0 )
+			{
+				this.structuredProductionData.push({
+					production_area: production_area,
+					category_production: categoryProduction
+				});
+			}
+
+			console.log("categoryProduction", this.structuredProductionData);
 		}
 	}
 
