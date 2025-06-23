@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { RestService } from '../rest.service';
 import { combineLatest, Observable, of, startWith } from 'rxjs';
 import { RestProduction } from '../RestClases/RestProduction';
+import { CommonModule } from '@angular/common';
 
 interface ProductionByArea
 {
@@ -10,30 +11,38 @@ interface ProductionByArea
 	production_by_category: ProductionByCategory[];
 	total_kgs: number;
 	total_pieces: number;
+	open: boolean;
+	string_id: string;
 }
 
 
 interface ProductionByCategory
 {
 	category_name: string;
-	kgs: number;
-	pieces: number;
+	total_kgs: number;
+	total_pieces: number;
 	production_by_item: CProductionInfo[];
+	open: boolean;
+	string_id: string;
 }
 
 
 interface CProductionInfo {
 	item: any;
-	total: number;
-	pieces: number;
+	total_kgs: number;
+	total_pieces: number;
 	production_info_list: any[];
+	open: boolean;
+	string_id: string;
 }
 
 interface CategoryProduction {
 	category_name: string;
-	kgs: number;
-	pieces: number;
+	total_kgs: number;
+	total_pieces: number;
 	production_by_item: CProductionInfo[];
+	open: boolean;
+	string_id: string;
 }
 
 interface ProductionArea {
@@ -104,7 +113,7 @@ export class ResumenProductionComponent {
 			])
 			.then(([production_info_response, production_area_list]) =>
 			{
-				this.production_info_list = production_info_response.data;
+				this.production_info_list = production_info_response;
 				this.production_area_list = production_area_list;
 
 				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));
@@ -151,7 +160,9 @@ export class ResumenProductionComponent {
 					production_area,
 					production_by_category: [],
 					total_kgs: 0,
-					total_pieces: 0
+					total_pieces: 0,
+					open: false,
+					string_id: 'p_area_'+production_area.id
 				};
 				production_by_area_list.push(production_by_area);
 			}
@@ -166,9 +177,12 @@ export class ResumenProductionComponent {
 				{
 					production_by_category = {
 						category_name,
-						kgs: 0,
-						pieces: 0,
-						production_by_item: []
+						total_kgs: 0,
+						total_pieces: 0,
+						production_by_item: [],
+						open: false,
+						string_id: 'p_cat_'+( production_info?.category?.id || 'NULL')
+
 					};
 					production_by_area.production_by_category.push(production_by_category);
 				}
@@ -179,9 +193,11 @@ export class ResumenProductionComponent {
 				{
 					production_by_item = {
 						item: production_info.item,
-						total: 0,
-						pieces: 0,
-						production_info_list: []
+						total_kgs: 0,
+						total_pieces: 0,
+						production_info_list: [],
+						open: false,
+						string_id: 'p_item_'+production_info.item.id
 					};
 					production_by_category.production_by_item.push(production_by_item);
 				}
@@ -191,11 +207,11 @@ export class ResumenProductionComponent {
 				production_by_area.total_kgs += production_info.production.qty;
 				production_by_area.total_pieces += production_info.production.alternate_qty;
 
-				production_by_category.kgs += production_info.production.qty;
-				production_by_category.pieces += production_info.alternate_qty;
+				production_by_category.total_kgs += production_info.production.qty;
+				production_by_category.total_pieces += production_info.production.alternate_qty;
 
-				production_by_item.total += production_info.production.qty;
-				production_by_item.pieces += production_info.production.alternate_qty;
+				production_by_item.total_kgs += production_info.production.qty;
+				production_by_item.total_pieces += production_info.production.alternate_qty;
 			}
 		}
 
