@@ -7,11 +7,22 @@ import { RestProduction } from '../RestClases/RestProduction';
 interface ProductionByArea
 {
 	production_area:any;
-	production_info:any[];
+	production_by_category: ProductionByCategory[];
+	total_kgs: number;
+	total_pieces: number;
 }
 
 
-interface ProductionInfo {
+interface ProductionByCategory
+{
+	category_name: string;
+	kgs: number;
+	pieces: number;
+	production_by_item: CProductionInfo[];
+}
+
+
+interface CProductionInfo {
 	item: any;
 	total: number;
 	pieces: number;
@@ -19,10 +30,10 @@ interface ProductionInfo {
 }
 
 interface CategoryProduction {
-	category: any;
+	category_name: string;
 	kgs: number;
 	pieces: number;
-	production_by_item: ProductionInfo[];
+	production_by_item: CProductionInfo[];
 }
 
 interface ProductionArea {
@@ -43,10 +54,11 @@ export class ResumenProductionComponent {
 	rest_production: RestProduction;
 
 	production_area_list:any[] = [];
+	production_by_area_list:ProductionByArea[] = [];
 	production_info_list:any[] = [];
 	is_loading: boolean = false;
 	item_info_list:any[] = [];
-	structuredProductionData: ProductionData = [];
+	structured_production_data: ProductionData = [];
 
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
@@ -56,15 +68,15 @@ export class ResumenProductionComponent {
 
 	ngOnInit()
 	{
-		this.getQueryParamObservable().subscribe(([queryParams, paramMap]) =>
+		this.getQueryParamObservable().subscribe(([query_params, param_map]) =>
 		{
-			let keys = queryParams.keys;
+			let keys = query_params.keys;
 
 			let obj:Record<string,string> = {};
 
 			for(let key of keys)
 			{
-				obj[key] = queryParams.get(key) as string;
+				obj[key] = query_params.get(key) as string;
 			}
 
 			if(!('created>=' in obj) )
@@ -90,9 +102,9 @@ export class ResumenProductionComponent {
 				this.rest_production.getProductionInfo(obj),
 				this.rest_production.getAllProductionAreas(),
 			])
-			.then(([production_info_list, production_area_list]) =>
+			.then(([production_info_response, production_area_list]) =>
 			{
-				this.production_info_list = production_info_list;
+				this.production_info_list = production_info_response.data;
 				this.production_area_list = production_area_list;
 
 				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));
@@ -118,56 +130,78 @@ export class ResumenProductionComponent {
 
 	createStructures()
 	{
-		this.structuredProductionData = [];
+		console.log("this.production_area_list", this.production_area_list);
+		console.log("this.production_info_list", this.production_info_list);
+
+		let production_by_area_list: ProductionByArea[] = [];
+
 		for(let production_area of this.production_area_list)
 		{
-			let production_info_list = this.production_info_list.filter(info => info.production_area_id === production_area.id);
+			let filter_prod = (prod_info:any) =>{
+				return prod_info.production_area.id === production_area.id
+			};
 
-			const categoryMap: Map<string, ProductionInfo[]> = new Map();
+			let production_info_list = this.production_info_list.filter( filter_prod );
 
-			for (const productionInfo of production_info_list) {
-				const itemInfo = this.item_info_list.find(item => item.id === productionInfo.item_id);
-				if (itemInfo && itemInfo.category) {
-					const categoryName = itemInfo.category.name;
-					if (!categoryMap.has(categoryName)) {
-						categoryMap.set(categoryName, []);
-					}
-					categoryMap.get(categoryName)!.push({
-						item: itemInfo,
-						total: productionInfo.qty,
-						pieces: productionInfo.alternate_qty,
-						production_info_list: [productionInfo] // Store the original production info object
-					});
-				}
+			let production_by_area:ProductionByArea | undefined = production_by_area_list.find(pba => pba.production_area.id === production_area.id);
+
+			if (!production_by_area)
+			{
+				production_by_area = {
+					production_area,
+					production_by_category: [],
+					total_kgs: 0,
+					total_pieces: 0
+				};
+				production_by_area_list.push(production_by_area);
 			}
 
-			const categoryProduction: CategoryProduction[] = [];
 
-			for (const [categoryName, productionByItem] of categoryMap.entries()) {
-				let categoryKgs = 0;
-				let categoryPieces = 0;
+			for (const production_info of production_info_list)
+			{
+				let category_name = production_info?.category?.name || 'N/A';
+				let production_by_category = production_by_area.production_by_category.find(pbc => pbc.category_name === category_name);
 
-				// Further group by item within category
-				const itemMap = new Map<number, ProductionInfo>();
-				for(const prodInfo of productionByItem){
-					if(!itemMap.has(prodInfo.item.id)){
-						itemMap.set(prodInfo.item.id, {item: prodInfo.item, total: 0, pieces: 0, production_info_list: []});
-					}
-					itemMap.get(prodInfo.item.id)!.total += prodInfo.total;
-					itemMap.get(prodInfo.item.id)!.pieces += prodInfo.pieces;
-					itemMap.get(prodInfo.item.id)!.production_info_list.push(...prodInfo.production_info_list);
-					categoryKgs += prodInfo.total;
-					categoryPieces += prodInfo.pieces;
+				if (!production_by_category)
+				{
+					production_by_category = {
+						category_name,
+						kgs: 0,
+						pieces: 0,
+						production_by_item: []
+					};
+					production_by_area.production_by_category.push(production_by_category);
 				}
 
-				categoryProduction.push({
-					category: productionByItem[0].item.category, // Assuming all items in a category have the same category object
-					kgs: categoryKgs,
-					pieces: categoryPieces,
-					production_by_item: Array.from(itemMap.values())
-				});
+				let production_by_item = production_by_category.production_by_item.find(pbi => pbi.item.id === production_info.item_id);
 
+				if (!production_by_item)
+				{
+					production_by_item = {
+						item: production_info.item,
+						total: 0,
+						pieces: 0,
+						production_info_list: []
+					};
+					production_by_category.production_by_item.push(production_by_item);
+				}
+
+				production_by_item.production_info_list.push( production_info );
+
+				production_by_area.total_kgs += production_info.production.qty;
+				production_by_area.total_pieces += production_info.production.alternate_qty;
+
+				production_by_category.kgs += production_info.production.qty;
+				production_by_category.pieces += production_info.alternate_qty;
+
+				production_by_item.total += production_info.production.qty;
+				production_by_item.pieces += production_info.production.alternate_qty;
+			}
 		}
+
+		this.production_by_area_list = production_by_area_list;
+		console.log("this.production_by_area_list", this.production_by_area_list);
+
 	}
 
 	/*

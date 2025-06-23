@@ -70,7 +70,21 @@ export class RestProduction
 
 	getItemInfoListByProductionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
 	{
-		let ids = Array.isArray(production_area_id) ? production_area_id.join(',') : production_area_id;
+		let z:string[] = [];
+
+		if(Array.isArray(production_area_id))
+		{
+			let map = new Map<string,(boolean)>();
+			for(let id of production_area_id)
+			{
+				map.set(''+id,true);
+			}
+			z = Array.from(map.keys());
+		}
+
+
+		let ids = Array.isArray(production_area_id) ? z.join(',') : production_area_id;
+
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 
 		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id,=${ids}&limit=999999`;
@@ -79,8 +93,15 @@ export class RestProduction
 		.then(data => data.data)
 		.then(items =>
 		{
-			let item_ids = items.map((item:any) => item.item_id);
-			let url_items = `${this.rest_service.getBaseUrl()}/item.php?id,=${item_ids.join(',')}&limit=999999`;
+			let id_map = new Map<number,boolean>();
+			for(let item of items)
+			{
+				id_map.set(item.item_id,true);
+			}
+
+			let item_ids = Array.from(id_map.keys()).join(',');
+
+			let url_items = `${this.rest_service.getBaseUrl()}/item.php?id,=${item_ids}&limit=999999`;
 
 			return fetch( url_items , options )
 				.then(response => response.json())
@@ -283,7 +304,7 @@ export class RestProduction
 		return new Date( f[0], f[1], f[2], f[3], f[4], f[5], 0);
 	}
 
-	getProductionInfo(p: URLSearchParams | Object):Promise<any[]>
+	getProductionInfo(p: URLSearchParams | Object):Promise<any>
 	{
 		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
 		const url = new URL(`${this.rest_service.getBaseUrl()}/production_info.php`);
