@@ -1,0 +1,88 @@
+<div class="container mt-4">
+  <h2>Resumen de Producción</h2>
+
+  @if (is_loading) {
+    <p>Cargando...</p>
+  } @else {
+    <div id="accordion">
+      @for (areaData of production_by_area_list; track areaData.production_area.id) {
+        <div class="card">
+          <div class="card-header" [id]="'headingArea' + areaData.production_area.id">
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" [attr.data-target]="'#collapseArea' + areaData.production_area.id" aria-expanded="true" [attr.aria-controls]="'collapseArea' + areaData.production_area.id">
+                {{ areaData.production_area.name }}
+              </button>
+            </h5>
+          </div>
+
+          <div [id]="'collapseArea' + areaData.production_area.id" class="collapse show" [attr.aria-labelledby]="'headingArea' + areaData.production_area.id" data-parent="#accordion">
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Área/Categoría/Artículo</th>
+                    <th>Kgs</th>
+                    <th>Piezas</th>
+                    <th>Detalles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (categoryData of areaData.production_by_category; track categoryData.category_name) {
+                    <tr>
+                      <td colspan="4">
+                        <div id="accordionCategory{{areaData.production_area.id}}">
+                          <div class="card">
+                            <div class="card-header" [id]="'headingCategory' + areaData.production_area.id + '_' + categoryData.category_name">
+                              <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" [attr.data-target]="'#collapseCategory' + areaData.production_area.id + '_' + categoryData.category_name" aria-expanded="true" [attr.aria-controls]="'collapseCategory' + areaData.production_area.id + '_' + categoryData.category_name">
+                                  {{ categoryData.category_name }}
+                                </button>
+                              </h5>
+                            </div>
+
+                            <div [id]="'collapseCategory' + areaData.production_area.id + '_' + categoryData.category_name" class="collapse show" [attr.aria-labelledby]="'headingCategory' + areaData.production_area.id + '_' + categoryData.category_name" [attr.data-parent]="'#accordionCategory' + areaData.production_area.id">
+                              <div class="card-body">
+                                <table class="table table-sm">
+                                  <tbody>
+                                    @for (itemData of categoryData.production_by_item; track itemData.item.id) {
+                                      <tr>
+                                        <td>{{ itemData.item.name }}</td>
+                                        <td>{{ itemData.total | number:'1.2-2' }}</td>
+                                        <td>{{ itemData.pieces | number:'1.0-0' }}</td>
+                                        <td>
+                                          @for (productionInfo of itemData.production_info_list; track productionInfo.id) {
+                                            <p>{{ productionInfo.production.qty | number:'1.2-2' }} kgs ({{ productionInfo.production.alternate_qty | number:'1.0-0' }} piezas)</p>
+                                          }
+                                        </td>
+                                      </tr>
+                                    }
+                                    <tr class="table-info">
+                                      <td><strong>Total Categoría</strong></td>
+                                      <td><strong>{{ categoryData.kgs | number:'1.2-2' }}</strong></td>
+                                      <td><strong>{{ categoryData.pieces | number:'1.0-0' }}</strong></td>
+                                      <td></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                  <tr class="table-primary">
+                    <td><strong>Total Área</strong></td>
+                    <td><strong>{{ areaData.total_kgs | number:'1.2-2' }}</strong></td>
+                    <td><strong>{{ areaData.total_pieces | number:'1.0-0' }}</strong></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
