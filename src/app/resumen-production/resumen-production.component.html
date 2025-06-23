@@ -1,1 +1,44 @@
-<p>resumen-production works!</p>
+<div class="container mt-4">
+  <h2>Resumen de Producción</h2>
+
+  <div *ngIf="productionSummary" class="accordion" id="productionAccordion">
+    @for (areaSummary of productionSummary; track areaSummary.area) 
+    {
+      <div class="card-header" [id]="'heading' + areaSummary.area">
+        <h2 class="mb-0">
+          <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" [attr.data-target]="'#collapse' + areaSummary.area" aria-expanded="true" [attr.aria-controls]="'collapse' + areaSummary.area">
+            {{ areaSummary.area }}
+          </button>
+        </h2>
+      </div>
+
+      <div [id]="'collapse' + areaSummary.area" class="collapse show" [attr.aria-labelledby]="'heading' + areaSummary.area" data-parent="#productionAccordion">
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Artículo</th>
+                <th>KG</th>
+                <th>Piezas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of areaSummary.items; track item.article) {
+              <tr>
+                <td>{{ item.article }}</td>
+                <td>{{ item.kg }}</td>
+                <td>{{ item.pieces }}</td>
+              </tr>
+            }
+              <tr class="table-secondary">
+                <td><strong>Total {{ areaSummary.area }}</strong></td>
+                <td><strong>{{ areaSummary.totalKg }}</strong></td>
+                <td><strong>{{ areaSummary.totalPieces }}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>    
+    }
+    </div>
+  </div>
+</div>

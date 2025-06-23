@@ -291,7 +291,8 @@ export class RestProduction
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		return fetch(url, options )
-			.then(this.getJsonLambda());
+			.then(this.getJsonLambda())
+			.then(data => data.data	)
 	}
 
 	getUrlParams(obj:any):URLSearchParams
