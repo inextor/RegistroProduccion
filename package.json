@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration development --disable-host-check --host=0.0.0.0",
+    "start": "ng serve --disable-host-check --host=0.0.0.0",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "watch": "ng build --watch",
 	"deploy": "ng build --configuration production && ~/Projects/RegistroProduccion/deploy.sh",
     "test": "ng test"
   },
