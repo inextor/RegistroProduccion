@@ -1,72 +1,79 @@
 <div class="container mt-4">
 	<h2>Resumen de Producción</h2>
 
-	@if (is_loading) {
+	@if (is_loading)
+	{
 		<p>Cargando...</p>
-	} @else {
-		<div id="accordion">
-			<table class="table table-bordered">
-				<thead>
-					<tr>
-						<th>Equipo/Categoría/Artículo</th>
-						<th>Kgs</th>
-						<th>Piezas</th>
-						<th>Detalles</th>
-					</tr>
-				</thead>
+	}
+	@else
+	{
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Equipo/Categoría/Artículo</th>
+					<th>Kgs</th>
+					<th>Piezas</th>
+					<th>Detalles</th>
+				</tr>
+			</thead>
 
-				<tbody>
-					@for (area_data of production_by_area_list; track area_data.production_area.id)
+			<tbody>
+				@for (area_data of production_by_area_list; track area_data.production_area.id)
+				{
+					<tr>
+						<th>{{ area_data.production_area.name }}</th>
+						<th>{{area_data.total_kgs}}</th>
+						<th>{[area_data.total_pieces}}</th>
+						<th>
+							<button (click)="area_data.open = !area_data.open">Tog</button>
+						</th>
+					</tr>
+
+					@for (category_data of area_data.production_by_category; track category_data.category_name)
 					{
-						<tr>
-							<th>{{ area_data.production_area.name }}</th>
-							<th>area_data.kgs</th>
-							<th>area_data.pieces</th>
-							<th>
-								<button (click)="area_data.open = !area_data.open">Tog</button>
-							</th>
+						<tr class="table-info">
+							<td>
+								<strong>{{category_data.category_name}}</strong>
+							</td>
+							<td><strong>{{ category_data.total_kgs  }}</strong></td>
+							<td><strong>{{ category_data.total_pieces }}</strong></td>
+							<td>
+								<button (click)="category_data.open = !category_data.open">Tog</button>
+							</td>
 						</tr>
 
-						@for (category_data of area_data.production_by_category; track category_data.category_name)
+						@if(category_data.open)
 						{
-							<tr class="table-info">
-								<td>
-									<strong>{{category_data.category_name}}</strong>
-								</td>
-								<td><strong>{{ category_data.kgs  }}</strong></td>
-								<td><strong>{{ category_data.pieces }}</strong></td>
-								<td>
-									<button (click)="area_data.open = !area_data.open">Tog</button>
-								</td>
-							</tr>
-
-							@if(category_data.open)
+							@for (item_data of category_data.production_by_item; track item_data.item.id)
 							{
-								@for (item_data of category_data.production_by_item; track item_data.item.id)
-								{
-									<tr>
-										<td>{{ item_data.item.name }}</td>
-										<td>{{ item_data.total}}</td>
-										<td>{{ item_data.pieces }}</td>
-										<td>
-											@for (production_info of item_data.production_info_list; track production_info.id)
-											{
-												<p>{{ production_info.production.qty }} kgs ({{ production_info.production.alternate_qty }} piezas)</p>
-											}
-										</td>
-									</tr>
-								}
+								<tr>
+									<td>{{ item_data.item.name }}</td>
+									<td>{{ item_data.total_kgs}}</td>
+									<td>{{ item_data.total_pieces }}</td>
+									<td>
+										<button (click)="item_data.open = !item_data.open"> Tog </button>
+									</td>
+								</tr>
+								<tr>
+									@for (production_info of item_data.production_info_list; track production_info.id)
+									{
+										<td></td>
+										<td>{{production_info.production.qty}}</td>
+										<td>{{production_info.production.alternate_qty}}</td>
+										<td></td>
+									}
+								</tr>
 							}
 						}
-						<tr class="table-primary">
-							<td><strong>Total Área</strong></td>
-							<td><strong>{{ area_data.total_kgs  }}</strong></td>
-							<td><strong>{{ area_data.total_pieces  }}</strong></td>
-							<td></td>
-						</tr>
 					}
-				</tbody>
-			</table>
-		</div>
+					<tr class="table-primary">
+						<td><strong>Total Área</strong></td>
+						<td><strong>{{ area_data.total_kgs  }}</strong></td>
+						<td><strong>{{ area_data.total_pieces  }}</strong></td>
+						<td></td>
+					</tr>
+				}
+			</tbody>
+		</table>
 	}
 </div>
