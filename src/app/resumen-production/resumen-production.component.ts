@@ -130,7 +130,7 @@ export class ResumenProductionComponent {
 			])
 			.then(([production_info_response, production_area_list]) =>
 			{
-				this.production_info_list = production_info_response.toSorted((a:any,b:any)=>
+				this.production_info_list = production_info_response.sort((a:any,b:any)=>
 				{
 					const aa = Utils.getDateFromMysqlString(a.production.created);
 					const bb = Utils.getDateFromMysqlString(b.production.created);
