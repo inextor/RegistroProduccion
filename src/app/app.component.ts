@@ -6,6 +6,7 @@ import { ConfirmationService } from './services/confirmation.service';
 import { NgIf } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
 import { ToastErrorComponent } from './toast-error/toast-error.component';
+import { environment } from '../environments/environment';
 
 @Component
 ({
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit
 	constructor(public router: Router, public route: ActivatedRoute, public rest_service: RestService,public confirmation_service:ConfirmationService)
 	{
 
+		console.log('Environment', environment.name);
 	}
 
 	confirmation_note_label:string = '';

@@ -121,12 +121,6 @@ export class ResumenProductionComponent {
 			ed.setHours(0,0,0,0);
 			obj['created<~'] = ed.toISOString().substring(0,19).replace('T',' ');
 
-
-			for(let key of keys)
-			{
-				obj[key] = query_params.get(key) as string;
-			}
-
 			this.is_loading = true;
 
 			Promise.all
