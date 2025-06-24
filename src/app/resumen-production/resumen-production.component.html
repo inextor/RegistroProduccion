@@ -1,6 +1,24 @@
 <div class="container mt-4">
 	<h2>Resumen de Producción</h2>
 
+	<div class="row">
+		<div class="col-md-4">
+			<div class="form-group">
+				<label>Inicio</label>
+				<input type="date" class="form-control" name="start_date" [(ngModel)]="start_date">
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label>Fin</label>
+				<input type="date" class="form-control" name="end_date" [(ngModel)]="end_date">
+			</div>
+		</div>
+		<div class="col-md-4">
+			<button class="btn btn-primary" (click)="search($event)">Buscar</button>
+		</div>
+	</div>
+
 	@if (is_loading)
 	{
 		<p>Cargando...</p>
@@ -8,23 +26,24 @@
 	@else
 	{
 		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th>Equipos/Categorias/Articulos/Parciales</th>
-					<th>Kgs</th>
-					<th>Piezas</th>
-					<th></th>
-				</tr>
-			</thead>
+			<tr>
+				<th>Equipos/Categorias/Articulos/Parciales</th>
+				<th>Kgs</th>
+				<th>Piezas</th>
+				<th></th>
+			</tr>
+		</table>
 
-			@for (area_data of production_by_area_list; track area_data.production_area.id)
-			{
+		@for (area_data of production_by_area_list; track area_data.production_area.id)
+		{
+
+			<table class="table table-bordered">
 				<tr>
 					<th>{{ area_data.production_area.name }}</th>
 					<th>{{area_data.total_kgs}}</th>
 					<th>{{area_data.total_pieces}}</th>
 					<th>
-						<button (click)="area_data.open = !area_data.open">Tog</button>
+						<button (click)="area_data.open = !area_data.open">Toggle</button>
 					</th>
 				</tr>
 				@if(area_data.open)
@@ -42,7 +61,7 @@
 								<strong>{{ category_data.total_pieces }}</strong>
 							</td>
 							<td>
-								<button (click)="category_data.open = !category_data.open">Tog</button>
+								<button (click)="category_data.open = !category_data.open">Toggle</button>
 							</td>
 						</tr>
 
@@ -55,7 +74,7 @@
 									<td>{{ item_data.total_kgs}}</td>
 									<td>{{ item_data.total_pieces }}</td>
 									<td>
-										<button (click)="item_data.open = !item_data.open"> Tog </button>
+										<button (click)="item_data.open = !item_data.open"> Toggle </button>
 									</td>
 								</tr>
 								@if(item_data.open)
@@ -74,7 +93,19 @@
 						}
 					}
 				}
-			}
+			</table>
+		}
+
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Total Kgs</th>
+					<th>Total Piezas</th>
+					<th></th>
+				</tr>
+			</thead>
+
 			<tfoot>
 				<tr class="table-primary">
 					<td><strong>Total Área</strong></td>

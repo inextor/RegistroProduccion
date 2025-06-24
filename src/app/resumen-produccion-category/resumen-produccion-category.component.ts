@@ -1,21 +1,8 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { RestService } from '../rest.service';
-import { combineLatest, Observable, of, startWith } from 'rxjs';
 import { RestProduction } from '../RestClases/RestProduction';
-import { CommonModule } from '@angular/common';
-import { Utils } from '../classes/DateUtils';
-import { FormsModule } from '@angular/forms';
-
-interface ProductionByArea
-{
-	production_area:any;
-	production_by_category: ProductionByCategory[];
-	total_kgs: number;
-	total_pieces: number;
-	open: boolean;
-	string_id: string;
-}
+import { RestService } from '../rest.service';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { combineLatest, Observable, startWith } from 'rxjs';
 
 
 interface ProductionByCategory
@@ -23,13 +10,25 @@ interface ProductionByCategory
 	category_name: string;
 	total_kgs: number;
 	total_pieces: number;
-	production_by_item: CProductionInfo[];
+	production_by_area: ProductionByArea[];
 	open: boolean;
 	string_id: string;
 }
 
-interface CProductionInfo
+
+interface ProductionByArea
 {
+	production_area:any;
+	production_by_item: CProductionInfo[];
+	total_kgs: number;
+	total_pieces: number;
+	open: boolean;
+	string_id: string;
+}
+
+
+
+interface CProductionInfo {
 	item: any;
 	total_kgs: number;
 	total_pieces: number;
@@ -55,14 +54,16 @@ interface ProductionArea {
 type ProductionData = ProductionArea[];
 
 
-@Component({
-	selector: 'app-resumen-production',
-	imports: [FormsModule],
-	templateUrl: './resumen-production.component.html',
-	styleUrl: './resumen-production.component.css'
-})
-export class ResumenProductionComponent {
 
+
+@Component({
+  selector: 'app-resumen-produccion-category',
+  imports: [],
+  templateUrl: './resumen-produccion-category.component.html',
+  styleUrl: './resumen-produccion-category.component.css'
+})
+export class ResumenProduccionCategoryComponent
+{
 	rest_production: RestProduction;
 
 	production_area_list:any[] = [];
@@ -74,10 +75,9 @@ export class ResumenProductionComponent {
 
 	total_kgs: number = 0;
 	total_pieces: number = 0;
-	end_date: string = '';
-	start_date: string = '';
 
-	constructor(public rest_service: RestService, public route: ActivatedRoute,public router: Router)
+
+	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
 		this.rest_production = new RestProduction(rest_service);
 	}
@@ -87,47 +87,31 @@ export class ResumenProductionComponent {
 		this.getQueryParamObservable().subscribe(([query_params, param_map]) =>
 		{
 			let keys = query_params.keys;
+
 			let obj:Record<string,string> = {};
-
-			if( query_params.has('start_date') )
-			{
-				this.start_date = query_params.get('start_date') as string;
-			}
-			else
-			{
-				let d = new Date();
-				d.setHours(0,0,0,0);
-				this.start_date = Utils.getLocalMysqlStringFromDate(d).substring(0,10);
-			}
-
-			let sd = Utils.getLocalDateFromMysqlString(this.start_date) as Date;
-			sd.setHours(0,0,0,0);
-			obj['created>~'] = sd.toISOString().substring(0,19).replace('T',' ');
-
-			if( query_params.has('end_date') )
-			{
-				this.end_date = query_params.get('end_date') as string;
-			}
-			else
-			{
-				let d = new Date();
-				d.setHours(0,0,0,0);
-				d.setDate(d.getDate() + 1);
-				this.end_date = Utils.getLocalMysqlStringFromDate(d).substring(0,10);
-			}
-
-
-			let ed = Utils.getLocalDateFromMysqlString(this.end_date) as Date;
-			ed.setHours(0,0,0,0);
-			obj['created<~'] = ed.toISOString().substring(0,19).replace('T',' ');
-
 
 			for(let key of keys)
 			{
 				obj[key] = query_params.get(key) as string;
 			}
 
-			this.is_loading = true;
+			if(!('created>=' in obj) )
+			{
+				let d = new Date();
+				d.setHours(0,0,0,0);
+
+				obj['created>~'] = d.toISOString().substring(0,19).replace('T',' ');
+			}
+
+			if(!('created<=' in obj) )
+			{
+				let d = new Date();
+				d.setHours(0,0,0,0);
+				d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+				d.setSeconds(d.getSeconds() - 1);
+
+				obj['created<'] = d.toISOString().substring(0,19).replace('T',' ');
+			}
 
 			Promise.all
 			([
@@ -159,6 +143,7 @@ export class ResumenProductionComponent {
 		});
 	}
 
+
 	createStructures()
 	{
 		console.log("this.production_area_list", this.production_area_list);
@@ -183,7 +168,7 @@ export class ResumenProductionComponent {
 			{
 				production_by_area = {
 					production_area,
-					production_by_category: [],
+					production_by_item: [],
 					total_kgs: 0,
 					total_pieces: 0,
 					open: false,
@@ -196,15 +181,15 @@ export class ResumenProductionComponent {
 			for (const production_info of production_info_list)
 			{
 				let category_name = production_info?.category?.name || 'N/A';
-				let production_by_category = production_by_area.production_by_category.find(pbc => pbc.category_name === category_name);
+				let production_by_category = production_by_area.production_by_item.find(pbi => pbi.item.id === production_info.item.id);
 
 				if (!production_by_category)
 				{
 					production_by_category = {
-						category_name,
+						item: production_info.item,
+						production_info_list: [],
 						total_kgs: 0,
 						total_pieces: 0,
-						production_by_item: [],
 						open: false,
 						string_id: 'p_cat_'+( production_info?.category?.id || 'NULL')
 
@@ -252,12 +237,13 @@ export class ResumenProductionComponent {
 
 		this.production_by_area_list = production_by_area_list;
 		console.log("this.production_by_area_list", this.production_by_area_list);
+
 	}
 
 	/*
 	let x = [
 		{
-			production_area:any;
+a			production_area:any;
 			category_production: [
 				{
 					category: any,
@@ -310,12 +296,5 @@ export class ResumenProductionComponent {
 			this.route.queryParamMap.pipe(startWith(p)),
 			this.route.paramMap
 		])
-	}
-	search($event: MouseEvent)
-	{
-		this.router.navigate(['/resumen-production'], { queryParams:{
-			start_date: this.start_date,
-			end_date: this.end_date
-		}});
 	}
 }
