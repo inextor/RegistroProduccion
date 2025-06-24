@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { RestService } from '../rest.service';
 import { combineLatest, Observable, of, startWith } from 'rxjs';
 import { RestProduction } from '../RestClases/RestProduction';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 import { Utils } from '../classes/DateUtils';
 import { FormsModule } from '@angular/forms';
 
@@ -57,7 +57,7 @@ type ProductionData = ProductionArea[];
 
 @Component({
 	selector: 'app-resumen-production',
-	imports: [FormsModule],
+	imports: [FormsModule,DatePipe, JsonPipe],
 	templateUrl: './resumen-production.component.html',
 	styleUrl: './resumen-production.component.css'
 })
@@ -136,7 +136,14 @@ export class ResumenProductionComponent {
 			])
 			.then(([production_info_response, production_area_list]) =>
 			{
-				this.production_info_list = production_info_response;
+				this.production_info_list = production_info_response.toSorted((a:any,b:any)=>
+				{
+					const aa = Utils.getDateFromMysqlString(a.production.created);
+					const bb = Utils.getDateFromMysqlString(b.production.created);
+					console.log("comparing", aa, bb);
+					return aa > bb ? 1 : -1;
+				});
+
 				this.production_area_list = production_area_list;
 
 				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));

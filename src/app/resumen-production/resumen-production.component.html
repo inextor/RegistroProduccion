@@ -79,13 +79,13 @@
 								</tr>
 								@if(item_data.open)
 								{
-									@for (production_info of item_data.production_info_list; track production_info.id)
+									@for (production_info of item_data.production_info_list; track production_info.production.id)
 									{
 										<tr>
-											<td></td>
+											<td class="text-end">{{production_info.production.created | date:'mediumDate'}}</td>
 											<td>{{production_info.production.qty}}</td>
 											<td>{{production_info.production.alternate_qty}}</td>
-											<td></td>
+											<td>{{production_info | json}}</td>
 										</tr>
 									}
 								}
