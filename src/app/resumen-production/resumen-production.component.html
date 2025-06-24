@@ -10,33 +10,37 @@
 		<table class="table table-bordered">
 			<thead>
 				<tr>
-					<th>Equipo/Categoría/Artículo</th>
+					<th>Equipos/Categorias/Articulos/Parciales</th>
 					<th>Kgs</th>
 					<th>Piezas</th>
-					<th>Detalles</th>
+					<th></th>
 				</tr>
 			</thead>
 
-			<tbody>
-				@for (area_data of production_by_area_list; track area_data.production_area.id)
+			@for (area_data of production_by_area_list; track area_data.production_area.id)
+			{
+				<tr>
+					<th>{{ area_data.production_area.name }}</th>
+					<th>{{area_data.total_kgs}}</th>
+					<th>{{area_data.total_pieces}}</th>
+					<th>
+						<button (click)="area_data.open = !area_data.open">Tog</button>
+					</th>
+				</tr>
+				@if(area_data.open)
 				{
-					<tr>
-						<th>{{ area_data.production_area.name }}</th>
-						<th>{{area_data.total_kgs}}</th>
-						<th>{{area_data.total_pieces}}</th>
-						<th>
-							<button (click)="area_data.open = !area_data.open">Tog</button>
-						</th>
-					</tr>
-
 					@for (category_data of area_data.production_by_category; track category_data.category_name)
 					{
 						<tr class="table-info">
 							<td>
 								<strong>{{category_data.category_name}}</strong>
 							</td>
-							<td><strong>{{ category_data.total_kgs  }}</strong></td>
-							<td><strong>{{ category_data.total_pieces }}</strong></td>
+							<td>
+								<strong>{{ category_data.total_kgs  }}</strong>
+							</td>
+							<td>
+								<strong>{{ category_data.total_pieces }}</strong>
+							</td>
 							<td>
 								<button (click)="category_data.open = !category_data.open">Tog</button>
 							</td>
@@ -54,26 +58,31 @@
 										<button (click)="item_data.open = !item_data.open"> Tog </button>
 									</td>
 								</tr>
-								<tr>
+								@if(item_data.open)
+								{
 									@for (production_info of item_data.production_info_list; track production_info.id)
 									{
-										<td></td>
-										<td>{{production_info.production.qty}}</td>
-										<td>{{production_info.production.alternate_qty}}</td>
-										<td></td>
+										<tr>
+											<td></td>
+											<td>{{production_info.production.qty}}</td>
+											<td>{{production_info.production.alternate_qty}}</td>
+											<td></td>
+										</tr>
 									}
-								</tr>
+								}
 							}
 						}
 					}
-					<tr class="table-primary">
-						<td><strong>Total Área</strong></td>
-						<td><strong>{{ area_data.total_kgs  }}</strong></td>
-						<td><strong>{{ area_data.total_pieces  }}</strong></td>
-						<td></td>
-					</tr>
 				}
-			</tbody>
+			}
+			<tfoot>
+				<tr class="table-primary">
+					<td><strong>Total Área</strong></td>
+					<td><strong>{{ total_kgs  }}</strong></td>
+					<td><strong>{{ total_pieces  }}</strong></td>
+					<td></td>
+				</tr>
+			</tfoot>
 		</table>
 	}
 </div>
