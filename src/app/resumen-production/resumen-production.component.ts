@@ -57,7 +57,7 @@ type ProductionData = ProductionArea[];
 
 @Component({
 	selector: 'app-resumen-production',
-	imports: [FormsModule,DatePipe, JsonPipe],
+	imports: [FormsModule,DatePipe ],
 	templateUrl: './resumen-production.component.html',
 	styleUrl: './resumen-production.component.css'
 })
@@ -116,10 +116,14 @@ export class ResumenProductionComponent {
 				this.end_date = Utils.getLocalMysqlStringFromDate(d).substring(0,10);
 			}
 
+			console.log("this.start_date", this.start_date);
+			console.log("this.end_date", this.end_date);
+
 
 			let ed = Utils.getLocalDateFromMysqlString(this.end_date) as Date;
-			ed.setHours(0,0,0,0);
+			ed.setHours(23,59,59,0);
 			obj['created<~'] = ed.toISOString().substring(0,19).replace('T',' ');
+			obj['limit'] = '999999';
 
 			this.is_loading = true;
 
@@ -130,15 +134,13 @@ export class ResumenProductionComponent {
 			])
 			.then(([production_info_response, production_area_list]) =>
 			{
+				this.production_area_list = production_area_list;
 				this.production_info_list = production_info_response.sort((a:any,b:any)=>
 				{
-					const aa = Utils.getDateFromMysqlString(a.production.created);
-					const bb = Utils.getDateFromMysqlString(b.production.created);
-					console.log("comparing", aa, bb);
-					return aa > bb ? 1 : -1;
+					console.log("a.production.created", a.production.created);
+					console.log("b.production.created", b.production.created);
+					return a.production.created.localeCompare(b.production.created);
 				});
-
-				this.production_area_list = production_area_list;
 
 				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));
 			})
@@ -312,6 +314,7 @@ export class ResumenProductionComponent {
 			this.route.paramMap
 		])
 	}
+
 	search($event: MouseEvent)
 	{
 		this.router.navigate(['/resumen-production'], { queryParams:{

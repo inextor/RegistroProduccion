@@ -1,35 +1,38 @@
 <div class="container mt-4">
 	<h2>Resumen de Producción</h2>
 
-	<div class="row">
-		<div class="col-md-4">
-			<div class="form-group">
-				<label>Inicio</label>
-				<input type="date" class="form-control" name="start_date" [(ngModel)]="start_date">
+	<div class="card">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label>Inicio</label>
+					<input type="date" class="form-control" name="start_date" [(ngModel)]="start_date">
+				</div>
 			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="form-group">
-				<label>Fin</label>
-				<input type="date" class="form-control" name="end_date" [(ngModel)]="end_date">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label>Fin</label>
+					<input type="date" class="form-control" name="end_date" [(ngModel)]="end_date">
+				</div>
 			</div>
-		</div>
-		<div class="col-md-4">
-			<button class="btn btn-primary" (click)="search($event)">Buscar</button>
+			<div class="col-md-4">
+				<button class="btn btn-primary" (click)="search($event)">Buscar</button>
+			</div>
 		</div>
 	</div>
 
+
 	@if (is_loading)
 	{
-		<p>Cargando...</p>
+`		<app-loading [is_loading]="is_loading"></app-loading>
 	}
 	@else
 	{
 		<table class="table table-bordered">
 			<tr>
 				<th>Equipos/Categorias/Articulos/Parciales</th>
-				<th>Kgs</th>
-				<th>Piezas</th>
+				<th class="text-end">Kgs</th>
+				<th class="text-end">Piezas</th>
 				<th></th>
 			</tr>
 		</table>
@@ -40,8 +43,8 @@
 			<table class="table table-bordered">
 				<tr>
 					<th>{{ area_data.production_area.name }}</th>
-					<th>{{area_data.total_kgs}}</th>
-					<th>{{area_data.total_pieces}}</th>
+					<th class="text-end">{{area_data.total_kgs}}</th>
+					<th class="text-end">{{area_data.total_pieces}}</th>
 					<th>
 						<button (click)="area_data.open = !area_data.open">Toggle</button>
 					</th>
@@ -51,13 +54,13 @@
 					@for (category_data of area_data.production_by_category; track category_data.category_name)
 					{
 						<tr class="table-info">
-							<td>
+							<td class="text-end">
 								<strong>{{category_data.category_name}}</strong>
 							</td>
-							<td>
+							<td class="text-end">
 								<strong>{{ category_data.total_kgs  }}</strong>
 							</td>
-							<td>
+							<td class="text-end">
 								<strong>{{ category_data.total_pieces }}</strong>
 							</td>
 							<td>
@@ -70,9 +73,9 @@
 							@for (item_data of category_data.production_by_item; track item_data.item.id)
 							{
 								<tr>
-									<td>{{ item_data.item.name }}</td>
-									<td>{{ item_data.total_kgs}}</td>
-									<td>{{ item_data.total_pieces }}</td>
+									<td class="text-end">{{ item_data.item.name }}</td>
+									<td class="text-end">{{ item_data.total_kgs}}</td>
+									<td class="text-end">{{ item_data.total_pieces }}</td>
 									<td>
 										<button (click)="item_data.open = !item_data.open"> Toggle </button>
 									</td>
@@ -83,8 +86,8 @@
 									{
 										<tr>
 											<td class="text-end">{{production_info.production.created | date:'mediumDate'}}</td>
-											<td>{{production_info.production.qty}}</td>
-											<td>{{production_info.production.alternate_qty}}</td>
+											<td class="text-end">{{production_info.production.qty}}</td>
+											<td class="text-end">{{production_info.production.alternate_qty}}</td>
 											<td></td>
 										</tr>
 									}
@@ -100,8 +103,8 @@
 			<thead>
 				<tr>
 					<th></th>
-					<th>Total Kgs</th>
-					<th>Total Piezas</th>
+					<th class="text-end">Total Kgs</th>
+					<th class="text-end">Total Piezas</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -109,8 +112,8 @@
 			<tfoot>
 				<tr class="table-primary">
 					<td><strong>Total Área</strong></td>
-					<td><strong>{{ total_kgs  }}</strong></td>
-					<td><strong>{{ total_pieces  }}</strong></td>
+					<td class="text-end"><strong>{{ total_kgs  }}</strong></td>
+					<td class="text-end"><strong>{{ total_pieces  }}</strong></td>
 					<td></td>
 				</tr>
 			</tfoot>
