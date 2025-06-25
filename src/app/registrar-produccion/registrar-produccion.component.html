@@ -60,7 +60,7 @@
 
 	<form (submit)="onGuardar()" ngNativeValidate>
 		<div class="row">
-			<select class="input-select" name="selected_item_id" [(ngModel)]="selected_item_id" required (change)="onItemSelected(item_array.find(item => item.id == $event.target.value))">
+			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)">
 				<option>Producto</option>
 				<option *ngFor="let item of item_array" [value]="item.id">{{item.id}} - {{item.name}}</option>
 			</select>
@@ -97,7 +97,10 @@
 				<div class="col-2 text-end px-0">
 					{{production_info.production.alternate_qty | number}}
 				</div>
-				<div class="col-4 text-end px-1">
+				<div class="col-2 text-end px-1">
+					{{production_info.production.qty | number:'1.3-3'}}
+				</div>
+				<div class="col-2 text-end px-1">
 					{{production_info.production.qty | number:'1.3-3'}}
 				</div>
 			</div>
@@ -105,8 +108,8 @@
 		<div class="row border-bottom mx-0 fw-bold">
 			<div class="col-6"></div>
 			<div class="col-2 text-end px-0">{{pieces_total | number}}</div>
-			<div class="col-4 text-end px-1">{{kg_total|number:'1.3-3'}}</div>
-			<div class="col-4 text-end px-1">{{(kg_total/pieces_total) |number:'1.3-3'}}</div>
+			<div class="col-2 text-end px-1">{{kg_total|number:'1.3-3'}}</div>
+			<div class="col-2 text-end px-1">{{(kg_total/pieces_total) |number:'1.3-3'}}</div>
 		</div>
 	</div>
 }
