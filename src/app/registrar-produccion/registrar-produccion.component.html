@@ -63,7 +63,8 @@
 			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)">
 				<option>Producto</option>
 				<option *ngFor="let item of item_array" [value]="item.id">{{item.id}} - {{item.name}}</option>
-			</select>			<div class="col-2">
+			</select>			
+			<div class="col-2">
 				<div class="form-group">
 					<label for="control" >#</label>
 					<input type="text" placeholder="#" class="input-text" name="control" [(ngModel)]="control" required autocomplete="off">
