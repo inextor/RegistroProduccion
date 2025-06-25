@@ -31,7 +31,8 @@ export class RegistrarProduccionComponent implements OnInit
     production_role_prices: any;
 	alternate_qty: number | '' = '';;
 	last_production_info_list:any[] = [];
-	control: 1;
+	control:number =  1;
+	selected_item: any = {name:'', background:''};
 
 	kg_total = 0;
 	pieces_total = 0;
@@ -98,6 +99,8 @@ export class RegistrarProduccionComponent implements OnInit
 	selectProductionArea(area: any): void
 	{
 		this.selected_production_area = area;
+		this.alternate_qty = '';
+		this.qty = '';
 		this.search_term = area.name;
 		this.show_autocomplete = false;
 		this.filtered_production_areas = [];
@@ -113,6 +116,8 @@ export class RegistrarProduccionComponent implements OnInit
 		])
 		.then(([users, items, roles]) =>
 		{
+			this.control = 1;
+
 			this.users = users.map((u:any)=>
 			{
 				u.role = roles.find((r:any)=>r.id == u.role_id) || {name:'Sin Rol'};
@@ -141,12 +146,19 @@ export class RegistrarProduccionComponent implements OnInit
 		});
 	}
 
-	onItemSelected(item: any): void {
-		this.selected_item_id = item.id;
-		if (item && item.background) {
+	onItemSelected(item_id: number): void
+	{
+		this.selected_item_id = item_id;
+
+		let item = this.item_array.find(item => item.id == item_id);
+		this.selected_item = item;
+
+		console.log('Item selected:', item);
+
+
+		if (item && item.background)
+		{
 			document.body.style.backgroundColor = item.background;
-		} else {
-			document.body.style.backgroundColor = ''; // Or a default color
 		}
 	}
 
@@ -231,7 +243,7 @@ export class RegistrarProduccionComponent implements OnInit
 			})
 
 			this.control++;
-			
+
 			let kg_total = 0;
 			let pieces_total = 0;
 
