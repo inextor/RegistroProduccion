@@ -23,7 +23,7 @@ export class RegistrarProduccionComponent implements OnInit
 	selected_production_area: any = null; // To store the selected area object
 	item_array: any[] = []; 
 	users: any[] = [];
-	selected_item_id: number = 0; // This will probably be the item info id
+	selected_item_id: number | undefined = 0; // This will probably be the item info id
 	production: RestProduction;
 	extra_qty: number = 0; //pieces???
 	qty: number | '' = ''; //kilos
@@ -31,6 +31,7 @@ export class RegistrarProduccionComponent implements OnInit
     production_role_prices: any;
 	alternate_qty: number | '' = '';;
 	last_production_info_list:any[] = [];
+	control: 1;
 
 	kg_total = 0;
 	pieces_total = 0;
@@ -140,6 +141,15 @@ export class RegistrarProduccionComponent implements OnInit
 		});
 	}
 
+	onItemSelected(item: any): void {
+		this.selected_item_id = item.id;
+		if (item && item.background) {
+			document.body.style.backgroundColor = item.background;
+		} else {
+			document.body.style.backgroundColor = ''; // Or a default color
+		}
+	}
+
 	onSearchFocus(): void
 	{
 		if (this.search_term.trim() !== '' && this.filtered_production_areas.length > 0)
@@ -204,7 +214,8 @@ export class RegistrarProduccionComponent implements OnInit
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_production_area.store_id,
 				qty: this.qty || parseInt( this.qty as '' ),
-				alternate_qty: this.alternate_qty
+				alternate_qty: this.alternate_qty,
+				control: ""+this.control
 			}
 		};
 
@@ -212,13 +223,15 @@ export class RegistrarProduccionComponent implements OnInit
 
 		this.production.addProduction(data).then(response =>
 		{
-				console.log('Production added:', response);
+			console.log('Production added:', response);
 			this.last_production_info_list.push({
 				production: response.production,
 				item: this.item_array.find(item => item.id == this.selected_item_id),
 				production_area: this.selected_production_area
 			})
 
+			this.control++;
+			
 			let kg_total = 0;
 			let pieces_total = 0;
 
