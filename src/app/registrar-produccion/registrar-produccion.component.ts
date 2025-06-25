@@ -21,7 +21,7 @@ export class RegistrarProduccionComponent implements OnInit
 	filtered_production_areas: any[] = [];
 	show_autocomplete = false;
 	selected_production_area: any = null; // To store the selected area object
-	item_array: any[] = []; 
+	item_array: any[] = [];
 	users: any[] = [];
 	selected_item_id: number = 0; // This will probably be the item info id
 	production: RestProduction;
