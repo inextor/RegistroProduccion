@@ -180,9 +180,17 @@ export class RestProduction
 	{
 		return (response:any) =>
 		{
+			response.json();
 			if( !response.ok )
 			{
-				throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`);
+				return response.json().then((data:any) =>
+				{
+					if( 'error' in data )
+					{
+						throw data.error;
+					}
+					throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`);
+				})
 			}
 
 			return response.json();
