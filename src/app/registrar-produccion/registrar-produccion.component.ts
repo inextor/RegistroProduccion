@@ -28,7 +28,7 @@ export class RegistrarProduccionComponent implements OnInit
 	extra_qty: number = 0; //pieces???
 	qty: number | '' = ''; //kilos
 	store = GetEmpty.store();
-    production_role_prices: any;
+	production_role_prices: any;
 	alternate_qty: number | '' = '';;
 	last_production_info_list:any[] = [];
 	control:number =  1;
@@ -155,10 +155,50 @@ export class RegistrarProduccionComponent implements OnInit
 
 		console.log('Item selected:', item);
 
-
 		if (item && item.background)
 		{
 			document.body.style.backgroundColor = item.background;
+		}
+
+		// Load last production info for the selected item
+		if (this.selected_production_area && this.selected_item_id)
+		{
+			let d = new Date();
+			d.setHours(0,0,0,0);
+
+			this.production.getProductionInfo({
+				item_id: this.selected_item_id,
+				'created>~':d.toISOString().substring(0,19).replace('T',' '),
+				production_area_id: this.selected_production_area.id,
+				_sort_order: 'id_DESC',
+				limit: 999999
+			})
+			.then(response =>
+			{
+				this.last_production_info_list = response;
+
+				if (response && response.length > 0)
+				{
+					console.log('Last production info loaded:', response[0]);
+
+					this.control = parseInt(response[response.length-1].production.control) + 1;
+
+					if( Number.isNaN(this.control) )
+					{
+						this.control = response.length;
+					}
+				}
+				else
+				{
+					this.control = 1;
+				}
+				console.log('Control number set to:', this.control);
+			})
+			.catch(error =>
+			{
+				console.error('Error loading last production info:', error);
+				this.control = 1; // Reset to 1 on error
+			});
 		}
 	}
 
@@ -231,7 +271,6 @@ export class RegistrarProduccionComponent implements OnInit
 			}
 		};
 
-		this.qty = '';
 
 		this.production.addProduction(data).then(response =>
 		{
@@ -255,10 +294,10 @@ export class RegistrarProduccionComponent implements OnInit
 
 			this.kg_total = kg_total;
 			this.pieces_total = pieces_total;
+			this.qty = '';
 		})
 		.catch(error =>
 		{
-			alert('Error al registrar producto');
 			this.rest_service.showError(error);
 		})
 	}

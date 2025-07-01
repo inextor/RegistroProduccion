@@ -65,19 +65,21 @@
 				<option *ngFor="let item of item_array" [value]="item.id">{{item.id}} - {{item.name}}</option>
 			</select>
 			<div class="col-2">
-				<label>#</label>
-				<input type="text" placeholder="#" class="input-text" name="control" [(ngModel)]="control" required autocomplete="off">
+				<div class="form-group">
+					<label for="control" >#</label>
+					<input type="text" placeholder="#" class="input-text" name="control" [(ngModel)]="control" required autocomplete="off">
+				</div>
 			</div>
-			<div class="col-5">
+			<div class="col-4">
 				<div class="form-group">
 					<label for="pieces_qty">Piezas</label>
-					<input type="text" placeholder="Piezas" class="input-text" name="pieces_qty" [(ngModel)]="alternate_qty" required autocomplete="off">
+					<input type="number" placeholder="Piezas" class="input-text" name="pieces_qty" [(ngModel)]="alternate_qty" required autocomplete="off">
 				</div>
 			</div>
 			<div class="col-5">
 				<div class="form-group">
 					<label for="pieces_qty">Kilos</label>
-					<input type="text" placeholder="Kilos" class="input-text" name="qty" [(ngModel)]="qty" required autocomplete="off"><!-- KILOS -->
+					<input type="number" placeholder="Kilos" class="input-text" step="any" name="qty" [(ngModel)]="qty" required autocomplete="off"><!-- KILOS -->
 				</div>
 			</div>
 		</div>
@@ -99,8 +101,8 @@
 		@for (production_info of last_production_info_list; track production_info)
 		{
 			<div class="row border-bottom align-items-center mx-0">
-				<div class="col-1 text-end px-0">
-					{{production_info.production.control}}
+				<div class="col-1 text-end">
+					#{{production_info.production.control}}
 				</div>
 				<div class="col-3 text-end px-0">
 					{{production_info.production.alternate_qty | number}}
