@@ -37,16 +37,27 @@
 			</tr>
 		</table>
 
-		@for (area_data of production_by_area_list; track area_data.production_area.id)
+		@for (area_data of production_by_area_list; track area_data.production_area.id;let index=$index)
 		{
-
 			<table class="table table-bordered">
 				<tr>
+					<th>{{index+1}}</th>
 					<th>{{ area_data.production_area.name }}</th>
 					<th class="text-end">{{area_data.total_kgs}}</th>
 					<th class="text-end">{{area_data.total_pieces}}</th>
 					<th>
-						<button (click)="area_data.open = !area_data.open">Toggle</button>
+						@if(area_data.open)
+						{
+							<button (click)="area_data.open = !area_data.open" class="btn btn-small btn-primary">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
+							</button>
+						}
+						@else
+						{
+							<button (click)="area_data.open = !area_data.open" class="btn btn-small btn-primary">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
+							</button>
+						}
 					</th>
 				</tr>
 				@if(area_data.open)
@@ -54,6 +65,7 @@
 					@for (category_data of area_data.production_by_category; track category_data.category_name)
 					{
 						<tr class="table-info">
+							<td></td>
 							<td class="text-end">
 								<strong>{{category_data.category_name}}</strong>
 							</td>
@@ -64,7 +76,19 @@
 								<strong>{{ category_data.total_pieces }}</strong>
 							</td>
 							<td>
-								<button (click)="category_data.open = !category_data.open">Toggle</button>
+								@if(category_data.open)
+								{
+									<button (click)="category_data.open = !category_data.open" class="btn btn-small btn-primary">
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
+									</button>
+								}
+								@else
+								{
+									<button (click)="category_data.open = !category_data.open" class="btn btn-small btn-primary">
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
+									</button>
+								}
+
 							</td>
 						</tr>
 
@@ -73,11 +97,24 @@
 							@for (item_data of category_data.production_by_item; track item_data.item.id)
 							{
 								<tr>
+									<td></td>
 									<td class="text-end">{{ item_data.item.name }}</td>
 									<td class="text-end">{{ item_data.total_kgs}}</td>
 									<td class="text-end">{{ item_data.total_pieces }}</td>
 									<td>
-										<button (click)="item_data.open = !item_data.open"> Toggle </button>
+										@if(item_data.open)
+										{
+											<button (click)="item_data.open = !item_data.open" class="btn btn-small btn-primary">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
+											</button>
+										}
+										@else
+										{
+											<button (click)="item_data.open = !item_data.open" class="btn btn-small btn-primary">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
+											</button>
+										}
+
 									</td>
 								</tr>
 								@if(item_data.open)
@@ -85,7 +122,8 @@
 									@for (production_info of item_data.production_info_list; track production_info.production.id)
 									{
 										<tr>
-											<td class="text-end">{{production_info.production.created | date:'mediumDate'}}</td>
+											<td></td>
+											<td class="text-end">{{production_info.production.control}} - {{production_info.production.created | date:'mediumDate'}}</td>
 											<td class="text-end">{{production_info.production.qty}}</td>
 											<td class="text-end">{{production_info.production.alternate_qty}}</td>
 											<td></td>
