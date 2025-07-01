@@ -180,7 +180,6 @@ export class RestProduction
 	{
 		return (response:any) =>
 		{
-			response.json();
 			if( !response.ok )
 			{
 				return response.json().then((data:any) =>
