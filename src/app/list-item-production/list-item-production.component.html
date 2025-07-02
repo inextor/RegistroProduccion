@@ -26,6 +26,10 @@
 				<div class="list-item-subtitle">{{ item_info.item.name }}</div>
 				<div class="row">
 					<div class="col-6 form-group">
+						<label>Piezas</label>
+						<input type="text" [name]="'alt-qty'+production_item_info.production.id" placeholder="Piezas" class="form-control" name="alternate_qty" [(ngModel)]="production_item_info.production.alternate_qty">
+					</div>
+					<div class="col-6 form-group">
 						<label>Kilos</label>
 						<input type="text" [name]="'qty'+production_item_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_item_info.production.qty"><!-- KILOS -->
 					</div>
