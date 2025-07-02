@@ -1,0 +1,44 @@
+<div class="container">
+	<h1>Producción de {{ production_area_info.production_area.name }}</h1>
+	<div>
+		<label>Fecha</label>
+		<input type="date" name="date" [ngModel]="date" (ngModelChange)="loadData(production_area_info.production_area.id, $event)" />
+	</div>
+
+	@if (is_loading)
+	{
+		<div class="spinner-grow text-primary" role="status" >
+			<span class="sr-only">Loading...</span>
+		</div>
+	}
+
+	@for (production_area_info of production_area_info_list; track production_area_info.production_area.id)
+	{
+		<div class="list-item">
+			<div class="list-item-icon">
+				<i class="material-icons"></i>
+			</div>
+			<div class="list-item-content">
+				<div class="list-item-title">
+					{{ production_area_info.production.control}} -
+					{{ production_area_info.item.name }}
+				</div>
+				<div class="list-item-subtitle">{{ production_area_info.production_area.name }}</div>
+				<div class="row">
+					<div class="col-6 form-group">
+						<label>Piezas</label>
+						<input type="text" [name]="'alt-qty'+production_area_info.production.id" placeholder="Piezas" class="form-control" name="alternate_qty" [(ngModel)]="production_area_info.production.alternate_qty">
+					</div>
+					<div class="col-6 form-group">
+						<label>Kilos</label>
+						<input type="text" [name]="'qty'+production_area_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_area_info.production.qty"><!-- KILOS -->
+					</div>
+					<div class="col-6">
+						<label>&nbsp;</label>
+						<button class="btn btn-primary" type="button" (click)="update(production_area_info)">Guardar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+</div>

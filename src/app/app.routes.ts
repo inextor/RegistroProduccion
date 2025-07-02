@@ -29,5 +29,8 @@ export const routes: Routes = [
 		path: 'resumen-production',
 		loadComponent: () => import('./resumen-production/resumen-production.component').then(m => m.ResumenProductionComponent),
 	},
-
+	{
+		path: 'list-production-area-production',
+		loadComponent: () => import('./list-production-area-production/list-production-area-production.component').then(m => m.ListProductionAreaProductionComponent),
+	}
 ];

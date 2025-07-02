@@ -2,7 +2,7 @@
 	<h1>Grupos de trabajo</h1>
 	@for (area of production_area_list; track area.id)
 	{
-		<a [routerLink]="['/production-by-group', area.id]" class="list-item">
+		<a [routerLink]="['/list-production-area-production']" [queryParams]="{ production_area_id: area.id }" class="list-item">
 			<div class="list-item-icon">
 				<i class="material-icons"></i>
 			</div>
