@@ -181,7 +181,7 @@ export class RegistrarProduccionComponent implements OnInit
 				{
 					console.log('Last production info loaded:', response[0]);
 
-					this.control = parseInt(response[response.length-1].production.control) + 1;
+					this.control = parseFloat(response[response.length-1].production.control) + 1;
 
 					if( Number.isNaN(this.control) )
 					{
@@ -265,7 +265,7 @@ export class RegistrarProduccionComponent implements OnInit
 				item_id: this.selected_item_id,
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_production_area.store_id,
-				qty: this.qty || parseInt( this.qty as '' ),
+				qty: this.qty || parseFloat( this.qty as '' ),
 				alternate_qty: this.alternate_qty,
 				control: ""+this.control
 			}
@@ -283,23 +283,30 @@ export class RegistrarProduccionComponent implements OnInit
 
 			this.control++;
 
-			let kg_total = 0;
-			let pieces_total = 0;
+			this.updatetotal();
 
-			for( let production_info of this.last_production_info_list )
-			{
-				kg_total += parseInt( ''+production_info.production.qty);
-				pieces_total += parseInt( ''+production_info.production.alternate_qty);
-			}
-
-			this.kg_total = kg_total;
-			this.pieces_total = pieces_total;
 			this.qty = '';
 		})
 		.catch(error =>
 		{
 			this.rest_service.showError(error);
 		})
+	}
+
+	updatetotal()
+	{
+		let kg_total = 0;
+		let pieces_total = 0;
+
+		for( let production_info of this.last_production_info_list )
+		{
+			kg_total += parseFloat( ''+production_info.production.qty);
+			pieces_total += parseInt( ''+production_info.production.alternate_qty);
+		}
+
+		this.kg_total = kg_total;
+		this.pieces_total = pieces_total;
+
 	}
 
 	guraderProduction(event: Event):void
