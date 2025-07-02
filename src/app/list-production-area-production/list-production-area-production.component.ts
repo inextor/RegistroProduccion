@@ -24,12 +24,12 @@ export class ListProductionAreaProductionComponent implements OnInit
 		production_area: { name: '' }
 	};
 
-
 	rest_production: RestProduction;
 	production_item_info_list: any[] = [];
 
 	date:string = '';
     is_loading: boolean = false;
+    production_info_list: any[] = [];
 
 	constructor(private rest_service: RestService, private route: ActivatedRoute, public confirmation_service:ConfirmationService)
 	{
@@ -69,13 +69,13 @@ export class ListProductionAreaProductionComponent implements OnInit
 
 		Promise.all
 		([
-			this.rest_production.getProductionArea(production_area_id),
-			this.rest_production.getProductionItemInfoByProductionAreaId(production_area_id, date),
+			this.rest_production.getProductionAreaInfo(production_area_id),
+			this.rest_production.getProductionInfoByProductionAreaId(production_area_id, date),
 		])
-		.then(([production_area_info, production_item_info]) =>
+		.then(([production_area_info, production_info_list]) =>
 		{
 			this.is_loading = false;
-			console.log('Received',production_area_info, production_item_info);
+			console.log('Received',production_area_info, production_info_list);
 
 			if( !production_area_info )
 			{
@@ -84,16 +84,16 @@ export class ListProductionAreaProductionComponent implements OnInit
 			}
 
 			this.production_area_info = production_area_info;
-			this.production_item_info_list = production_item_info;
+			this.production_info_list = production_info_list;
 
 		}).catch((error:any) => console.error(error));
 	}
 
-	update(production_item_info: any)
+	update(production_info: any)
 	{
 		this.confirmation_service.showConfirmAlert
 		(
-			production_item_info,
+			production_info,
 			'Confirmación',
 			'¿Está seguro de que desea actualizar la cantidad?',
 			'Aceptar',
@@ -107,14 +107,14 @@ export class ListProductionAreaProductionComponent implements OnInit
 			mergeMap((result:ConfirmationResult) =>
 			{
 				console.log('Confirmed');
-				return from(this.rest_production.updateProduction(production_item_info.production));
+				return from(this.rest_production.updateProduction(production_info.production));
 			})
 		)
 		.subscribe
 		({
 			next:(production:any)=> //production is the updated production
 			{
-				this.loadData(production_item_info.production_area.id, this.date);
+				this.loadData(production_info.production_area.id, this.date);
 			},
 			error:(error:any) =>
 			{

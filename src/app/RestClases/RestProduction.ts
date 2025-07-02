@@ -118,6 +118,15 @@ export class RestProduction
 		return this.getItemInfoListByProductionAreaIds(production_area_id);
 	}
 
+	getProductionAreaInfo(production_area_id: number):Promise<any>
+	{
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		const url = `${this.rest_service.getBaseUrl()}/production_area_info.php?id=${production_area_id}`;
+
+		return fetch(url, options )
+			.then(this.getJsonLambda());
+	}
+
 	/*
 	* @returns Promise:<{total:number,data:{production_area:Object, users:Array, store:Object}[]>
 	*/
@@ -248,6 +257,27 @@ export class RestProduction
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&created>=${start_utc_string}&created<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
+
+		return fetch(url, options )
+			.then(this.getJsonLambda())
+			.then(data => data.data)
+	}
+
+	getProductionInfoByProductionAreaId(production_area_id: any,date:string):Promise<any[]>
+	{
+		let d = Utils.getDateFromLocalMysqlString(date);
+		d.setHours(0,0,0,0);
+
+		let end = new Date();
+		end.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+		end.setSeconds(end.getSeconds() - 1);
+
+
+		let start_utc_string = d.toISOString().substring(0,19).replace('T',' ');
+		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
+
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&created>=${start_utc_string}&created<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())

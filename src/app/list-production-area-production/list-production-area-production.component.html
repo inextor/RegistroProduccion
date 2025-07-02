@@ -12,7 +12,7 @@
 		</div>
 	}
 
-	@for (production_area_info of production_area_info_list; track production_area_info.production_area.id)
+	@for (production_info of production_info_list; track production_info.production.id)
 	{
 		<div class="list-item">
 			<div class="list-item-icon">
@@ -20,22 +20,22 @@
 			</div>
 			<div class="list-item-content">
 				<div class="list-item-title">
-					{{ production_area_info.production.control}} -
-					{{ production_area_info.item.name }}
+					{{ production_info.production.control}} -
+					{{ production_info.item.name }}
 				</div>
 				<div class="list-item-subtitle">{{ production_area_info.production_area.name }}</div>
 				<div class="row">
 					<div class="col-6 form-group">
 						<label>Piezas</label>
-						<input type="text" [name]="'alt-qty'+production_area_info.production.id" placeholder="Piezas" class="form-control" name="alternate_qty" [(ngModel)]="production_area_info.production.alternate_qty">
+						<input type="text" [name]="'alt-qty'+production_info.production.id" placeholder="Piezas" class="form-control" name="alternate_qty" [(ngModel)]="production_info.production.alternate_qty">
 					</div>
 					<div class="col-6 form-group">
 						<label>Kilos</label>
-						<input type="text" [name]="'qty'+production_area_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_area_info.production.qty"><!-- KILOS -->
+						<input type="text" [name]="'qty'+production_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_info.production.qty"><!-- KILOS -->
 					</div>
 					<div class="col-6">
 						<label>&nbsp;</label>
-						<button class="btn btn-primary" type="button" (click)="update(production_area_info)">Guardar</button>
+						<button class="btn btn-primary" type="button" (click)="update(production_info)">Guardar</button>
 					</div>
 				</div>
 			</div>
