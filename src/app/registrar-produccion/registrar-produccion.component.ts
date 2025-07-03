@@ -193,6 +193,9 @@ export class RegistrarProduccionComponent implements OnInit
 					this.control = 1;
 				}
 				console.log('Control number set to:', this.control);
+
+				this.qty = '';
+				this.alternate_qty = '';
 			})
 			.catch(error =>
 			{
