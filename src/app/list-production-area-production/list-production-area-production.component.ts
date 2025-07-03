@@ -28,8 +28,8 @@ export class ListProductionAreaProductionComponent implements OnInit
 	production_item_info_list: any[] = [];
 
 	date:string = '';
-    is_loading: boolean = false;
-    production_info_list: any[] = [];
+	is_loading: boolean = false;
+	production_info_list: any[] = [];
 
 	constructor(private rest_service: RestService, private route: ActivatedRoute, public confirmation_service:ConfirmationService)
 	{
