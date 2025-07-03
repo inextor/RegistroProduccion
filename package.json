@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration development --disable-host-check --host=0.0.0.0",
-	"build": "ng build --configuration production && ~/Projects/RegistroProduccion/deploy.sh",
+    "build": "ng build --configuration production",
+    "deploy": "ng build --configuration production  && ~/Projects/RegistroProduccion/deploy.sh",
     "watch": "ng build --watch",
     "test": "ng test"
   },
