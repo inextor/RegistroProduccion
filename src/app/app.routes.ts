@@ -32,5 +32,9 @@ export const routes: Routes = [
 	{
 		path: 'list-production-area-production',
 		loadComponent: () => import('./list-production-area-production/list-production-area-production.component').then(m => m.ListProductionAreaProductionComponent),
+	},
+	{
+		path: 'registrar-gasolina',
+		loadComponent: () => import('./registrar-gasolina/registrar-gasolina.component').then(m => m.RegistrarGasolinaComponent),
 	}
 ];
