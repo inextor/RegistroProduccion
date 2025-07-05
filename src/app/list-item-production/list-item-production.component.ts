@@ -6,12 +6,13 @@ import { FormsModule } from '@angular/forms';
 import { filter, mergeMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { ConfirmationResult, ConfirmationService } from '../services/confirmation.service';
-import { Utils } from '../classes/DateUtils';
+import { CommonModule } from '@angular/common';
 
 @Component
 ({
 	selector: 'app-list-item-production',
-	imports: [FormsModule],
+	standalone: true,
+	imports: [FormsModule, CommonModule],
 	templateUrl: './list-item-production.component.html',
 	styleUrl: './list-item-production.component.css'
 })
@@ -30,6 +31,10 @@ export class ListItemProductionComponent implements OnInit
 
 	date:string = '';
     is_loading: boolean = false;
+
+	production_area_array: any[] = [];
+	selected_production_area_filter_id: number | undefined;
+	filtered_production_item_info_list: any[] = [];
 
 	constructor(private rest_service: RestService, private route: ActivatedRoute, public confirmation_service:ConfirmationService)
 	{
@@ -71,11 +76,12 @@ export class ListItemProductionComponent implements OnInit
 		([
 			this.rest_production.getItemInfo(item_id),
 			this.rest_production.getProductionItemInfoByItemId(item_id, date),
+			this.rest_production.getAllProductionAreas()
 		])
-		.then(([item_info, production_item_info]) =>
+		.then(([item_info, production_item_info_list, production_area_array]) =>
 		{
 			this.is_loading = false;
-			console.log('Received',item_info, production_item_info);
+			console.log('Received',item_info, production_item_info_list, production_area_array);
 
 			if( !item_info )
 			{
@@ -84,9 +90,55 @@ export class ListItemProductionComponent implements OnInit
 			}
 
 			this.item_info = item_info;
-			this.production_item_info_list = production_item_info;
+			this.production_item_info_list = production_item_info_list;
+			this.production_area_array = production_area_array;
+
+			if (this.production_item_info_list.length > 0)
+			{
+				this.selected_production_area_filter_id = this.production_item_info_list[0].production_area.id;
+			}
+			else
+			{
+				this.selected_production_area_filter_id = undefined;
+			}
+			this.filterProductionItemInfoList();
 
 		}).catch((error:any) => console.error(error));
+	}
+
+	filterProductionItemInfoList(): void
+	{
+		if (this.selected_production_area_filter_id)
+		{
+			this.filtered_production_item_info_list = this.production_item_info_list.filter(
+				(info: any) => info.production_area.id === this.selected_production_area_filter_id
+			);
+		}
+		else
+		{
+			this.filtered_production_item_info_list = this.production_item_info_list;
+		}
+	}
+
+	async saveAll(): Promise<void>
+	{
+		this.is_loading = true;
+		try
+		{
+			for (const production_info of this.filtered_production_item_info_list)
+			{
+				await this.rest_production.updateProduction(production_info.production);
+			}
+			this.rest_service.showError({error:'Todos los cambios guardados'}, false);
+		}
+		catch (error:any)
+		{
+			this.rest_service.showError(error);
+		}
+		finally
+		{
+			this.is_loading = false;
+		}
 	}
 
 	update(production_item_info: any)
@@ -112,9 +164,9 @@ export class ListItemProductionComponent implements OnInit
 		)
 		.subscribe
 		({
-			next:(production:any)=>
+			next:(production:any)=> //production is the updated production
 			{
-				this.loadData(production_item_info.item_id, this.date);
+				this.rest_service.showError({error:'Cambio guardado'}, false);
 			},
 			error:(error:any) =>
 			{
