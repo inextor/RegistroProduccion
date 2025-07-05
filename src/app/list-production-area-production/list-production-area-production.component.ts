@@ -30,6 +30,9 @@ export class ListProductionAreaProductionComponent implements OnInit
 	date:string = '';
 	is_loading: boolean = false;
 	production_info_list: any[] = [];
+	item_array: any[] = [];
+	selected_item_filter_id: number | undefined;
+	filtered_production_info_list: any[] = [];
 
 	constructor(private rest_service: RestService, private route: ActivatedRoute, public confirmation_service:ConfirmationService)
 	{
@@ -71,11 +74,12 @@ export class ListProductionAreaProductionComponent implements OnInit
 		([
 			this.rest_production.getProductionAreaInfo(production_area_id),
 			this.rest_production.getProductionInfoByProductionAreaId(production_area_id, date),
+			this.rest_production.getProductionAreaItems(production_area_id)
 		])
-		.then(([production_area_info, production_info_list]) =>
+		.then(([production_area_info, production_info_list, item_array]) =>
 		{
 			this.is_loading = false;
-			console.log('Received',production_area_info, production_info_list);
+			console.log('Received',production_area_info, production_info_list, item_array);
 
 			if( !production_area_info )
 			{
@@ -85,8 +89,54 @@ export class ListProductionAreaProductionComponent implements OnInit
 
 			this.production_area_info = production_area_info;
 			this.production_info_list = production_info_list;
+			this.item_array = item_array;
+
+			if (this.production_info_list.length > 0)
+			{
+				this.selected_item_filter_id = this.production_info_list[0].item.id;
+			}
+			else
+			{
+				this.selected_item_filter_id = undefined;
+			}
+			this.filterProductionInfoList();
 
 		}).catch((error:any) => console.error(error));
+	}
+
+	filterProductionInfoList(): void
+	{
+		if (this.selected_item_filter_id)
+		{
+			this.filtered_production_info_list = this.production_info_list.filter(
+				(info: any) => info.item.id === this.selected_item_filter_id
+			);
+		}
+		else
+		{
+			this.filtered_production_info_list = this.production_info_list;
+		}
+	}
+
+	async saveAll(): Promise<void>
+	{
+		this.is_loading = true;
+		try
+		{
+			for (const production_info of this.filtered_production_info_list)
+			{
+				await this.rest_production.updateProduction(production_info.production);
+			}
+			this.rest_service.showError({error:'Todos los cambios guardados'}, false);
+		}
+		catch (error:any)
+		{
+			this.rest_service.showError(error);
+		}
+		finally
+		{
+			this.is_loading = false;
+		}
 	}
 
 	update(production_info: any)
@@ -114,7 +164,7 @@ export class ListProductionAreaProductionComponent implements OnInit
 		({
 			next:(production:any)=> //production is the updated production
 			{
-				this.loadData(production_info.production_area.id, this.date);
+				this.rest_service.showError({error:'Cambio guardado'}, false);
 			},
 			error:(error:any) =>
 			{
