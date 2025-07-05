@@ -306,7 +306,15 @@ export class RestProduction
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())
-			.then(data => data.data)
+			.then((data) =>
+			{
+				if( 'total' in data )
+				{
+					return data.data;
+				}
+
+				return data;
+			})
 	}
 
 
