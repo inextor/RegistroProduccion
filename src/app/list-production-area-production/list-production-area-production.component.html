@@ -9,7 +9,7 @@
 		<div class="col-6">
 			<label for="itemFilter">Filtrar por Artículo</label>
 			<select class="form-control" id="itemFilter" [(ngModel)]="selected_item_filter_id" (ngModelChange)="filterProductionInfoList()">
-				<option [value]="undefined">Todos los Artículos</option>
+				<option value="">Todos los Artículos</option>
 				<option *ngFor="let item of item_array" [value]="item.id">{{item.name}}</option>
 			</select>
 		</div>

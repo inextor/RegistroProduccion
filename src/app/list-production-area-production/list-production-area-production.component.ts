@@ -31,7 +31,7 @@ export class ListProductionAreaProductionComponent implements OnInit
 	is_loading: boolean = false;
 	production_info_list: any[] = [];
 	item_array: any[] = [];
-	selected_item_filter_id: number | undefined;
+	selected_item_filter_id: number | '' = '';
 	filtered_production_info_list: any[] = [];
 
 	constructor(private rest_service: RestService, private route: ActivatedRoute, public confirmation_service:ConfirmationService)
@@ -97,7 +97,7 @@ export class ListProductionAreaProductionComponent implements OnInit
 			}
 			else
 			{
-				this.selected_item_filter_id = undefined;
+				this.selected_item_filter_id = '';
 			}
 			this.filterProductionInfoList();
 
@@ -109,7 +109,7 @@ export class ListProductionAreaProductionComponent implements OnInit
 		if (this.selected_item_filter_id)
 		{
 			this.filtered_production_info_list = this.production_info_list.filter(
-				(info: any) => info.item.id === this.selected_item_filter_id
+				(info: any) => info.item.id == this.selected_item_filter_id
 			);
 		}
 		else
