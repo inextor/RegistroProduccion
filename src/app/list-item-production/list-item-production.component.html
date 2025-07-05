@@ -1,18 +1,8 @@
 <div class="container">
 	<h1>Producción de {{ item_info.item.name }}</h1>
-	<div class="row">
-		<div class="col-6">
-			<label>Fecha</label>
-			<input type="date" name="date" [ngModel]="date" (ngModelChange)="loadData(item_info.item.id, $event)" class="form-control" />
-		</div>
-
-		<div class="col-6">
-			<label for="productionAreaFilter">Filtrar por Área de Producción</label>
-			<select class="form-control" id="productionAreaFilter" [(ngModel)]="selected_production_area_filter_id" (ngModelChange)="filterProductionItemInfoList()">
-				<option [value]="undefined">Todas las Áreas</option>
-				<option *ngFor="let area of production_area_array" [value]="area.id">{{area.name}}</option>
-			</select>
-		</div>
+	<div>
+		<label>Fecha</label>
+		<input type="date" name="date" [ngModel]="date" (ngModelChange)="loadData(item_info.item.id, $event)" />
 	</div>
 
 	@if (is_loading)
@@ -22,7 +12,7 @@
 		</div>
 	}
 
-	@for (production_item_info of filtered_production_item_info_list; track production_item_info.production.id)
+	@for (production_item_info of production_item_info_list; track item_info.id)
 	{
 		<div class="list-item">
 			<div class="list-item-icon">
@@ -43,10 +33,12 @@
 						<label>Kilos</label>
 						<input type="text" [name]="'qty'+production_item_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_item_info.production.qty"><!-- KILOS -->
 					</div>
+					<div class="col-6">
+						<label>&nbsp;</label>
+						<button class="btn btn-primary" type="button" (click)="update(production_item_info)">Guardar</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	}
-
-	<button class="btn btn-primary mt-3" (click)="saveAll()">Guardar Todo</button>
 </div>
