@@ -57,7 +57,7 @@ type ProductionData = ProductionArea[];
 
 @Component({
 	selector: 'app-resumen-production',
-	imports: [FormsModule,DatePipe ],
+	imports: [FormsModule,DatePipe,CommonModule],
 	templateUrl: './resumen-production.component.html',
 	styleUrl: './resumen-production.component.css'
 })

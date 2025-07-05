@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
@@ -12,7 +12,7 @@ import { GetEmpty } from '../RestClases/GetEmpty';
 	templateUrl: './registrar-produccion.component.html',
 	styleUrls: ['./registrar-produccion.component.css']
 })
-export class RegistrarProduccionComponent implements OnInit
+export class RegistrarProduccionComponent implements OnInit, OnDestroy
 {
 	production_areas: any[] = [];
 	is_loading = false;
@@ -139,6 +139,8 @@ export class RegistrarProduccionComponent implements OnInit
 			});
 
 			this.last_production_info_list = [];
+
+			this.updatetotal()
 		})
 		.catch(error =>
 		{
@@ -158,6 +160,10 @@ export class RegistrarProduccionComponent implements OnInit
 		if (item && item.background)
 		{
 			document.body.style.backgroundColor = item.background;
+		}
+		else
+		{
+			document.body.style.backgroundColor = '#ffffff';
 		}
 
 		// Load last production info for the selected item
@@ -194,6 +200,8 @@ export class RegistrarProduccionComponent implements OnInit
 				}
 				console.log('Control number set to:', this.control);
 
+
+				this.updatetotal()
 				this.qty = '';
 				this.alternate_qty = '';
 			})
@@ -201,7 +209,12 @@ export class RegistrarProduccionComponent implements OnInit
 			{
 				console.error('Error loading last production info:', error);
 				this.control = 1; // Reset to 1 on error
+				this.updatetotal()
 			});
+		}
+		else
+		{
+			this.updatetotal()
 		}
 	}
 
@@ -315,5 +328,10 @@ export class RegistrarProduccionComponent implements OnInit
 	guraderProduction(event: Event):void
 	{
 		event.preventDefault();
+	}
+
+	ngOnDestroy()
+	{
+		document.body.style.backgroundColor = '#ffffff';
 	}
 }

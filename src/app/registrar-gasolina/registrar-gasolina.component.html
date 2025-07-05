@@ -1,39 +1,37 @@
 <div class="almacen-container">
-	<div class="almacen-header">
-		<h2>Registrar Gasolina</h2>
-		<span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
-	</div>
-
-	<div class="almacen-location">
-		<span>Ubicación</span>
-		<span>{{store.name}}</span>
-	</div>
-
-	<div *ngIf="is_loading" class="loading-indicator">
-		Cargando áreas de producción...
-	</div>
-	<div *ngIf="error_message" class="error-message">
-		{{ error_message }}
+	<div class="row">
+		<div class="almacen-header">
+			<h2>Registrar Gasolina</h2>
+			<span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
+		</div>
+		<div *ngIf="is_loading" class="loading-indicator">
+			Cargando áreas de producción...
+		</div>
+		<div *ngIf="error_message" class="error-message">
+			{{ error_message }}
+		</div>
 	</div>
 
 	<form (submit)="onGuardar()" ngNativeValidate>
 		<div class="row">
-			<div class="col-12">
+			<div class="col-12 py-3">
 				<div class="form-group">
 					<label for="production_area">Área de Producción</label>
-					<select class="input-select" name="selected_production_area_id" [(ngModel)]="selected_production_area_id" required>
+					<select class="form-control" name="selected_production_area_id" [(ngModel)]="selected_production_area_id" required>
 						<option [value]="undefined" disabled selected>Seleccione un área</option>
 						<option *ngFor="let area of production_areas" [value]="area.id">{{area.name}}</option>
 					</select>
 				</div>
 			</div>
-			<div class="col-12">
+			<div class="col-12 py-3">
 				<div class="form-group">
 					<label for="total_cost">Costo Total</label>
-					<input type="number" placeholder="Costo Total" class="input-text" step="any" name="total_cost" [(ngModel)]="total_cost" required autocomplete="off">
+					<input type="number" placeholder="Costo Total" class="form-control" step="any" name="total_cost" [(ngModel)]="total_cost" required autocomplete="off">
 				</div>
 			</div>
+			<div class="col-12 py-3">
+				<button class="btn btn-primary" type="submit">Guardar</button>
+			</div>
 		</div>
-		<button class="btn-guardar" type="submit">Guardar</button>
 	</form>
 </div>

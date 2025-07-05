@@ -19,4 +19,3 @@ if [[ ! -e ~/Projects/RegistroProduccion/dist/myapp/browser/ ]]; then
 fi
 
 rsync ~/Projects/RegistroProduccion/dist/myapp/browser/* pos:/var/www/html/integranet.xyz/subdomains/mol/
-

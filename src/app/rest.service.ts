@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { RestProduction } from './RestClases/RestProduction';
+import { ActivatedRoute } from '@angular/router';
 
 export class ErrorMessage
 {
@@ -46,10 +47,20 @@ export class RestService
 	public permission: any = null;
 	public store: any = null;
 
-	constructor()
+	constructor(private route: ActivatedRoute)
 	{
 		this.loadAuthDataFromLocalStorage();
 		this.is_logged_in = localStorage.getItem('session') !== null;
+
+		route.params.subscribe((_params:any) =>
+		{
+			document.body.style.backgroundColor = '#ffffff';
+		});
+
+		route.queryParams.subscribe((_params:any) =>
+		{
+			document.body.style.backgroundColor = '#ffffff';
+		});
 	}
 
 	getBaseUrl(): string
