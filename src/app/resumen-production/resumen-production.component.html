@@ -43,7 +43,7 @@
 				<tr>
 					<th>{{index+1}}</th>
 					<th>{{ area_data.production_area.name }}</th>
-					<th class="text-end">{{area_data.total_kgs}}</th>
+					<th class="text-end">{{area_data.total_kgs | number:'1.2-2'}}</th>
 					<th class="text-end">{{area_data.total_pieces}}</th>
 					<th>
 						@if(area_data.open)
@@ -70,10 +70,10 @@
 								<strong>{{category_data.category_name}}</strong>
 							</td>
 							<td class="text-end">
-								<strong>{{ category_data.total_kgs  }}</strong>
+								<strong>{{ category_data.total_kgs  | number:'1.2-2'}}</strong>
 							</td>
 							<td class="text-end">
-								<strong>{{ category_data.total_pieces }}</strong>
+								<strong>{{ category_data.total_pieces | number}}</strong>
 							</td>
 							<td>
 								@if(category_data.open)
@@ -99,8 +99,8 @@
 								<tr>
 									<td></td>
 									<td class="text-end">{{ item_data.item.name }}</td>
-									<td class="text-end">{{ item_data.total_kgs}}</td>
-									<td class="text-end">{{ item_data.total_pieces }}</td>
+									<td class="text-end">{{ item_data.total_kgs | number:'1.2-2'}}</td>
+									<td class="text-end">{{ item_data.total_pieces | number }}</td>
 									<td>
 										@if(item_data.open)
 										{
@@ -124,8 +124,8 @@
 										<tr>
 											<td></td>
 											<td class="text-end">{{production_info.production.control}} - {{production_info.production.created | date:'mediumDate'}}</td>
-											<td class="text-end">{{production_info.production.qty}}</td>
-											<td class="text-end">{{production_info.production.alternate_qty}}</td>
+											<td class="text-end">{{production_info.production.qty | number:'1.2-2'}}</td>
+											<td class="text-end">{{production_info.production.alternate_qty | number}}</td>
 											<td></td>
 										</tr>
 									}
@@ -150,8 +150,8 @@
 			<tfoot>
 				<tr class="table-primary">
 					<td><strong>Total Área</strong></td>
-					<td class="text-end"><strong>{{ total_kgs  }}</strong></td>
-					<td class="text-end"><strong>{{ total_pieces  }}</strong></td>
+					<td class="text-end"><strong>{{ total_kgs | number:'1.2-2' }}</strong></td>
+					<td class="text-end"><strong>{{ total_pieces | number }}</strong></td>
 					<td></td>
 				</tr>
 			</tfoot>

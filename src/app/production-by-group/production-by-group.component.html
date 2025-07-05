@@ -33,18 +33,18 @@
 				<div class="col-6 col-md-2 c-d-md-none fw-bold">Articulo</div>
 				<div class="col-6 col-md-3">{{production_info.item_name }}</div>
 				<div class="col-6 col-md-2 c-d-md-none fw-bold">Kilos</div>
-				<div class="col-6 col-md-2 text-end">{{production_info.total_qty| number:'0.3-3' }}</div>
+				<div class="col-6 col-md-2 text-end">{{production_info.total_qty| number:'1.2-2' }}</div>
 				<div class="col-6 col-md-2 c-d-md-none fw-bold">Piezas</div>
 				<div class="col-6 col-md-2 text-end">{{production_info.total_alternate_qty |number }}</div>
 				<div class="col-6 col-md-2 c-d-md-none fw-bold">Promedio Peso x Pieza</div>
-				<div class="col-6 col-md-2 text-end">{{production_info.total_alternate_qty ? (production_info.total_qty/production_info.total_alternate_qty |number:'0.3-3' ) : '' }}</div>
+				<div class="col-6 col-md-2 text-end">{{production_info.total_alternate_qty ? (production_info.total_qty/production_info.total_alternate_qty |number:'1.2-2' ) : '' }}</div>
 			</div>
 		}
 		<div class="c-row mx-0 border-top">
 			<div class="fw-bold col-6">Total</div>
-			<div class="fw-bold col-2 text-end">{{ total_qty | number: '0.3-3' }}</div>
+			<div class="fw-bold col-2 text-end">{{ total_qty | number: '1.2-2' }}</div>
 			<div class="fw-bold col-2 text-end">{{ total_alternate_qty |number }}</div>
-			<div class="fw-bold col-2 text-end">{{ total_average |number: '0.3-3' }}</div>
+			<div class="fw-bold col-2 text-end">{{ total_average |number: '1.2-2' }}</div>
 		</div>
 	</div>
 </div>
