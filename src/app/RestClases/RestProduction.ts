@@ -233,6 +233,15 @@ export class RestProduction
 		.then(data => data.data)
 	}
 
+	getAttributes():Promise<any[]>
+	{
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		const url = `${this.rest_service.getBaseUrl()}/attribute.php?limit=999999`;
+		return fetch(url, options )
+			.then(this.getJsonLambda())
+			.then(data => data.data)
+	}
+
 	getProductionItemInfoByItemId(item_id: any,date:string):Promise<any[]>
 	{
 		let d = Utils.getDateFromLocalMysqlString(date);
@@ -320,7 +329,14 @@ export class RestProduction
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		return fetch(url, options )
 			.then(this.getJsonLambda())
-			.then(data => data.data	)
+			.then(data =>{
+				if( 'data' in data )
+				{
+					return data.data;
+				}
+
+				return data;
+			});
 	}
 
 	getUrlParams(obj:any):URLSearchParams
