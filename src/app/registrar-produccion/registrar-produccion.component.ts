@@ -162,7 +162,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 			this.last_production_info_list = [];
 
-			this.updatetotal()
+			this.updateTotal()
 		})
 		.catch(error =>
 		{
@@ -250,11 +250,10 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 					return production_info;
 				});
-				this.calculateTotals();
+				console.log('last_production_info_list before updateTotal:', this.last_production_info_list);
+				this.updateTotal();
 				console.log('Control number set to:', this.control);
 
-
-				this.updatetotal()
 				this.qty = '';
 				this.alternate_qty = '';
 			})
@@ -262,12 +261,12 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			{
 				console.error('Error loading last production info:', error);
 				this.control = 1; // Reset to 1 on error
-				this.updatetotal()
+				this.updateTotal();
 			});
 		}
 		else
 		{
-			this.updatetotal()
+			this.updateTotal();
 		}
 	}
 
@@ -362,13 +361,13 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		{
 			console.log('Production added:', response);
 			this.last_production_info_list.unshift({
-				production: response.production,
+				production: data.production,
 				item: this.item_array.find(item => item.id == this.selected_item_id),
 				production_area: this.selected_production_area
 			})
 
 			this.control++;
-			this.updatetotal();
+			this.updateTotal();
 
 			this.qty = '';
 		})
@@ -378,7 +377,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		})
 	}
 
-	updatetotal()
+	updateTotal()
 	{
 		let kg_total = 0;
 		let pieces_total = 0;
