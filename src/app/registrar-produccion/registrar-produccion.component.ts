@@ -59,8 +59,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	{
 		try
 		{
-			const attributes = await this.rest_service.getAttributes();
-
+			const attributes = await this.production.getAttributes();
 			const pesoInferior = attributes.find((attr: any) => attr.name === 'Peso Inferior');
 			const pesoSuperior = attributes.find((attr: any) => attr.name === 'Peso Superior');
 
@@ -89,7 +88,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 			Promise.all
 			([
-				this.rest_service.getAttributes(),
+				this.production.getAttributes(),
 				this.production.getProductionAreas(currentStore.id)
 			])
 			.then(([attributes,areas])=>
