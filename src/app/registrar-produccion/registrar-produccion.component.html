@@ -92,16 +92,16 @@
 	<div class="card m-3">
 		<div class="row border-bottom mx-0 fw-bold">
 			<div class="col-12 fw-bold px-0">{{selected_item.name}}</div>
-			<div class="col-1 text-end px-0">#</div>
+			<div class="col-2 text-end px-0">#</div>
 			<div class="col-3 text-end px-0">Piezas</div>
 			<div class="col-4 text-end px-1">Kilos</div>
-			<div class="col-4 text-end px-1">%</div>
+			<div class="col-3 text-end px-1">%</div>
 		</div>
 
 		@for (production_info of last_production_info_list; track production_info)
 		{
-			<div class="row border-bottom align-items-center mx-0">
-				<div class="col-1 text-end">
+			<div class="row border-bottom align-items-center mx-0" [ngClass]="{'out-of-range': production_info.production.is_out_of_range}">
+				<div class="col-2 text-end">
 					{{production_info.production.control}}
 				</div>
 				<div class="col-3 text-end px-0">
@@ -110,16 +110,17 @@
 				<div class="col-4 text-end px-1">
 					{{production_info.production.qty | number:'1.2-2'}}
 				</div>
-				<div class="col-4 text-end px-1">
+				<div class="col-3 text-end px-1">
 					{{(production_info.production.qty/production_info.production.alternate_qty) | number:'1.2-2'}}
 				</div>
 			</div>
 		}
 
 		<div class="row border-bottom mx-0 fw-bold">
-			<div class="col-4 text-end px-0">{{pieces_total | number}}</div>
+			<div class="col-2 text-end px-0"></div>
+			<div class="col-3 text-end px-0">{{pieces_total | number}}</div>
 			<div class="col-4 text-end px-1">{{kg_total|number:'1.2-2'}}</div>
-			<div class="col-4 text-end px-1">{{(kg_total/pieces_total) |number:'1.2-2'}}</div>
+			<div class="col-3 text-end px-1">{{(kg_total/pieces_total) |number:'1.2-2'}}</div>
 		</div>
 	</div>
 }
