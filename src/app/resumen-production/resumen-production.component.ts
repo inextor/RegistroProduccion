@@ -76,6 +76,7 @@ export class ResumenProductionComponent {
 	total_pieces: number = 0;
 	end_date: string = '';
 	start_date: string = '';
+    attributes: any[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute,public router: Router)
 	{
@@ -131,9 +132,11 @@ export class ResumenProductionComponent {
 			([
 				this.rest_production.getProductionInfo(obj),
 				this.rest_production.getAllProductionAreas(),
+				this.rest_production.getAttributes(),
 			])
-			.then(([production_info_response, production_area_list]) =>
+			.then(([production_info_response, production_area_list, attributes]) =>
 			{
+				this.attributes = attributes;
 				this.production_area_list = production_area_list;
 				this.production_info_list = production_info_response.sort((a:any,b:any)=>
 				{

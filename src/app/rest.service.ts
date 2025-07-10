@@ -225,8 +225,6 @@ export class RestService
 		return !!this.session && !!this.user;
 	}
 
-
-
 	getErrorString(error:any):string
 	{
 		if (error == null || error === undefined)

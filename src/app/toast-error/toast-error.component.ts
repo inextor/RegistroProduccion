@@ -47,9 +47,9 @@ export class ToastErrorComponent
 			{
 				if( error.auto_hide )
 				{
-					//this.clicked(error);
+					this.clicked(error);
 				}
-			}, 6500);
+			}, 3500);
 		});
 	}
 
