@@ -267,6 +267,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 					return production_info;
 				});
+				this.calculateTotals();
 				console.log('Control number set to:', this.control);
 			})
 			.catch(error =>
@@ -374,24 +375,29 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			})
 
 			this.control++;
+			this.calculateTotals();
 
-			let kg_total = 0;
-			let pieces_total = 0;
-
-			for( let production_info of this.last_production_info_list )
-			{
-				kg_total += parseInt( ''+production_info.production.qty);
-				pieces_total += parseInt( ''+production_info.production.alternate_qty);
-			}
-
-			this.kg_total = kg_total;
-			this.pieces_total = pieces_total;
 			this.qty = '';
 		})
 		.catch(error =>
 		{
 			this.rest_service.showError(error);
 		})
+	}
+
+	calculateTotals(): void
+	{
+		let kg_total = 0;
+		let pieces_total = 0;
+
+		for( let production_info of this.last_production_info_list )
+		{
+			kg_total += parseFloat( ''+production_info.production.qty);
+			pieces_total += parseInt( ''+production_info.production.alternate_qty);
+		}
+
+		this.kg_total = kg_total;
+		this.pieces_total = pieces_total;
 	}
 
 	guraderProduction(event: Event):void
