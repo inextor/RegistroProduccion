@@ -175,8 +175,6 @@ export class RegistrarProduccionComponent implements OnInit
 			})
 			.then(response =>
 			{
-				this.last_production_info_list = response;
-
 				if (response && response.length > 0)
 				{
 					console.log('Last production info loaded:', response[0]);
@@ -192,6 +190,7 @@ export class RegistrarProduccionComponent implements OnInit
 				{
 					this.control = 1;
 				}
+				this.last_production_info_list = response ? response.reverse() : [];
 				console.log('Control number set to:', this.control);
 			})
 			.catch(error =>
@@ -275,7 +274,7 @@ export class RegistrarProduccionComponent implements OnInit
 		this.production.addProduction(data).then(response =>
 		{
 			console.log('Production added:', response);
-			this.last_production_info_list.push({
+			this.last_production_info_list.unshift({
 				production: response.production,
 				item: this.item_array.find(item => item.id == this.selected_item_id),
 				production_area: this.selected_production_area
