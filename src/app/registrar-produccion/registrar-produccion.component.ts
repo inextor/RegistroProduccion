@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
@@ -12,7 +12,7 @@ import { GetEmpty } from '../RestClases/GetEmpty';
 	templateUrl: './registrar-produccion.component.html',
 	styleUrls: ['./registrar-produccion.component.css']
 })
-export class RegistrarProduccionComponent implements OnInit
+export class RegistrarProduccionComponent implements OnInit, OnDestroy
 {
 	production_areas: any[] = [];
 	is_loading = false;
@@ -304,5 +304,10 @@ export class RegistrarProduccionComponent implements OnInit
 	guraderProduction(event: Event):void
 	{
 		event.preventDefault();
+	}
+
+	ngOnDestroy(): void
+	{
+		document.body.style.backgroundColor = ''; // Reset to default or global style
 	}
 }
