@@ -1,7 +1,7 @@
 <div class="container mt-4">
 	<h2>Resumen de Producción</h2>
 
-	<div class="card">
+	<div class="card p-3 mb-3">
 		<div class="row">
 			<div class="col-md-4">
 				<div class="form-group">
@@ -28,133 +28,136 @@
 	}
 	@else
 	{
-		<table class="table table-bordered">
-			<tr>
-				<th>Equipos/Categorias/Articulos/Parciales</th>
-				<th class="text-end">Kgs</th>
-				<th class="text-end">Piezas</th>
-				<th></th>
-			</tr>
-		</table>
-
-		@for (area_data of production_by_area_list; track area_data.production_area.id;let index=$index)
-		{
+		<div class="card p-3">
 			<table class="table table-bordered">
 				<tr>
-					<th>{{index+1}}</th>
-					<th>{{ area_data.production_area.name }}</th>
-					<th class="text-end">{{area_data.total_kgs}}</th>
-					<th class="text-end">{{area_data.total_pieces}}</th>
-					<th>
-						@if(area_data.open)
-						{
-							<button (click)="area_data.open = !area_data.open" class="btn btn-small btn-primary">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
-							</button>
-						}
-						@else
-						{
-							<button (click)="area_data.open = !area_data.open" class="btn btn-small btn-primary">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
-							</button>
-						}
-					</th>
+					<th>Equipos/Categorias/Articulos/Parciales</th>
+					<th class="text-end">Kgs</th>
+					<th class="text-end">Piezas</th>
+					<th></th>
 				</tr>
-				@if(area_data.open)
-				{
-					@for (category_data of area_data.production_by_category; track category_data.category_name)
-					{
-						<tr class="table-info">
-							<td></td>
-							<td class="text-end">
-								<strong>{{category_data.category_name}}</strong>
-							</td>
-							<td class="text-end">
-								<strong>{{ category_data.total_kgs  }}</strong>
-							</td>
-							<td class="text-end">
-								<strong>{{ category_data.total_pieces }}</strong>
-							</td>
-							<td>
-								@if(category_data.open)
-								{
-									<button (click)="category_data.open = !category_data.open" class="btn btn-small btn-primary">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
-									</button>
-								}
-								@else
-								{
-									<button (click)="category_data.open = !category_data.open" class="btn btn-small btn-primary">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
-									</button>
-								}
+			</table>
 
-							</td>
-						</tr>
-
-						@if(category_data.open)
-						{
-							@for (item_data of category_data.production_by_item; track item_data.item.id)
+			@for (area_data of production_by_area_list; track area_data.production_area.id;let index=$index)
+			{
+				<table class="table table-bordered">
+					<tr>
+						<th>{{index+1}}</th>
+						<th>{{ area_data.production_area.name }}</th>
+						<th class="text-end">{{area_data.total_kgs}}</th>
+						<th class="text-end">{{area_data.total_pieces}}</th>
+						<th>
+							@if(area_data.open)
 							{
-								<tr>
-									<td></td>
-									<td class="text-end">{{ item_data.item.name }}</td>
-									<td class="text-end">{{ item_data.total_kgs}}</td>
-									<td class="text-end">{{ item_data.total_pieces }}</td>
-									<td>
-										@if(item_data.open)
-										{
-											<button (click)="item_data.open = !item_data.open" class="btn btn-small btn-primary">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
-											</button>
-										}
-										@else
-										{
-											<button (click)="item_data.open = !item_data.open" class="btn btn-small btn-primary">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
-											</button>
-										}
-
-									</td>
-								</tr>
-								@if(item_data.open)
-								{
-									@for (production_info of item_data.production_info_list; track production_info.production.id)
+								<button (click)="area_data.open = !area_data.open" class="btn btn-small btn-primary">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
+								</button>
+							}
+							@else
+							{
+								<button (click)="area_data.open = !area_data.open" class="btn btn-small btn-primary">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
+								</button>
+							}
+						</th>
+					</tr>
+					@if(area_data.open)
+					{
+						@for (category_data of area_data.production_by_category; track category_data.category_name)
+						{
+							<tr class="table-info">
+								<td></td>
+								<td class="text-end">
+									<strong>{{category_data.category_name}}</strong>
+								</td>
+								<td class="text-end">
+									<strong>{{ category_data.total_kgs  }}</strong>
+								</td>
+								<td class="text-end">
+									<strong>{{ category_data.total_pieces }}</strong>
+								</td>
+								<td>
+									@if(category_data.open)
 									{
-										<tr>
-											<td></td>
-											<td class="text-end">{{production_info.production.control}} - {{production_info.production.created | date:'mediumDate'}}</td>
-											<td class="text-end">{{production_info.production.qty}}</td>
-											<td class="text-end">{{production_info.production.alternate_qty}}</td>
-											<td></td>
-										</tr>
+										<button (click)="category_data.open = !category_data.open" class="btn btn-small btn-primary">
+											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
+										</button>
+									}
+									@else
+									{
+										<button (click)="category_data.open = !category_data.open" class="btn btn-small btn-primary">
+											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
+										</button>
+									}
+
+								</td>
+							</tr>
+
+							@if(category_data.open)
+							{
+								@for (item_data of category_data.production_by_item; track item_data.item.id)
+								{
+									<tr>
+										<td></td>
+										<td class="text-end">{{ item_data.item.name }}</td>
+										<td class="text-end">{{ item_data.total_kgs}}</td>
+										<td class="text-end">{{ item_data.total_pieces }}</td>
+										<td>
+											@if(item_data.open)
+											{
+												<button (click)="item_data.open = !item_data.open" class="btn btn-small btn-primary">
+													<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48"><path fill="#2196f3" d="M43 17.1L39.9 14L24 29.9L8.1 14L5 17.1L24 36z"/></svg>
+												</button>
+											}
+											@else
+											{
+												<button (click)="item_data.open = !item_data.open" class="btn btn-small btn-primary">
+													<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="m9 6l6 6l-6 6"/></svg>
+												</button>
+											}
+
+										</td>
+									</tr>
+									@if(item_data.open)
+									{
+										@for (production_info of item_data.production_info_list; track production_info.production.id)
+										{
+											<tr>
+												<td></td>
+												<td class="text-end">{{production_info.production.control}} - {{production_info.production.created | date:'mediumDate'}}</td>
+												<td class="text-end">{{production_info.production.qty}}</td>
+												<td class="text-end">{{production_info.production.alternate_qty}}</td>
+												<td></td>
+											</tr>
+										}
 									}
 								}
 							}
 						}
 					}
-				}
+				</table>
+			}
+		</div>
+		<div class="card mt-3">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th></th>
+						<th class="text-end">Total Kgs</th>
+						<th class="text-end">Total Piezas</th>
+						<th></th>
+					</tr>
+				</thead>
+
+				<tfoot>
+					<tr class="table-primary">
+						<td><strong>Total Área</strong></td>
+						<td class="text-end"><strong>{{ total_kgs  }}</strong></td>
+						<td class="text-end"><strong>{{ total_pieces  }}</strong></td>
+						<td></td>
+					</tr>
+				</tfoot>
 			</table>
-		}
-
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th></th>
-					<th class="text-end">Total Kgs</th>
-					<th class="text-end">Total Piezas</th>
-					<th></th>
-				</tr>
-			</thead>
-
-			<tfoot>
-				<tr class="table-primary">
-					<td><strong>Total Área</strong></td>
-					<td class="text-end"><strong>{{ total_kgs  }}</strong></td>
-					<td class="text-end"><strong>{{ total_pieces  }}</strong></td>
-					<td></td>
-				</tr>
-			</tfoot>
-		</table>
+		</div>
 	}
 </div>
