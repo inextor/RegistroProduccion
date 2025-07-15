@@ -27,7 +27,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	production: RestProduction;
 	extra_qty: number = 0; //pieces???
 	qty: number | '' = ''; //kilos
-	store = GetEmpty.store();
+	store: any = GetEmpty.store();
 	production_role_prices: any;
 	alternate_qty: number | '' = '';;
 	last_production_info_list:any[] = [];
@@ -43,6 +43,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	kg_total = 0;
 	pieces_total = 0;
 
+	stores: any[] = [];
+	selected_store_id: number | undefined;
+
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
 		// RestProduction is actually RestProduction
@@ -51,12 +54,56 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 	ngOnInit(): void
 	{
-		this.loadProductionAreas();
+		this.rest_service.getStores().then((stores: any[]) =>
+		{
+			this.stores = stores;
+			console.log('Stores loaded in component:', this.stores);
+			const currentStore = this.rest_service.getStore();
+			if (currentStore && currentStore.id)
+			{
+				this.selected_store_id = currentStore.id;
+				this.store = currentStore;
+			}
+			else if (this.stores.length > 0)
+			{
+				this.selected_store_id = this.stores[0].id;
+				this.store = this.stores[0];
+			}
+			this.loadProductionAreas();
+		}).catch((error: any) =>
+		{
+			this.rest_service.showError(`Failed to load stores: ${error.message}`);
+		});
 	}
+
+	onStoreSelected(store_id: number): void
+	{
+		this.selected_store_id = store_id;
+		const selectedStore = this.stores.find(s => s.id === Number(store_id));
+		if (selectedStore)
+		{
+			this.store = selectedStore;
+			this.rest_service.setStore(store_id).then(() =>
+			{
+				this.loadProductionAreas();
+			}).catch((error: any) =>
+			{
+				this.rest_service.showError(`Failed to set store: ${error.message}`);
+			});
+		}
+		else
+		{
+			this.rest_service.showError('Selected store not found.');
+		}
+	}
+
+	
+
+	
 
 	loadProductionAreas()
 	{
-		const currentStore = this.rest_service.getStore()
+		const currentStore = this.store;
 
 		if (currentStore && currentStore.id)
 		{
@@ -85,7 +132,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 				this.production_areas = areas.data || areas;
 			})
-			.catch(error =>
+			.catch((error: any) =>
 			{
 				this.error_message = `Failed to load production areas: ${error.message}`;
 				console.error(this.error_message, error);
@@ -164,7 +211,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 			this.updateTotal()
 		})
-		.catch(error =>
+		.catch((error: any) =>
 		{
 			console.error('Error loading production area items:', error);
 		});
@@ -257,7 +304,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				this.qty = '';
 				this.alternate_qty = '';
 			})
-			.catch(error =>
+			.catch((error: any) =>
 			{
 				console.error('Error loading last production info:', error);
 				this.control = 1; // Reset to 1 on error
@@ -371,7 +418,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 			this.qty = '';
 		})
-		.catch(error =>
+		.catch((error: any) =>
 		{
 			this.rest_service.showError(error);
 		})

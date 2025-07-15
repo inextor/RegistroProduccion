@@ -118,9 +118,23 @@ export class RestService
 
 	getStores(): any
 	{
-		return fetch(`${this.base_url}/store.php?limit=999999`)
-			.then(response => response.json())
-			.then(data => data.data);
+		const url = `${this.base_url}/store.php?limit=999999`;
+		console.log(`Fetching stores from: ${url}`);
+		return fetch(url)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log('Raw stores data from API:', data);
+				return data.data;
+			})
+			.catch(error => {
+				console.error('Error fetching stores:', error);
+				throw error;
+			});
 	}
 
 	saveAuthDataToLocalStorage(user: any, session: any, permission: any, store: any): void
