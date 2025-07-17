@@ -10,8 +10,6 @@ import { Consumption_User } from '../Models/Consumption_User'; // Import Consump
 import { Production_Area } from '../Models/Production_Area'; // Import ProductionArea interface
 import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
 
-
-
 @Component
 ({
 	selector: 'app-registrar-gasolina',
@@ -73,7 +71,8 @@ export class RegistrarGasolinaComponent implements OnInit
 			let gas_p = this.production.searchItemInfo('Gasolina');
 			let roles_p = this.production.getAllRoles();
 
-			let [areas, gas] = await Promise.all([areas_p, gas_p]);
+			let [areas, gas, roles] = await Promise.all([areas_p, gas_p, roles_p]);
+			this.role_list = roles;
 
 			if( gas.length === 0 )
 			{
@@ -129,11 +128,11 @@ export class RegistrarGasolinaComponent implements OnInit
 
 		const consumption: Consumption = {
 			id: 0, // Will be set by backend
-			item_id: this.gas_item_info.id,
+			item_id: this.gas_item_info.item.id,
 			qty: Number(this.litros),
 			production_area_id: this.selected_production_area_id,
 			consumed_by_user_id: null, // Assuming the current user is the consumer
-			store_id: currentStore.id,
+			store_id: this.store.id,
 			description: `Gasolina: ${this.litros} litros @ ${this.precio} MXN/litro`,
 			status: 'ACTIVE',
 			created: '', // Will be set by backend
@@ -144,8 +143,9 @@ export class RegistrarGasolinaComponent implements OnInit
 
 		let role_ids = this.role_list.filter(role=>
 		{
-			let role_name = role.name.toLowerCase();
-			return ['marinero','capitan'].includes(role_name);
+			return true;
+			//let role_name = role.name.toLowerCase();
+			//return ['marinero','capitan'].includes(role_name);
 		})
 		.map(role => role.id) as number[];
 
@@ -209,6 +209,9 @@ export class RegistrarGasolinaComponent implements OnInit
 		this.selected_production_area_id = id;
 		let production_area_info = this.production_area_info_list.find(pa => pa.production_area.id == id) as ProductionAreaInfo;
 		this.selected_production_area_id  = id;
+		this.store = production_area_info.store;
+
+		console.log('Selected production area:', production_area_info);
 
 		this.users = production_area_info.users.map(u=>
 		{
