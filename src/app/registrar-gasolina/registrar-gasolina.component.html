@@ -12,26 +12,34 @@
 		</div>
 	</div>
 
-	<form (submit)="onGuardar()" ngNativeValidate>
-		<div class="row">
-			<div class="col-12 py-3">
-				<div class="form-group">
-					<label for="production_area">Área de Producción</label>
-					<select class="form-control" name="selected_production_area_id" [(ngModel)]="selected_production_area_id" required>
-						<option [value]="undefined" disabled selected>Seleccione un área</option>
-						<option *ngFor="let area of production_areas" [value]="area.id">{{area.name}}</option>
-					</select>
+	<div class="card p-3" style="max-width: 500px;margin: 0 auto;">
+		<form (submit)="onGuardar()" ngNativeValidate>
+			<div class="row">
+				<div class="col-12 py-3">
+					<div class="form-group">
+						<label for="production_area">Área de Producción</label>
+						<select class="form-control" name="selected_production_area_id" [(ngModel)]="selected_production_area_id" required>
+							<option [value]="undefined" disabled selected>Seleccione un área</option>
+							<option *ngFor="let area of production_areas" [value]="area.id">{{area.name}}</option>
+						</select>
+					</div>
 				</div>
-			</div>
-			<div class="col-12 py-3">
-				<div class="form-group">
+				<div class="col-12 py-3 form-group">
+					<label for="litros">Litros</label>
+					<input type="number" placeholder="Litros" class="form-control" step="any" name="litros" [(ngModel)]="litros" (ngModelChange)="calculateTotalCost()" required autocomplete="off">
+				</div>
+				<div class="col-12 py-3 form-group">
+					<label for="precio">Precio</label>
+					<input type="number" placeholder="Precio" class="form-control" step="any" name="precio" [(ngModel)]="precio" (ngModelChange)="calculateTotalCost()" required autocomplete="off">
+				</div>
+				<div class="col-12 py-3 form-group">
 					<label for="total_cost">Costo Total</label>
-					<input type="number" placeholder="Costo Total" class="form-control" step="any" name="total_cost" [(ngModel)]="total_cost" required autocomplete="off">
+					<div class="form-control">{{total_cost | currency:'$'}}</div>
+				</div>
+				<div class="col-12 py-3">
+					<button class="btn btn-primary" type="submit">Guardar</button>
 				</div>
 			</div>
-			<div class="col-12 py-3">
-				<button class="btn btn-primary" type="submit">Guardar</button>
-			</div>
-		</div>
-	</form>
+		</form>
+	</div>
 </div>
