@@ -1,14 +1,14 @@
-<div class="almacen-container">
-	<div class="almacen-header">
-		<h2>Almacen</h2>
-		<span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
-	</div>
+<div class="almacen-container mt-3">
 
-	<div class="almacen-location">
-		<span>Ubicación</span>
-		<select class="input-select" name="selected_store_id" [(ngModel)]="selected_store_id" (ngModelChange)="onStoreSelected($event)">
-			<option *ngFor="let s of stores" [value]="s.id">{{s.name}}</option>
-		</select>
+	<div class="row align-items-center">
+		<div class="col-12">
+			<div>
+				<span>Ubicación</span>
+				<select class="input-select" name="selected_store_id" [(ngModel)]="selected_store_id" (ngModelChange)="onStoreSelected($event)">
+					<option *ngFor="let s of stores" [value]="s.id">{{s.name}}</option>
+				</select>
+			</div>
+		</div>
 	</div>
 
 	<!-- Autocomplete for Buscar equipo -->
@@ -62,8 +62,8 @@
 
 	<form (submit)="onGuardar()" ngNativeValidate>
 		<div class="row">
-			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)">
-				<option>Producto</option>
+			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)" required>
+				<option value="">Producto</option>
 				<option *ngFor="let item of item_array" [value]="item.id">{{item.id}} - {{item.name}}</option>
 			</select>
 			<div class="col-2 px-0">
