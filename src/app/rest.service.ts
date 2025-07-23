@@ -119,7 +119,6 @@ export class RestService
 	getStores(): any
 	{
 		const url = `${this.base_url}/store.php?limit=999999`;
-		console.log(`Fetching stores from: ${url}`);
 		return fetch(url)
 			.then(response => {
 				if (!response.ok) {
@@ -128,7 +127,6 @@ export class RestService
 				return response.json();
 			})
 			.then(data => {
-				console.log('Raw stores data from API:', data);
 				return data.data;
 			})
 			.catch(error => {
@@ -241,6 +239,10 @@ export class RestService
 
 	getErrorString(error:any):string
 	{
+		if( error instanceof Error )
+		{
+			return error.message;
+		}
 		if (error == null || error === undefined)
 			return 'Error desconocido';
 
@@ -265,6 +267,7 @@ export class RestService
 	showError(error: any, auto_hide:boolean = true)
 	{
 		console.log('Error to display is', error);
+
 		if( error instanceof ErrorMessage )
 		{
 			this.showErrorMessage(error);
