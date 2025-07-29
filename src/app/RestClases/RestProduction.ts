@@ -211,7 +211,6 @@ export class RestProduction
 			.then(this.getJsonLambda())
 			.then(data => data.data)
 	}
-}
 
 	getRolesItemPrices(role_ids:number[]):Promise<any[]>
 	{
