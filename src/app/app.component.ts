@@ -31,7 +31,7 @@ export class AppComponent implements OnInit
 	{
 		if( localStorage.getItem('session') )
 		{
-			this.router.navigate(['/registrar-produccion']);
+			//this.router.navigate(['/registrar-produccion']);
 		}
 		else
 		{

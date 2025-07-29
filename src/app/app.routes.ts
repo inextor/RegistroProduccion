@@ -36,5 +36,9 @@ export const routes: Routes = [
 	{
 		path: 'registrar-gasolina',
 		loadComponent: () => import('./registrar-gasolina/registrar-gasolina.component').then(m => m.RegistrarGasolinaComponent),
+	},
+	{
+		path: 'generar-nomina',
+		loadComponent: () => import('./generar-nomina/generar-nomina.component').then(m => m.GenerarNominaComponent),
 	}
 ];

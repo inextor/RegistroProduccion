@@ -1,14 +1,9 @@
 import { Utils } from "../classes/DateUtils";
-import { Attribute } from "../Models/attribute";
-import { ConsumptionInfo } from "../Models/ConsumptionInfo";
-import { ItemInfo } from "../Models/ItemInfo";
-import { ProductionAreaInfo } from "../Models/ProductionAreaInfo";
 import { RestService } from "../rest.service";
 
 
-export class RestProduction
+export class RestConsumption
 {
-
 	constructor(private rest_service: RestService)
 	{
 
@@ -17,36 +12,6 @@ export class RestProduction
 	zero(x:number):string
 	{
 		return x < 10 ? '0'+x : ''+x;
-	}
-
-	searchProductionAreaInfo(p: URLSearchParams | Object):Promise<ProductionAreaInfo[]>
-	{
-		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
-		const url = new URL(`${this.rest_service.getBaseUrl()}/production_area_info.php`);
-		url.search = params.toString(); // Handles '?' and encoding
-
-		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		return fetch(url, options )
-		.then(this.getJsonLambda())
-		.then((data) =>
-		{
-			return data.data;
-		});
-	}
-
-	searchProductionInfo(p: URLSearchParams | Object):Promise<ProductionAreaInfo[]>
-	{
-		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
-		const url = new URL(`${this.rest_service.getBaseUrl()}/production_info.php`);
-		url.search = params.toString(); // Handles '?' and encoding
-
-		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		return fetch(url, options )
-		.then(this.getJsonLambda())
-		.then((data) =>
-		{
-			return data.data;
-		});
 	}
 
 	async getProductionAreas(storeId: number): Promise<any>
@@ -70,7 +35,7 @@ export class RestProduction
 		}
 		catch (error)
 		{
-			console.error(`Error in getProductionAreas for store ID ${storeId}:`, error);
+			console.error(`Error in getConsumptionAreas for store ID ${storeId}:`, error);
 			throw error; // Re-throw to be handled by the component
 		}
 	}
@@ -80,12 +45,12 @@ export class RestProduction
 	 * @returns Promise:<{total:number,data:ItemInfo[]}>
 	 */
 
-	getItemsByProductionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
+	getItemsByConsumptionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
 	{
 		let ids = Array.isArray(production_area_id) ? production_area_id.join(',') : production_area_id;
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 
-		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id,=${ids}&limit=999999`;
+		const url = `${this.rest_service.getBaseUrl()}/consumption_area_item.php?production_area_id,=${ids}&limit=999999`;
 		return fetch(url, options )
 		.then(response => response.json())
 		.then(data => data.data)
@@ -105,7 +70,7 @@ export class RestProduction
 	 * @returns Promise:<{total:number,data:ItemInfo[]}>
 	 */
 
-	getItemInfoListByProductionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
+	getItemInfoListByConsumptionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
 	{
 		let z:string[] = [];
 
@@ -124,7 +89,7 @@ export class RestProduction
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 
-		const url = `${this.rest_service.getBaseUrl()}/production_area_item.php?production_area_id,=${ids}&limit=999999`;
+		const url = `${this.rest_service.getBaseUrl()}/consuption_area_item.php?production_area_id,=${ids}&limit=999999`;
 		return fetch(url, options )
 		.then(response => response.json())
 		.then(data => data.data)
@@ -138,7 +103,7 @@ export class RestProduction
 
 			let item_ids = Array.from(id_map.keys()).join(',');
 
-			let url_items = `${this.rest_service.getBaseUrl()}/item_info.php?id,=${item_ids}&limit=999999`;
+			let url_items = `${this.rest_service.getBaseUrl()}/item.php?id,=${item_ids}&limit=999999`;
 
 			return fetch( url_items , options )
 				.then(response => response.json())
@@ -150,12 +115,12 @@ export class RestProduction
 	 * @deprecated
 	 */
 
-	getProductionAreaItems(production_area_id: string|number|number[]):Promise<ItemInfo[]>
+	getConsumptionAreaItems(production_area_id: string|number|number[]):Promise<any[]>
 	{
-		return this.getItemInfoListByProductionAreaIds(production_area_id);
+		return this.getItemInfoListByConsumptionAreaIds(production_area_id);
 	}
 
-	getProductionAreaInfo(production_area_id: number):Promise<any>
+	getConsumptionAreaInfo(production_area_id: number):Promise<any>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_area_info.php?id=${production_area_id}`;
@@ -183,10 +148,10 @@ export class RestProduction
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())
-			.then(data => data.data);
-	}
+			.then(data => data.data)
+		}
 
-	addProduction(production: any): Promise<any>
+	addConsumptionInfo(consumption_info: any): Promise<any>
 	{
 
 		let headers =	{
@@ -195,23 +160,14 @@ export class RestProduction
 		};
 
 		let method = 'POST';
-		let body = JSON.stringify(production);
+		let body = JSON.stringify(consumption_info);
 
-		const url = `${this.rest_service.getBaseUrl()}/production_info.php`;
+
+		const url = `${this.rest_service.getBaseUrl()}/consuption_info.php`;
 		return fetch(url, { method, headers, body })
 			.then(this.getJsonLambda())
 			.then(data => data)
-	}
-
-	getGasolinaPrice(role_ids:number[], item_id:number):Promise<any[]>
-	{
-		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/role_item_price.php?role_id,=${role_ids.join(',')}&item_id=${item_id}&limit=999999`;
-		return fetch(url, options )
-			.then(this.getJsonLambda())
-			.then(data => data.data)
-	}
-}
+		}
 
 	getRolesItemPrices(role_ids:number[]):Promise<any[]>
 	{
@@ -251,7 +207,7 @@ export class RestProduction
 		};
 	}
 
-	getAllProductionAreas():Promise<any[]>
+	getAllConsumptionAreas():Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_area.php?limit=999999`;
@@ -260,7 +216,7 @@ export class RestProduction
 			.then(data => data.data);
 	}
 
-	getAllProduction():Promise<any[]>
+	getAllConsumption():Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_info.php?limit=999999`;
@@ -269,7 +225,7 @@ export class RestProduction
 			.then(data => data.data);
 	}
 
-	getProductionItems():Promise<ItemInfo[]>
+	getConsumptionItems():Promise<any[]>
 	{
 		return this.getAllRoles().then(roles =>
 		{
@@ -288,7 +244,7 @@ export class RestProduction
 		.then(data => data.data)
 	}
 
-	getAttributes():Promise<Attribute[]>
+	getAttributes():Promise<any[]>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/attribute.php?limit=999999`;
@@ -297,7 +253,7 @@ export class RestProduction
 			.then(data => data.data)
 	}
 
-	getProductionItemInfoByItemId(item_id: any,date:string):Promise<any[]>
+	getConsumptionItemInfoByItemId(item_id: any,date:string):Promise<any[]>
 	{
 		let d = Utils.getDateFromLocalMysqlString(date);
 		d.setHours(0,0,0,0);
@@ -318,7 +274,7 @@ export class RestProduction
 			.then(data => data.data)
 	}
 
-	getProductionInfoByProductionAreaId(production_area_id: any,date:string):Promise<any[]>
+	getConsumptionInfoByProductionAreaId(production_area_id: any,date:string):Promise<any[]>
 	{
 		let d = Utils.getDateFromLocalMysqlString(date);
 		d.setHours(0,0,0,0);
@@ -360,7 +316,7 @@ export class RestProduction
 			.then(this.getJsonLambda())
 	}
 
-	updateProduction(production:any):Promise<any>
+	updateConsumption(production:any):Promise<any>
 	{
 		let headers =	{
 			'Authorization': `Bearer ${this.rest_service.session.id}`,
@@ -416,7 +372,27 @@ export class RestProduction
 		return new Date( f[0], f[1], f[2], f[3], f[4], f[5], 0);
 	}
 
-	getProductionInfo(p: URLSearchParams | Object):Promise<any>
+	searchConsumptionInfo(p: URLSearchParams | Object):Promise<any[]>
+	{
+		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
+		const url = new URL(`${this.rest_service.getBaseUrl()}/consumption_info.php`);
+		url.search = params.toString(); // Handles '?' and encoding
+
+		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		return fetch(url, options )
+		.then(this.getJsonLambda())
+		.then(data =>
+		{
+			if( 'data' in data )
+			{
+				return data.data;
+			}
+
+			return data;
+		});
+	}
+
+	getConsumptionInfo(p: URLSearchParams | Object):Promise<any>
 	{
 		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
 		const url = new URL(`${this.rest_service.getBaseUrl()}/production_info.php`);
@@ -451,31 +427,15 @@ export class RestProduction
 		return params;
 	}
 
-	getProductionByGroup(group_id:string, start_date:Date, end_date:Date):Promise<any[]>
+	getConsumptionByArea(group_id: number, start_date: Date, end_date: Date): Promise<any[]>
 	{
-
-		let start_utc_string = start_date.toISOString().substring(0,19).replace('T',' ');
-		let end_utc_string = end_date.toISOString().substring(0,19).replace('T',' ');
+		let start_utc_string = start_date.toISOString().substring(0, 19).replace('T', ' ');
+		let end_utc_string = end_date.toISOString().substring(0, 19).replace('T', ' ');
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/reports/production_by_area.php?production_area_id=${group_id}&start=${start_utc_string}&end=${end_utc_string}`;
-		return fetch(url, options )
+		const url = `${this.rest_service.getBaseUrl()}/consumption_info.php?production_area_id=${group_id}&created>~=${start_utc_string}&created<~=${end_utc_string}`;
+		return fetch(url, options)
 			.then(this.getJsonLambda())
-	}
-
-	addConsumptionInfo(consumption_info: ConsumptionInfo): Promise<ConsumptionInfo>
-	{
-		let headers = {
-			'Authorization': `Bearer ${this.rest_service.session.id}`,
-			'Content-Type': 'application/json'
-		};
-
-		let method = 'POST';
-		let body = JSON.stringify(consumption_info);
-
-		const url = `${this.rest_service.getBaseUrl()}/consumption_info.php`;
-		return fetch(url, { method, headers, body })
-			.then(this.getJsonLambda())
-			.then(data => data);
+			.then(data => data.data)
 	}
 }

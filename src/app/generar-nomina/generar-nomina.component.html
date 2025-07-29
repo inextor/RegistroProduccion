@@ -1,0 +1,156 @@
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<h1>Generar Nómina</h1>
+		</div>
+	</div>
+	<form (submit)="searchProductionAreaData()" ngNativeValidate>
+		<div class="row">
+			<div class="col-12 col-md-4">
+				<div class="form-group">
+					<label for="production_area">Area de producción</label>
+					<select class="form-control" name="production_area_id" id="production_area_id" [(ngModel)]="production_area_id" required>
+						<option value="">Seleccionar</option>
+						@for (area of production_area_list; track area.id)
+						{
+							<option [ngValue]="area.id">{{area.name}}</option>
+						}
+					</select>
+				</div>
+			</div>
+			<div class="col-12 col-md-4">
+				<label for="start_date">Desde</label>
+				<input type="date" class="form-control" name="start_date" id="start_date" [(ngModel)]="start_date" required>
+			</div>
+
+			<div class="col-12 col-md-4">
+				<label for="start_date">Desde</label>
+				<input type="date" class="form-control" name="end_date" id="end_date" [(ngModel)]="end_date" required>
+			</div>
+			<div class="col-12 col-md-4">
+				<button type="submit" class="btn btn-primary">Buscar</button>
+			</div>
+		</div>
+	</form>
+
+	<h2>Consumos</h2>
+
+	<div class="row titulo-subheader">
+		<div class="col-12 col-md-3"></div>
+		<div class="col-12 col-md-3">Precio</div>
+		<div class="col-12 col-md-3 text-end">Litros</div>
+		<div class="col-12 col-md-3 text-end">Total</div>
+	</div>
+
+	@for (consumption_info of consumption_info_list; track consumption_info.consumption.id; let index = $index)
+	{
+		<div class="row gasolina">
+			<div class="col-12 col-md-3">
+				{{consumption_info.item.name}} ({{consumption_info.consumption.created | date:'dd/MM/yyyy'}})
+			</div>
+			<div class="col-12 col-md-3">
+				{{consumption_info.consumption.price}}
+			</div>
+			<div class="col-12 col-md-3 text-end">
+				{{consumption_info.consumption.qty}}
+			</div>
+			<div class="col-12 col-md-3 text-end">
+				{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
+			</div>
+		</div>
+	}
+
+	<h2>Resumen Produccion</h2>
+	<table class="table">
+	@for(r of resume; track r.date)
+	{
+		<tr class="gray-row">
+			<th [attr.colspan]="r.production_info_list.length+1">Producto({{r.date}})</th>
+		</tr>
+		<tr class="gray-row">
+			<th>Piezas</th>
+			@for(pi of r.production_info_list;track pi.production.id)
+			{
+				<th>{{pi.item.name}}</th>
+			}
+		</tr>
+		<tr>
+			<td>{{r.piezas}}</td>
+			@for(pi of r.production_info_list; track pi.production.id)
+			{
+				<td>{{pi.production.qty  | number:'1.2-2'}}</td>
+			}
+		</tr>
+	}
+		<tr class="gray-row">
+			<td>Total Pizas</td>
+			<td>Total Kgs</td>
+			<td></td>
+		</tr>
+		<tr class="">
+			<td>{{total_pieces}}</td>
+			<td>{{total_kgs}}</td>
+			<td></td>
+		</tr>
+	</table>
+
+	<!--Poner los totales de produccion kgs y consumo litros
+	<div class="row">
+		<div class="col-3">Total</div>
+		<div class="col-3"></div>
+		<div class="col-3"></div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<h2>Consumos</h2>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Fecha</th>
+						<th>Usuario</th>
+						<th>Producto</th>
+						<th>Cantidad</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (consumption_info of consumption_info_list; track consumption_info.consumption.id)
+					{
+						<tr>
+							<td>{{consumption_info.consumption.created}}</td>
+							<td>{{consumption_info.item.name}}</td>
+							<td>{{consumption_info.consumption.qty}}</td>
+							<td>{{consumption_info.consumption.price*consumption_info.consumption.qty}}</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	-->
+	@for(ur of user_resume_list; track ur.user.id)
+	{
+		<h2>{{ur.role.name}} {{ur.price}}</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Efectivo</th>
+					<th>Consumos</th>
+					<th>Abono</th>
+					<th>Total</th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr>
+						<td>{{ur.user.name}} {{ur.total_pieces}}+{{ur.total_kgs}}</td>
+						<td>{{ur.total_to_pay}}</td>
+						<td>{{ur.total_consumo_liters}}</td>
+						<td>{{0| currency:'$'}}</td>
+						<td>{{ur.total_consumo_total}}</td>
+						<td>{{ur.total_to_pay - ur.total_consumo_total}}</td>
+					</tr>
+			</tbody>
+		</table>
+	}
+</div>

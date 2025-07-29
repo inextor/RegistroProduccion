@@ -62,10 +62,13 @@
 
 	<form (submit)="onGuardar()" ngNativeValidate>
 		<div class="row">
+			<div class="col-12 py-3 form-group">
+				<label for="produced_date">Fecha</label>
+				<input type="date" class="form-control" name="produced_date" [(ngModel)]="produced_date" required>
+			</div>
 			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)" required>
 				<option value="">Producto</option>
-				<option *ngFor="let item of item_array" [value]="item.id">{{item.id}} - {{item.name}}</option>
-			</select>
+				<option *ngFor="let item_info of item_info_array" [value]="item_info.item.id">{{item_info.item.id}} - {{item_info.item.name}}</option> </select>
 			<div class="col-2 px-0">
 				<div class="form-group">
 					<label for="control" >#</label>
@@ -82,6 +85,12 @@
 				<div class="form-group">
 					<label for="pieces_qty">Kilos</label>
 					<input type="number" placeholder="Kilos" class="input-text" step="any" name="qty" min="0.0001" [(ngModel)]="qty" required autocomplete="off"><!-- KILOS -->
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="form-group">
+					<label for="loss_percent">Merma (%)</label>
+					<input type="number" placeholder="Merma" class="input-text" name="loss_percent" [(ngModel)]="loss_percent" autocomplete="off">
 				</div>
 			</div>
 			<div class="col-12 mt-2 mx-0">

@@ -103,7 +103,7 @@ export class ResumenProductionComponent {
 
 			let sd = Utils.getLocalDateFromMysqlString(this.start_date) as Date;
 			sd.setHours(0,0,0,0);
-			obj['created>~'] = sd.toISOString().substring(0,19).replace('T',' ');
+			obj['produced>~'] = sd.toISOString().substring(0,19).replace('T',' ');
 
 			if( query_params.has('end_date') )
 			{
@@ -123,7 +123,7 @@ export class ResumenProductionComponent {
 
 			let ed = Utils.getLocalDateFromMysqlString(this.end_date) as Date;
 			ed.setHours(23,59,59,0);
-			obj['created<~'] = ed.toISOString().substring(0,19).replace('T',' ');
+			obj['produced<~'] = ed.toISOString().substring(0,19).replace('T',' ');
 			obj['limit'] = '999999';
 
 			this.is_loading = true;
@@ -140,9 +140,7 @@ export class ResumenProductionComponent {
 				this.production_area_list = production_area_list;
 				this.production_info_list = production_info_response.sort((a:any,b:any)=>
 				{
-					console.log("a.production.created", a.production.created);
-					console.log("b.production.created", b.production.created);
-					return a.production.created.localeCompare(b.production.created);
+					return a.production.produced.localeCompare(b.production.produced);
 				});
 
 				return this.rest_production.getProductionAreaItems(production_area_list.map((area:any) => area.id));
@@ -235,6 +233,21 @@ export class ResumenProductionComponent {
 						string_id: 'p_item_'+production_info.item.id
 					};
 					production_by_category.production_by_item.push(production_by_item);
+				}
+
+				const item_info = this.item_info_list.find(i => i.item.id === production_info.item.id);
+
+				if( item_info )
+				{
+					const peso_inferior_attribute = this.attributes.find(a => a.name === 'Peso Inferior');
+					const peso_superior_attribute = this.attributes.find(a => a.name === 'Peso Superior');
+
+					const min_weight = item_info.attributes.find((a:any) => a.attribute_id === peso_inferior_attribute.id)?.value;
+					const max_weight = item_info.attributes.find((a:any) => a.attribute_id === peso_superior_attribute.id)?.value;
+
+					let ratio = production_info.production.qty / production_info.production.alternate_qty;
+
+					production_info.is_out_of_range = (min_weight && ratio < min_weight) || (max_weight && ratio > max_weight);
 				}
 
 				production_by_item.production_info_list.push( production_info );

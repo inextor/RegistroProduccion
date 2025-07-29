@@ -1,18 +1,5 @@
 <div class="almacen-container">
-	<div class="row">
-		<div class="almacen-header">
-			<h2>Registrar Gasolina</h2>
-			<span class="icon-settings">&#9881;</span> <!-- Settings Icon -->
-		</div>
-		<div *ngIf="is_loading" class="loading-indicator">
-			Cargando áreas de producción...
-		</div>
-		<div *ngIf="error_message" class="error-message">
-			{{ error_message }}
-		</div>
-	</div>
-
-	<div class="card p-3" style="max-width: 500px;margin: 0 auto;">
+	<div class="card mt-3 p-3" style="max-width: 500px;margin: 0 auto;">
 		<form (submit)="onGuardar()" ngNativeValidate>
 			<div class="row">
 				<div class="col-12 py-3">
@@ -27,8 +14,11 @@
 						</select>
 					</div>
 				</div>
+				<div class="col-12 py-3 form-group">
+					<label for="fecha">Fecha</label>
+					<input type="date" class="form-control" name="fecha" [(ngModel)]="fecha" required>
+				</div>
 				<div>
-					USers;
 					@for(user of users; track user.id )
 					{
 						<div class="col-12 py-3 form-group">

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
 import { RestProduction } from '../RestClases/RestProduction';
 import { GetEmpty } from '../RestClases/GetEmpty';
+import { ItemInfo } from '../Models/ItemInfo';
 
 @Component({
 	selector: 'app-registrar-produccion',
@@ -21,7 +22,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	filtered_production_areas: any[] = [];
 	show_autocomplete = false;
 	selected_production_area: any = null; // To store the selected area object
-	item_array: any[] = [];
+	item_info_array: ItemInfo[] = [];
 	users: any[] = [];
 	selected_item_id: number | undefined = 0; // This will probably be the item info id
 	production: RestProduction;
@@ -88,6 +89,16 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		if (selectedStore)
 		{
 			this.store = selectedStore;
+
+			let percents = {
+				'MS': 17, //Mollusca SF
+				'TN': 10, //Tina
+				'ME': 10, //Mollusca Enseanada
+				'CN': 10, //COnrado
+				'MN': 10, //Ming
+			};
+			if( this.store.code == 'SF' )
+
 			this.rest_service.setStore(store_id).then(() =>
 			{
 				this.selected_production_area = null;
@@ -190,7 +201,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			this.production.getProductionAreaItems(area.id),
 			this.production.getAllRoles()
 		])
-		.then(([users, items, roles]) =>
+		.then(([users, item_info_array, roles]) =>
 		{
 			this.control = 1;
 
@@ -200,7 +211,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				return u;
 			});
 
-			this.item_array = items;
+			this.item_info_array = item_info_array;
+			console.log('Items:',this.item_info_array);
+
 			let role_ids = this.users.filter(user=>user.role_id).map(user => user.role_id) as number[];
 			return this.production.getRolesItemPrices(role_ids);
 		})
@@ -228,8 +241,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	{
 		this.selected_item_id = item_id;
 
-		let item = this.item_array.find(item => item.id == item_id);
-		this.selected_item = item;
+		let item_info = this.item_info_array.find(item_info => item_info.item.id == item_id) as ItemInfo;
+		let item = item_info.item;
+		this.selected_item = item_info.item;
 
 		console.log('Item selected:', item);
 
@@ -417,7 +431,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				control: ""+this.control,
 				is_out_of_range: is_out_of_range,
 				produced: this.produced_date,
-				loss_qty: loss_qty
+				merma_qty: loss_qty
 			}
 		};
 
@@ -427,7 +441,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			console.log('Production added:', response);
 			this.last_production_info_list.unshift({
 				production: data.production,
-				item: this.item_array.find(item => item.id == this.selected_item_id),
+				item: this.item_info_array.find(item_info => item_info.item.id == this.selected_item_id),
 				production_area: this.selected_production_area
 			})
 

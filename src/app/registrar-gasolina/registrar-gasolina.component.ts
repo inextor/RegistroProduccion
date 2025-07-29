@@ -23,9 +23,10 @@ export class RegistrarGasolinaComponent implements OnInit
 {
 	production_area_info_list:ProductionAreaInfo[] = [];
 	selected_production_area_id: number | undefined;
-	total_cost: number | '' = '';
+	total_cost: number = 0;
 	litros: number | '' = '';
 	precio: number | '' = '';
+	fecha: string = new Date().toISOString().split('T')[0];
 	is_loading = false;
 	error_message: string | null = null;
 	production: RestProduction;
@@ -48,7 +49,7 @@ export class RegistrarGasolinaComponent implements OnInit
 		if (this.litros && this.precio) {
 			this.total_cost = this.litros * this.precio;
 		} else {
-			this.total_cost = '';
+			this.total_cost = 0;
 		}
 	}
 
@@ -102,11 +103,6 @@ export class RegistrarGasolinaComponent implements OnInit
 			return;
 		}
 
-		if (this.total_cost === '' || this.total_cost <= 0) {
-			alert('Por favor ingrese un costo total válido');
-			return;
-		}
-
 		if (this.litros === '' || this.litros <= 0) {
 			alert('Por favor ingrese una cantidad de litros válida');
 			return;
@@ -130,12 +126,13 @@ export class RegistrarGasolinaComponent implements OnInit
 			id: 0, // Will be set by backend
 			item_id: this.gas_item_info.item.id,
 			qty: Number(this.litros),
+			price: Number(this.precio),
 			production_area_id: this.selected_production_area_id,
 			consumed_by_user_id: null, // Assuming the current user is the consumer
 			store_id: this.store.id,
 			description: `Gasolina: ${this.litros} litros @ ${this.precio} MXN/litro`,
 			status: 'ACTIVE',
-			created: '', // Will be set by backend
+			created: this.fecha, // Will be set by backend
 			created_by_user_id: currentUserId,
 			updated: '', // Will be set by backend
 			updated_by_user_id: currentUserId,
@@ -149,19 +146,22 @@ export class RegistrarGasolinaComponent implements OnInit
 		})
 		.map(role => role.id) as number[];
 
+		let prices = await this.production.getGasolinaPrice(role_ids, this.gas_item_info.item.id);
+
 		let consumption_users = this.users
 		.filter(u=>role_ids.includes(u.role_id))
 		.map(user =>
 		{
+			let price = prices.find(p=>p.role_id == user.role_id);
 			let consumption_user: Consumption_User =
 			{
 				id: 0, // Will be set by backend
 				created_by_user_id: 0,
 				created: '', // Will be set by backend
 				currency_id: 'MXN', // Assuming MXN as default currency
-				price: Number(this.precio),
+				price: price ? price.price : 0,
 				consumption_id: 0,
-				total: 0,
+				total: Math.round(Number(this.precio) * Number(this.litros)*100)/400,
 				updated_by_user_id: 0,
 				updated: '',
 				user_id: user.id,
@@ -184,9 +184,10 @@ export class RegistrarGasolinaComponent implements OnInit
 			alert('Consumo de gasolina registrado exitosamente!');
 			// Clear form fields
 			this.selected_production_area_id = undefined;
-			this.total_cost = '';
+			this.total_cost = 0;
 			this.litros = '';
 			this.precio = '';
+			this.fecha = new Date().toISOString().split('T')[0];
 			this.users = []; // Clear selected users if any
 		})
 		.catch((error: any) =>
