@@ -43,8 +43,11 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	kg_total = 0;
 	pieces_total = 0;
 
+	produced_date: string = this.getCurrentDate();
+
 	stores: any[] = [];
 	selected_store_id: number | undefined;
+	loss_percent: number | '' = '';
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
@@ -57,7 +60,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		this.rest_service.getStores().then((stores: any[]) =>
 		{
 			this.stores = stores;
-			console.log('Stores loaded in component:', this.stores);
 			const currentStore = this.rest_service.getStore();
 			if (currentStore && currentStore.id)
 			{
@@ -80,11 +82,16 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	{
 		this.selected_store_id = store_id;
 		const selectedStore = this.stores.find(s => s.id === Number(store_id));
+		this.selected_production_area = null;
+		this.users = [];
+
 		if (selectedStore)
 		{
 			this.store = selectedStore;
 			this.rest_service.setStore(store_id).then(() =>
 			{
+				this.selected_production_area = null;
+				this.search_term = '';
 				this.loadProductionAreas();
 			}).catch((error: any) =>
 			{
@@ -97,57 +104,54 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		}
 	}
 
-	
-
-	
-
 	loadProductionAreas()
 	{
 		const currentStore = this.store;
 
-		if (currentStore && currentStore.id)
+		//if (!currentStore || !currentStore.id)
+		//{
+		//	this.rest_service.showError('Store information is not available. Cannot load production areas.');
+		//	this.production_areas = [];
+		//}
+
+		this.is_loading = true;
+		this.error_message = null;
+
+		Promise.all
+		([
+			this.production.getAttributes(),
+			this.production.getProductionAreas(currentStore.id)
+		])
+		.then(([attributes,areas])=>
 		{
-			this.is_loading = true;
-			this.error_message = null;
+			const pesoInferior = attributes.find((attr: any) => attr.name === 'Peso Inferior');
+			const pesoSuperior = attributes.find((attr: any) => attr.name === 'Peso Superior');
 
-			Promise.all
-			([
-				this.production.getAttributes(),
-				this.production.getProductionAreas(currentStore.id)
-			])
-			.then(([attributes,areas])=>
+			if (pesoInferior)
 			{
-				const pesoInferior = attributes.find((attr: any) => attr.name === 'Peso Inferior');
-				const pesoSuperior = attributes.find((attr: any) => attr.name === 'Peso Superior');
+				this.peso_inferior_attribute_id = pesoInferior.id;
+			}
 
-				if (pesoInferior)
-				{
-					this.peso_inferior_attribute_id = pesoInferior.id;
-				}
-
-				if (pesoSuperior)
-				{
-					this.peso_superior_attribute_id = pesoSuperior.id;
-				}
-
-				this.production_areas = areas.data || areas;
-			})
-			.catch((error: any) =>
+			if (pesoSuperior)
 			{
-				this.error_message = `Failed to load production areas: ${error.message}`;
-				console.error(this.error_message, error);
-				this.production_areas = [];
-			})
-			.finally(()=>
-			{
-				this.is_loading = false;
-			})
-		}
-		else
+				this.peso_superior_attribute_id = pesoSuperior.id;
+			}
+
+			console.log('PA',this.production_areas);
+			this.production_areas = areas.data || areas;
+		})
+		.catch((error: any) =>
 		{
-			this.rest_service.showError('Store information is not available. Cannot load production areas.');
+			this.error_message = `Failed to load production areas: ${error.message}`;
+			console.error(this.error_message, error);
 			this.production_areas = [];
-		}
+		})
+		.finally(()=>
+		{
+			console.log('finally',this.production_areas);
+			this.is_loading = false;
+		})
+
 	}
 
 	filterProductionAreas(): void
@@ -161,6 +165,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		this.filtered_production_areas = this.production_areas.filter(area =>
 			area.name && area.name.toLowerCase().includes(this.search_term.toLowerCase())
 		);
+
+		console.log('ST',this.production_areas);
+		console.log('TF',this.filtered_production_areas);
 
 		this.show_autocomplete = this.filtered_production_areas.length > 0;
 	}
@@ -388,6 +395,15 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		let date = new Date();
 		let lote = this.store.code+'-'+date.getFullYear()+'-'+zero(date.getMonth()+1)+'-'+zero(date.getDate());
 
+		let loss_qty = 0;
+		let final_qty = parseFloat(this.qty as string);
+
+		if (this.loss_percent && this.loss_percent > 0)
+		{
+			loss_qty = final_qty * (this.loss_percent / 100);
+			final_qty -= loss_qty;
+		}
+
 		let data = {
 			users, //Production_user
 			production :
@@ -395,11 +411,13 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				lote,
 				item_id: this.selected_item_id,
 				production_area_id : this.selected_production_area.id,
-				store_id: this.selected_production_area.store_id,
-				qty: this.qty || parseFloat( this.qty as '' ),
+				store_id: this.selected_store_id,
+				qty: final_qty,
 				alternate_qty: this.alternate_qty,
 				control: ""+this.control,
-				is_out_of_range: is_out_of_range
+				is_out_of_range: is_out_of_range,
+				produced: this.produced_date,
+				loss_qty: loss_qty
 			}
 		};
 
@@ -417,11 +435,31 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			this.updateTotal();
 
 			this.qty = '';
+			this.alternate_qty = '';
+			this.produced_date = this.getCurrentDate();
+			this.loss_percent = '';
 		})
 		.catch((error: any) =>
 		{
 			this.rest_service.showError(error);
 		})
+
+	}
+
+	getCurrentDate(): string
+	{
+		// Get the current date and time.
+		const now = new Date();
+		// Get the timezone offset in minutes. This value is positive if the local timezone is behind UTC and negative if it is ahead.
+		const timezoneOffsetInMinutes = now.getTimezoneOffset();
+		// Convert the offset to milliseconds.
+		const timezoneOffsetInMilliseconds = timezoneOffsetInMinutes * 60000;
+		// Subtract the offset from the current time to get the correct local time.
+		const correctedTime = now.getTime() - timezoneOffsetInMilliseconds;
+		// Create a new Date object with the corrected time.
+		const correctedDate = new Date(correctedTime);
+		// Return the date in YYYY-MM-DD format.
+		return correctedDate.toISOString().split('T')[0];
 	}
 
 	updateTotal()
