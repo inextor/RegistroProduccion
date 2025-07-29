@@ -152,16 +152,25 @@ export class RegistrarGasolinaComponent implements OnInit
 		.filter(u=>role_ids.includes(u.role_id))
 		.map(user =>
 		{
-			let price = prices.find(p=>p.role_id == user.role_id);
+			let total = Math.round(Number(this.precio) * Number(this.litros)*100)/400;
+			let price = Number(this.precio)/4;
+
+			if(user.role.name.toLowerCase() === 'buzo'){
+				total = 0;
+				price = 0;
+			}
+
+
+
 			let consumption_user: Consumption_User =
 			{
 				id: 0, // Will be set by backend
 				created_by_user_id: 0,
 				created: '', // Will be set by backend
 				currency_id: 'MXN', // Assuming MXN as default currency
-				price: price ? price.price : 0,
+				price: price,
 				consumption_id: 0,
-				total: Math.round(Number(this.precio) * Number(this.litros)*100)/400,
+				total: total,
 				updated_by_user_id: 0,
 				updated: '',
 				user_id: user.id,
