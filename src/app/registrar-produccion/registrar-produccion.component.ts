@@ -97,7 +97,15 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				'CN': 10, //COnrado
 				'MN': 10, //Ming
 			};
-			if( this.store.code == 'SF' )
+
+			if( this.store.code in percents )
+			{
+				this.loss_percent = (percents as any)[this.store.code] as number;
+			}
+			else
+			{
+				this.loss_percent = 0;
+			}
 
 			this.rest_service.setStore(store_id).then(() =>
 			{
@@ -449,7 +457,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			this.updateTotal();
 
 			this.qty = '';
-			this.alternate_qty = '';
 			this.produced_date = this.getCurrentDate();
 			this.loss_percent = '';
 		})
