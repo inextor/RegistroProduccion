@@ -48,7 +48,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 	stores: any[] = [];
 	selected_store_id: number | undefined;
-	loss_percent: number | '' = '';
+	loss_percent: number = 0;
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
@@ -101,10 +101,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			if( this.store.code in percents )
 			{
 				this.loss_percent = (percents as any)[this.store.code] as number;
-			}
-			else
-			{
-				this.loss_percent = 0;
 			}
 
 			this.rest_service.setStore(store_id).then(() =>
@@ -457,8 +453,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			this.updateTotal();
 
 			this.qty = '';
-			this.produced_date = this.getCurrentDate();
-			this.loss_percent = '';
+			//this.produced_date = this.getCurrentDate();
 		})
 		.catch((error: any) =>
 		{
@@ -479,6 +474,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		const correctedTime = now.getTime() - timezoneOffsetInMilliseconds;
 		// Create a new Date object with the corrected time.
 		const correctedDate = new Date(correctedTime);
+		console.log('Corrected date:',correctedDate.toISOString());
 		// Return the date in YYYY-MM-DD format.
 		return correctedDate.toISOString().split('T')[0];
 	}

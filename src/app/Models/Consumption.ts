@@ -5,7 +5,7 @@ export interface Consumption {
 	production_area_id: number | null;
 	consumed_by_user_id: number | null;
 	store_id: number;
-	price:Number;
+	price:number;
 	description: string | null;
 	status: 'ACTIVE' | 'DELETED';
 	created: string;

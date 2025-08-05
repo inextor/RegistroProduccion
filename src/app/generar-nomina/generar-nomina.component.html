@@ -62,34 +62,34 @@
 
 	<h2>Resumen Produccion</h2>
 	<table class="table">
-	@for(r of resume; track r.date)
-	{
-		<tr class="gray-row">
-			<th [attr.colspan]="r.production_info_list.length+1">Producto({{r.date}})</th>
-		</tr>
-		<tr class="gray-row">
-			<th>Piezas</th>
-			@for(pi of r.production_info_list;track pi.production.id)
-			{
-				<th>{{pi.item.name}}</th>
-			}
-		</tr>
-		<tr>
-			<td>{{r.piezas}}</td>
-			@for(pi of r.production_info_list; track pi.production.id)
-			{
-				<td>{{pi.production.qty  | number:'1.2-2'}}</td>
-			}
-		</tr>
-	}
+		@for(r of resume; track r.date)
+		{
+			<tr class="gray-row">
+				<th [attr.colspan]="r.production_info_list.length+1">Producto({{r.date}})</th>
+			</tr>
+			<tr class="gray-row">
+				<th>Piezas</th>
+				@for(pi of r.production_info_list;track pi.production.id)
+				{
+					<th>{{pi.item.name}}</th>
+				}
+			</tr>
+			<tr>
+				<td>{{r.piezas}}</td>
+				@for(pi of r.production_info_list; track pi.production.id)
+				{
+					<td>{{pi.production.qty  | number:'1.2-2'}}</td>
+				}
+			</tr>
+		}
 		<tr class="gray-row">
 			<td>Total Pizas</td>
 			<td>Total Kgs</td>
 			<td></td>
 		</tr>
 		<tr class="">
-			<td>{{total_pieces}}</td>
-			<td>{{total_kgs}}</td>
+			<td>{{total_pieces | number}}</td>
+			<td>{{total_kgs | number:'1.2-2'}}</td>
 			<td></td>
 		</tr>
 	</table>

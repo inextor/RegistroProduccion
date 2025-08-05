@@ -9,6 +9,7 @@ import { Consumption } from '../Models/Consumption'; // Import Consumption inter
 import { Consumption_User } from '../Models/Consumption_User'; // Import ConsumptionUser interface
 import { Production_Area } from '../Models/Production_Area'; // Import ProductionArea interface
 import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
+import { RestConsumption } from '../RestClases/RestConsumption';
 
 @Component
 ({
@@ -30,13 +31,15 @@ export class RegistrarGasolinaComponent implements OnInit
 	is_loading = false;
 	error_message: string | null = null;
 	production: RestProduction;
+	consumption: RestConsumption;
 	store = GetEmpty.store();
-    gas_item_info: any = null;
+	gas_item_info: any = null;
 	users: any[] = [];
 	role_list:any[] = [];
 
 	constructor(public rest_service: RestService) {
 		this.production = new RestProduction(rest_service);
+		this.consumption = new RestConsumption(rest_service);
 	}
 
 	ngOnInit(): void
@@ -186,8 +189,8 @@ export class RegistrarGasolinaComponent implements OnInit
 			users: consumption_users,
 		};
 
-		this.production.addConsumptionInfo(data)
-		.then(response =>
+		this.consumption.addConsumptionInfo(data)
+		.then((response:any) =>
 		{
 			console.log('Consumption added:', response);
 			alert('Consumo de gasolina registrado exitosamente!');
@@ -214,6 +217,8 @@ export class RegistrarGasolinaComponent implements OnInit
 		});
 	}
 
+	last_consumptions: ConsumptionInfo[] = [];
+
 	productionAreaSelected(id: number | undefined): void
 	{
 		this.selected_production_area_id = id;
@@ -230,5 +235,30 @@ export class RegistrarGasolinaComponent implements OnInit
 		});
 		console.log('Selected production area:', production_area_info);
 		console.log('Users:', this.users);
+		this.loadLastConsumptions();
+	}
+
+	loadLastConsumptions():void
+	{
+		if (!this.selected_production_area_id)
+		{
+			return;
+		}
+
+		this.consumption.searchConsumptionInfo
+		({
+			production_area_id: this.selected_production_area_id, item_id: this.gas_item_info.item.id,
+			limit: 3,
+			_sort: 'created_DESC',
+		})
+		.then((consumptions:any[]) =>
+		{
+			consumptions.sort((a, b) => a.created > b.created ? 1 : -1);
+			this.last_consumptions = consumptions;
+		})
+		.catch((error:any) =>
+		{
+			this.rest_service.showError("No se pudieron cargar los últimos consumos")
+		});
 	}
 }

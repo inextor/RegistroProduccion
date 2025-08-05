@@ -98,12 +98,12 @@ export class ResumenProductionComponent {
 			{
 				let d = new Date();
 				d.setHours(0,0,0,0);
-				this.start_date = Utils.getLocalMysqlStringFromDate(d).substring(0,10);
+				this.start_date = this.getLocalStringDate(d);
 			}
 
 			let sd = Utils.getLocalDateFromMysqlString(this.start_date) as Date;
 			sd.setHours(0,0,0,0);
-			obj['produced>~'] = sd.toISOString().substring(0,19).replace('T',' ');
+			obj['produced>~'] = this.getLocalStringDate(sd);
 
 			if( query_params.has('end_date') )
 			{
@@ -114,7 +114,7 @@ export class ResumenProductionComponent {
 				let d = new Date();
 				d.setHours(0,0,0,0);
 				d.setDate(d.getDate() + 1);
-				this.end_date = Utils.getLocalMysqlStringFromDate(d).substring(0,10);
+				this.end_date =  this.getLocalStringDate(d);
 			}
 
 			console.log("this.start_date", this.start_date);
@@ -123,7 +123,7 @@ export class ResumenProductionComponent {
 
 			let ed = Utils.getLocalDateFromMysqlString(this.end_date) as Date;
 			ed.setHours(23,59,59,0);
-			obj['produced<~'] = ed.toISOString().substring(0,19).replace('T',' ');
+			obj['produced<~'] = this.getLocalStringDate(ed);
 			obj['limit'] = '999999';
 
 			this.is_loading = true;
@@ -338,4 +338,20 @@ export class ResumenProductionComponent {
 			end_date: this.end_date
 		}});
 	}
+
+	getLocalStringDate(date: Date): string
+	{
+		const timezoneOffsetInMinutes = date.getTimezoneOffset();
+		// Convert the offset to milliseconds.
+		const timezoneOffsetInMilliseconds = timezoneOffsetInMinutes * 60000;
+		// Subtract the offset from the current time to get the correct local time.
+		const correctedTime = date.getTime() - timezoneOffsetInMilliseconds;
+		// Create a new Date object with the corrected time.
+		const correctedDate = new Date(correctedTime);
+		console.log('Corrected date:',correctedDate.toISOString());
+		// Return the date in YYYY-MM-DD format.
+		return correctedDate.toISOString().split('T')[0];
+
+	}
+
 }

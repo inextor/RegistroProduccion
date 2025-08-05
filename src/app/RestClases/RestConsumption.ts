@@ -163,7 +163,7 @@ export class RestConsumption
 		let body = JSON.stringify(consumption_info);
 
 
-		const url = `${this.rest_service.getBaseUrl()}/consuption_info.php`;
+		const url = `${this.rest_service.getBaseUrl()}/consumption_info.php`;
 		return fetch(url, { method, headers, body })
 			.then(this.getJsonLambda())
 			.then(data => data)

@@ -462,19 +462,5 @@ export class RestProduction
 			.then(this.getJsonLambda())
 	}
 
-	addConsumptionInfo(consumption_info: ConsumptionInfo): Promise<ConsumptionInfo>
-	{
-		let headers = {
-			'Authorization': `Bearer ${this.rest_service.session.id}`,
-			'Content-Type': 'application/json'
-		};
-
-		let method = 'POST';
-		let body = JSON.stringify(consumption_info);
-
-		const url = `${this.rest_service.getBaseUrl()}/consumption_info.php`;
-		return fetch(url, { method, headers, body })
-			.then(this.getJsonLambda())
-			.then(data => data);
-	}
+	
 }

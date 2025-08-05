@@ -13,6 +13,22 @@
 							}
 						</select>
 					</div>
+
+					@if(last_consumptions.length > 0)
+					{
+						<div class="mt-3">
+							<h5>Últimos 5 registros de consumo</h5>
+							<ul class="list-group">
+								@for(consumption_info of last_consumptions; track consumption_info.consumption.id)
+								{
+									<li class="list-group-item">
+										Fecha: {{consumption_info.consumption.created | date:'short'}}, Litros: {{consumption_info.consumption.qty}}, Total:
+										Total: {{consumption_info.consumption.price*consumption_info.consumption.qty | currency }}
+									</li>
+								}
+							</ul>
+						</div>
+					}
 				</div>
 				<div class="col-12 py-3 form-group">
 					<label for="fecha">Fecha</label>
