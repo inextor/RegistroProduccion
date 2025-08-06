@@ -40,5 +40,9 @@ export const routes: Routes = [
 	{
 		path: 'generar-nomina',
 		loadComponent: () => import('./generar-nomina/generar-nomina.component').then(m => m.GenerarNominaComponent),
+	},
+	{
+		path: 'generar-nomina-alterno',
+		loadComponent: () => import('./generar-nomina-alterno/generar-nomina-alterno.component').then(m => m.GenerarNominaAlternoComponent),
 	}
 ];

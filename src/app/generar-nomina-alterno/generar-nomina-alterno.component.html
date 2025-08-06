@@ -1,0 +1,81 @@
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<h1>Producción por Área</h1>
+		</div>
+	</div>
+	<form (submit)="searchProductionAreaData()" ngNativeValidate>
+		<div class="row">
+			<div class="col-12 col-md-4">
+				<div class="form-group">
+					<label for="production_area">Area de producción</label>
+					<select class="form-control" name="production_area_id" id="production_area_id" [(ngModel)]="production_area_id" required>
+						<option value="">Seleccionar</option>
+						@for (area of production_area_list; track area.id)
+						{
+							<option [ngValue]="area.id">{{area.name}}</option>
+						}
+					</select>
+				</div>
+			</div>
+			<div class="col-12 col-md-4">
+				<label for="start_date">Desde</label>
+				<input type="date" class="form-control" name="start_date" id="start_date" [(ngModel)]="start_date" required>
+			</div>
+
+			<div class="col-12 col-md-4">
+				<label for="end_date">Hasta</label>
+				<input type="date" class="form-control" name="end_date" id="end_date" [(ngModel)]="end_date" required>
+			</div>
+			<div class="col-12 col-md-4">
+				<button type="submit" class="btn btn-primary">Buscar</button>
+			</div>
+		</div>
+	</form>
+
+  <h2>Producción por Día</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Día</th>
+        <th>Piezas</th>
+        <th>Kgs</th>
+        <th>Merma Piezas</th>
+        <th>Merma Kgs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pi of production_info_list">
+        <td>{{ pi.item.name }}</td>
+        <td>{{ pi.production.produced | date:'dd/MM/yyyy' }}</td>
+        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? 0 : pi.production.alternate_qty }}</td>
+        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? 0 : pi.production.qty }}</td>
+        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? pi.production.alternate_qty : 0 }}</td>
+        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? pi.production.qty : 0 }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Totales por Producto</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Total Piezas</th>
+        <th>Total Kgs</th>
+        <th>Total Merma Piezas</th>
+        <th>Total Merma Kgs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let total of totalesPorProducto">
+        <td>{{ total.producto }}</td>
+        <td>{{ total.piezas }}</td>
+        <td>{{ total.kgs }}</td>
+        <td>{{ total.merma_piezas }}</td>
+        <td>{{ total.merma_kgs }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
