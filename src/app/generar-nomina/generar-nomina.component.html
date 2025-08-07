@@ -76,6 +76,7 @@
 			</tr>
 			<tr>
 				<td>{{r.piezas}}</td>
+
 				@for(pi of r.production_info_list; track pi.production.id)
 				{
 					<td>{{pi.production.qty  | number:'1.2-2'}}</td>
@@ -85,12 +86,13 @@
 		<tr class="gray-row">
 			<td>Total Pizas</td>
 			<td>Total Kgs</td>
-			<td></td>
+			<td>Totla Kgs Muerta</td>
 		</tr>
 		<tr class="">
 			<td>{{total_pieces | number}}</td>
 			<td>{{total_kgs | number:'1.2-2'}}</td>
-			<td></td>
+			<td>{{total_pieces_muerta | number:'1.2-2'}}</td>
+			<td>{{total_kgs_muerta | number:'1.2-2'}}</td>
 		</tr>
 	</table>
 
@@ -143,12 +145,11 @@
 			</thead>
 			<tbody>
 					<tr>
-						<td>{{ur.user.name}} {{ur.total_pieces}}+{{ur.total_kgs}}</td>
-						<td>{{ur.total_to_pay}}</td>
-						<td>{{ur.total_consumo_liters}}</td>
+						<td>{{ur.user.name}}</td>
+						<td>{{ur.total_to_pay | currency}}</td>
+						<td>{{ur.total_consumo_total | currency}}</td>
 						<td>{{0| currency:'$'}}</td>
-						<td>{{ur.total_consumo_total}}</td>
-						<td>{{ur.total_to_pay - ur.total_consumo_total}}</td>
+						<td>{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
 					</tr>
 			</tbody>
 		</table>

@@ -30,7 +30,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	qty: number | '' = ''; //kilos
 	store: any = GetEmpty.store();
 	production_role_prices: any;
-	alternate_qty: number | '' = '';;
+	alternate_qty: number | '' = '';
+	total_registrado: number = 0;
+;
 	last_production_info_list:any[] = [];
 	control:number =  1;
 	selected_item: any = {name:'', background:''};
@@ -49,6 +51,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	stores: any[] = [];
 	selected_store_id: number | undefined;
 	loss_percent: number = 0;
+	total_loss=0;
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
 	{
@@ -483,12 +486,23 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	{
 		let kg_total = 0;
 		let pieces_total = 0;
+		let total_loss = 0;
+		let total_registrado = 0;
 
 		for( let production_info of this.last_production_info_list )
 		{
-			kg_total += parseFloat( ''+production_info.production.qty);
+			let kgs = parseFloat( ''+production_info.production.qty);
+			let merma = parseFloat( ''+production_info.production.merma_qty);
+
+			kg_total += kgs;
 			pieces_total += parseInt( ''+production_info.production.alternate_qty);
+			total_loss += merma;
+
+			total_registrado = kgs + merma;
 		}
+
+		this.total_loss = total_loss;
+		this.total_registrado = total_registrado;
 
 		this.kg_total = kg_total;
 		this.pieces_total = pieces_total;

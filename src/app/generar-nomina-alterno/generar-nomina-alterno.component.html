@@ -33,26 +33,51 @@
 		</div>
 	</form>
 
+  <h2>Consumos</h2>
+
+	<div class="row titulo-subheader">
+		<div class="col-12 col-md-3"></div>
+		<div class="col-12 col-md-3">Precio</div>
+		<div class="col-12 col-md-3 text-end">Litros</div>
+		<div class="col-12 col-md-3 text-end">Total</div>
+	</div>
+
+	@for (consumption_info of consumption_info_list; track consumption_info.consumption.id; let index = $index)
+	{
+		<div class="row gasolina">
+			<div class="col-12 col-md-3">
+				{{consumption_info.item.name}} ({{consumption_info.consumption.created | shortDate}})
+			</div>
+			<div class="col-12 col-md-3">
+				{{consumption_info.consumption.price}}
+			</div>
+			<div class="col-12 col-md-3 text-end">
+				{{consumption_info.consumption.qty}}
+			</div>
+			<div class="col-12 col-md-3 text-end">
+				{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
+			</div>
+		</div>
+	}
+
   <h2>Producción por Día</h2>
   <table class="table">
     <thead>
       <tr>
         <th>Producto</th>
         <th>Día</th>
-        <th>Piezas</th>
-        <th>Kgs</th>
-        <th>Merma Piezas</th>
-        <th>Merma Kgs</th>
+        <th class="text-end">Piezas</th>
+        <th class="text-end">Kgs</th>
+        <th class="text-end">Merma</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let pi of production_info_list">
-        <td>{{ pi.item.name }}</td>
-        <td>{{ pi.production.produced | date:'dd/MM/yyyy' }}</td>
-        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? 0 : pi.production.alternate_qty }}</td>
-        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? 0 : pi.production.qty }}</td>
-        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? pi.production.alternate_qty : 0 }}</td>
-        <td>{{ pi.item.name.toLowerCase().includes('muerta') ? pi.production.qty : 0 }}</td>
+      <tr *ngFor="let prod of produccionPorDia">
+        <td>{{ prod.producto }}</td>
+        <td>{{ prod.dia | shortDate }}</td>
+        <td class="text-end">{{ prod.piezas }}</td>
+        <td class="text-end">{{ prod.kgs | number:'1.2-2' }}</td>
+        <td class="text-end">{{ prod.merma | number:'1.2-2' }}</td>
       </tr>
     </tbody>
   </table>
@@ -62,19 +87,17 @@
     <thead>
       <tr>
         <th>Producto</th>
-        <th>Total Piezas</th>
-        <th>Total Kgs</th>
-        <th>Total Merma Piezas</th>
-        <th>Total Merma Kgs</th>
+        <th class="text-end">Total Piezas</th>
+        <th class="text-end">Total Kgs</th>
+        <th class="text-end">Total Merma</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let total of totalesPorProducto">
         <td>{{ total.producto }}</td>
-        <td>{{ total.piezas }}</td>
-        <td>{{ total.kgs }}</td>
-        <td>{{ total.merma_piezas }}</td>
-        <td>{{ total.merma_kgs }}</td>
+        <td class="text-end">{{ total.piezas }}</td>
+        <td class="text-end">{{ total.kgs | number:'1.2-2' }}</td>
+        <td class="text-end">{{ total.merma | number:'1.2-2' }}</td>
       </tr>
     </tbody>
   </table>

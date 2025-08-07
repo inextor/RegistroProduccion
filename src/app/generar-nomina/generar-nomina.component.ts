@@ -19,6 +19,8 @@ interface UserResume{
 	user: any;
 	total_pieces: number;
 	total_kgs: number;
+	total_kgs_muerta: number;
+	total_pieces_muerta: number;
 	total_to_pay: number;
 	role: any;
 	total_consumo_liters: number;
@@ -54,6 +56,8 @@ export class GenerarNominaComponent implements OnInit
 	user_resume_list: UserResume[] = [];
 	total_pieces: number = 0;
 	total_kgs: number = 0;
+    total_kgs_muerta: number = 0;
+	total_pieces_muerta: number = 0;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
@@ -96,8 +100,8 @@ export class GenerarNominaComponent implements OnInit
 		Promise.all
 		([
 			this.rest_production.getUsersFromProductionArea(this.production_area_id),
-			this.rest_production.searchProductionInfo({'production_area_id':this.production_area_id, 'created>~':this.start_date,'status':'ACTIVE'}),
-			this.rest_consumption.searchConsumptionInfo({'production_area_id':this.production_area_id, 'created>~':this.start_date}),
+			this.rest_production.searchProductionInfo({'production_area_id':this.production_area_id, 'created>~':this.start_date,'status':'ACTIVE', limit:99999}),
+			this.rest_consumption.searchConsumptionInfo({'production_area_id':this.production_area_id, 'created>~':this.start_date, limit:9999999}),
 			this.rest_role.search({limit:999999})
 		])
 		.then(([users, production_info, consumption_info,role_response]) =>
@@ -137,8 +141,23 @@ export class GenerarNominaComponent implements OnInit
 
 			let r:Resume |undefined = days.find((d:any)=>date === d.date);
 
-			this.total_pieces += pi.production.alternate_qty;
-			this.total_kgs += pi.production.qty;
+			if( pi.item.name.toLowerCase().includes('muerta') )
+			{
+				this.total_pieces_muerta += pi.production.alternate_qty;
+			}
+			else
+			{
+				this.total_pieces += pi.production.alternate_qty;
+			}
+
+			if( pi.item.name.toLowerCase().includes('muerta') )
+			{
+				this.total_kgs_muerta += pi.production.qty;
+			}
+			else
+			{
+				this.total_kgs += pi.production.qty;
+			}
 
 			if( !r )
 			{
@@ -208,6 +227,9 @@ export class GenerarNominaComponent implements OnInit
 			let total= 0;
 
 			let total_pieces = 0;
+			let total_pieces_muerta = 0;
+			let total_kgs_muerta = 0;
+
 			let total_kgs = 0;
 			let total_to_pay = 0;
 
@@ -236,8 +258,9 @@ export class GenerarNominaComponent implements OnInit
 					}
 					else
 					{
-						console.log("foooo"+JSON.stringify(u));
-						//console.log('se conto'+pu.user.name+' '+pi.production.id+' '+pi.production.qty );
+						total_pieces_muerta += pi.production.alternate_qty;
+						total_kgs_muerta += pi.production.qty;
+						console.log(pi.item.name+'Muerta'+u.name+' '+pi.production.id+' '+pi.production.qty );
 					}
 					found++;
 				}
@@ -271,7 +294,18 @@ export class GenerarNominaComponent implements OnInit
 				}
 			}
 
-			user_resume_list.push({user:u,total_pieces,total_kgs,total_to_pay, role, total_consumo_liters, total_consumo_total, price});
+			user_resume_list.push({
+				user:u,
+				total_pieces,
+				total_pieces_muerta,
+				total_kgs_muerta,
+				total_kgs,
+				total_to_pay,
+				role,
+				total_consumo_liters,
+				total_consumo_total,
+				price
+			});
 		}
 
 		this.resume = days;
