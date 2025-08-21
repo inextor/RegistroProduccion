@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RestConsumption } from '../RestClases/RestConsumption';
-import { ShortDatePipe } from '../app/pipes/short-date.pipe';
+import { ShortDatePipe } from '../pipes/short-date.pipe';
 
 @Component({
   selector: 'app-generar-nomina-alterno',

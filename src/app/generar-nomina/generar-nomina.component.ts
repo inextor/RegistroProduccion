@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RestConsumption } from '../RestClases/RestConsumption';
 import { Rest } from '../classes/Rest';
+import { ShortDatePipe } from '../pipes/short-date.pipe';
 
 interface Resume{
 	date:string;
@@ -30,7 +31,7 @@ interface UserResume{
 @Component({
 	selector: 'app-generar-nomina',
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule],
+	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe],
 	templateUrl: './generar-nomina.component.html',
 	styleUrl: './generar-nomina.component.css'
 })
