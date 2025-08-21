@@ -23,7 +23,7 @@ import { RestConsumption } from '../RestClases/RestConsumption';
 export class RegistrarGasolinaComponent implements OnInit
 {
 	production_area_info_list:ProductionAreaInfo[] = [];
-	selected_production_area_id: number | undefined;
+	selected_production_area_id: number | '' = '';
 	total_cost: number = 0;
 	litros: number | '' = '';
 	precio: number | '' = '';
@@ -136,6 +136,7 @@ export class RegistrarGasolinaComponent implements OnInit
 			description: `Gasolina: ${this.litros} litros @ ${this.precio} MXN/litro`,
 			status: 'ACTIVE',
 			created: this.fecha, // Will be set by backend
+			consumed: this.fecha,
 			created_by_user_id: currentUserId,
 			updated: '', // Will be set by backend
 			updated_by_user_id: currentUserId,
@@ -162,8 +163,6 @@ export class RegistrarGasolinaComponent implements OnInit
 				total = 0;
 				price = 0;
 			}
-
-
 
 			let consumption_user: Consumption_User =
 			{
@@ -193,9 +192,9 @@ export class RegistrarGasolinaComponent implements OnInit
 		.then((response:any) =>
 		{
 			console.log('Consumption added:', response);
-			alert('Consumo de gasolina registrado exitosamente!');
+			this.rest_service.showSuccess('Consumo de gasolina registrado exitosamente!');
 			// Clear form fields
-			this.selected_production_area_id = undefined;
+			this.selected_production_area_id = '';
 			this.total_cost = 0;
 			this.litros = '';
 			this.precio = '';
@@ -221,9 +220,8 @@ export class RegistrarGasolinaComponent implements OnInit
 
 	productionAreaSelected(id: number | undefined): void
 	{
-		this.selected_production_area_id = id;
+		this.selected_production_area_id = id || '';
 		let production_area_info = this.production_area_info_list.find(pa => pa.production_area.id == id) as ProductionAreaInfo;
-		this.selected_production_area_id  = id;
 		this.store = production_area_info.store;
 
 		console.log('Selected production area:', production_area_info);
@@ -249,11 +247,11 @@ export class RegistrarGasolinaComponent implements OnInit
 		({
 			production_area_id: this.selected_production_area_id, item_id: this.gas_item_info.item.id,
 			limit: 3,
-			_sort: 'created_DESC',
+			_sort: 'consumed_DESC',
 		})
 		.then((consumptions:any[]) =>
 		{
-			consumptions.sort((a, b) => a.created > b.created ? 1 : -1);
+			consumptions.sort((a, b) => a.consumed > b.consumed ? 1 : -1);
 			this.last_consumptions = consumptions;
 		})
 		.catch((error:any) =>

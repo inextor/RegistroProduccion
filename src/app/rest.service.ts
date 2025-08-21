@@ -264,6 +264,11 @@ export class RestService
 		return 'Error desconocido';
 	}
 
+	showSuccess(message: string)
+	{
+		this.showErrorMessage(new ErrorMessage(message, 'alert-success', true));
+	}
+
 	showError(error: any, auto_hide:boolean = true)
 	{
 		console.log('Error to display is', error);

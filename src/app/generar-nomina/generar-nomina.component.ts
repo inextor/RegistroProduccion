@@ -100,8 +100,8 @@ export class GenerarNominaComponent implements OnInit
 		Promise.all
 		([
 			this.rest_production.getUsersFromProductionArea(this.production_area_id),
-			this.rest_production.searchProductionInfo({'production_area_id':this.production_area_id, 'created>~':this.start_date,'status':'ACTIVE', limit:99999}),
-			this.rest_consumption.searchConsumptionInfo({'production_area_id':this.production_area_id, 'created>~':this.start_date, limit:9999999}),
+			this.rest_production.searchProductionInfo({'production_area_id':this.production_area_id, 'produced>~':this.start_date,'status':'ACTIVE', limit:99999}),
+			this.rest_consumption.searchConsumptionInfo({'production_area_id':this.production_area_id, 'consumed>~':this.start_date, limit:9999999}),
 			this.rest_role.search({limit:999999})
 		])
 		.then(([users, production_info, consumption_info,role_response]) =>
@@ -118,7 +118,7 @@ export class GenerarNominaComponent implements OnInit
 				throw new Error('No se encontraron usuarios asociados a la área de producción seleccionada');
 			}
 
-			return this.rest_consumption_user.search({'user_id,':user_ids,'created>~':this.start_date, 'created<~=':this.end_date, limit:999999});
+			return this.rest_consumption_user.search({'user_id,':user_ids,'consumed>~':this.start_date, 'consumed<~':this.end_date, limit:999999});
 		})
 		.then((response) =>
 		{

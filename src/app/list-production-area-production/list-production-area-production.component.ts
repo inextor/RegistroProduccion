@@ -108,12 +108,14 @@ export class ListProductionAreaProductionComponent implements OnInit
 	{
 		if (this.selected_item_filter_id)
 		{
+			console.log('Filtrado por item');
 			this.filtered_production_info_list = this.production_info_list.filter(
 				(info: any) => info.item.id == this.selected_item_filter_id
 			);
 		}
 		else
 		{
+			console.log('Derecho y sin saliva', this.filtered_production_info_list );
 			this.filtered_production_info_list = this.production_info_list;
 		}
 	}

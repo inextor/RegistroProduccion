@@ -89,16 +89,20 @@ export class ListItemProductionComponent implements OnInit
 				return;
 			}
 
+			console.log('QVER..0.4');
+
 			this.item_info = item_info;
 			this.production_item_info_list = production_item_info_list;
 			this.production_area_array = production_area_array;
 
 			if (this.production_item_info_list.length > 0)
 			{
+				console.log('QVER..');
 				this.selected_production_area_filter_id = this.production_item_info_list[0].production_area.id;
 			}
 			else
 			{
+				console.log('QVER..2');
 				this.selected_production_area_filter_id = undefined;
 			}
 			this.filterProductionItemInfoList();
@@ -110,12 +114,14 @@ export class ListItemProductionComponent implements OnInit
 	{
 		if (this.selected_production_area_filter_id)
 		{
+			console.log('Se filtro por área de producción');
 			this.filtered_production_item_info_list = this.production_item_info_list.filter(
 				(info: any) => info.production_area.id === this.selected_production_area_filter_id
 			);
 		}
 		else
 		{
+			console.log('No se filtro por área de producción');
 			this.filtered_production_item_info_list = this.production_item_info_list;
 		}
 	}

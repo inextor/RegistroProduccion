@@ -1,0 +1,30 @@
+Las columans estan desfazadas en la toma de inventario.
+falta una columan al inicio.
+
+por ejemplo al agregar 16.46kg en piezas aparece mal y el total no aparece.
+los 16.46,  los 13.66 debe aparecer en la pnultima columna
+
+
+
+No respeta la fecha a la hora de agregar, debe guardar la informacion
+el filtro esta mal debe ser produced instead of created
+
+y cuando se cambia la fecha no vuelve a cargar la informacion
+
+
+--
+Verificar que no salgan todos lo registros del dia
+
+
+El total sale bien per no sale bien el el registro.
+
+cambiar totl kg muerta
+
+
+La muerta no esta apareciendo agregar piezas y kgs
+Agregar quien anoto  el registro.
+
+
+revisar todo las fechas que contengan produce instead of created
+Poner un boton para marcar como pagado, o Guardar
+

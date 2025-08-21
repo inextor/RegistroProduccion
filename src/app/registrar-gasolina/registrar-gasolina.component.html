@@ -5,8 +5,8 @@
 				<div class="col-12 py-3">
 					<div class="form-group">
 						<label for="production_area">Área de Producción</label>
-						<select class="form-control" name="selected_production_area_id" [(ngModel)]="selected_production_area_id" (ngModelChange)="productionAreaSelected($event)" required>
-							<option [value]="undefined" disabled selected>Seleccione un área</option>
+						<select class="form-control" name="selected_production_area_id" [ngModel]="selected_production_area_id" (ngModelChange)="productionAreaSelected($event)" required>
+							<option value="" selected>Seleccione un área</option>
 							@for (pa of production_area_info_list; track pa.production_area.id)
 							{
 								<option [value]="pa.production_area.id">{{pa.production_area.name}} ..</option>
@@ -44,11 +44,11 @@
 				</div>
 				<div class="col-12 py-3 form-group">
 					<label for="litros">Litros</label>
-					<input type="number" placeholder="Litros" class="form-control" step="any" name="litros" [(ngModel)]="litros" (ngModelChange)="calculateTotalCost()" required autocomplete="off">
+					<input type="number" placeholder="Litros" class="form-control" step="any" name="litros" [(ngModel)]="litros" (ngModelChange)="calculateTotalCost()" autocomplete="off" required>
 				</div>
 				<div class="col-12 py-3 form-group">
 					<label for="precio">Precio</label>
-					<input type="number" placeholder="Precio" class="form-control" step="any" name="precio" [(ngModel)]="precio" (ngModelChange)="calculateTotalCost()" required autocomplete="off">
+					<input type="number" placeholder="Precio" class="form-control" step="any" name="precio" [(ngModel)]="precio" (ngModelChange)="calculateTotalCost()" autocomplete="off" required>
 				</div>
 				<div class="col-12 py-3 form-group">
 					<label for="total_cost">Costo Total</label>

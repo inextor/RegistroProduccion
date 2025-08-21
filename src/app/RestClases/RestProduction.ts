@@ -305,9 +305,8 @@ export class RestProduction
 		end.setTime(d.getTime() + 24 * 60 * 60 * 1000);
 		end.setSeconds(end.getSeconds() - 1);
 
-
-		let start_utc_string = d.toISOString().substring(0,19).replace('T',' ');
-		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
+		let start_utc_string = Utils.getLocalMysqlStringFromDate(d);
+		let end_utc_string = Utils.getLocalMysqlStringFromDate(end);
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&created>=${start_utc_string}&created<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
@@ -326,12 +325,11 @@ export class RestProduction
 		end.setTime(d.getTime() + 24 * 60 * 60 * 1000);
 		end.setSeconds(end.getSeconds() - 1);
 
-
-		let start_utc_string = d.toISOString().substring(0,19).replace('T',' ');
-		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
+		let start_utc_string = Utils.getLocalMysqlStringFromDate(d);
+		let end_utc_string = Utils.getLocalMysqlStringFromDate(end);
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&created>=${start_utc_string}&created<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&produced>~=${start_utc_string}&produced<~=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())
@@ -462,5 +460,5 @@ export class RestProduction
 			.then(this.getJsonLambda())
 	}
 
-	
+
 }

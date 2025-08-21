@@ -1,0 +1,6 @@
+Agretar porcentaje de perdida y calcular en base a eso el total de produccion de kilos, el resto ponerlo en merma
+
+
+merma = kg*porcentaje;
+
+final de kg = kg - merma;

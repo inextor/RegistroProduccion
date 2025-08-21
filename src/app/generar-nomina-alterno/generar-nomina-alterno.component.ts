@@ -59,17 +59,25 @@ export class GenerarNominaAlternoComponent implements OnInit {
         'limit': 99999
     };
 
+
+	let production_search = {...search_params};
+	let consumed_search = {...search_params};
+
     if (this.start_date) {
-        search_params['created>~'] = this.start_date;
+        production_search['produced>~'] = this.start_date;
+		consumed_search['consumed>~'] = this.start_date;
+
     }
 
     if (this.end_date) {
-        search_params['created<~'] = this.end_date;
+        production_search['produced<~'] = this.end_date;
+		consumed_search['consumed<~'] = this.start_date;
     }
 
+
     Promise.all([
-      this.rest_production.searchProductionInfo(search_params),
-      this.rest_consumption.searchConsumptionInfo(search_params)
+      this.rest_production.searchProductionInfo(production_search),
+      this.rest_consumption.searchConsumptionInfo(consumed_search)
     ])
       .then(([production_info, consumption_info]) => {
         this.production_info_list = production_info;

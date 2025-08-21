@@ -46,7 +46,7 @@
 	{
 		<div class="row gasolina">
 			<div class="col-12 col-md-3">
-				{{consumption_info.item.name}} ({{consumption_info.consumption.created | date:'dd/MM/yyyy'}})
+				{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | date:'dd/MM/yyyy'}})
 			</div>
 			<div class="col-12 col-md-3">
 				{{consumption_info.consumption.price}}
@@ -86,7 +86,8 @@
 		<tr class="gray-row">
 			<td>Total Pizas</td>
 			<td>Total Kgs</td>
-			<td>Totla Kgs Muerta</td>
+			<td>Total Piezas Muerta</td>
+			<td>Total Kgs Muerta</td>
 		</tr>
 		<tr class="">
 			<td>{{total_pieces | number}}</td>
@@ -119,7 +120,7 @@
 					@for (consumption_info of consumption_info_list; track consumption_info.consumption.id)
 					{
 						<tr>
-							<td>{{consumption_info.consumption.created}}</td>
+							<td>{{consumption_info.consumption.consumed}}</td>
 							<td>{{consumption_info.item.name}}</td>
 							<td>{{consumption_info.consumption.qty}}</td>
 							<td>{{consumption_info.consumption.price*consumption_info.consumption.qty}}</td>

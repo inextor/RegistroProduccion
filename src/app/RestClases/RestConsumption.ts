@@ -267,7 +267,7 @@ export class RestConsumption
 		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&created>=${start_utc_string}&created<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&produced>=${start_utc_string}&produced<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())
@@ -288,7 +288,7 @@ export class RestConsumption
 		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&created>=${start_utc_string}&created<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&produced>=${start_utc_string}&produced<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())
@@ -433,7 +433,7 @@ export class RestConsumption
 		let end_utc_string = end_date.toISOString().substring(0, 19).replace('T', ' ');
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/consumption_info.php?production_area_id=${group_id}&created>~=${start_utc_string}&created<~=${end_utc_string}`;
+		const url = `${this.rest_service.getBaseUrl()}/consumption_info.php?production_area_id=${group_id}&consumed>~=${start_utc_string}&consumed<~=${end_utc_string}`;
 		return fetch(url, options)
 			.then(this.getJsonLambda())
 			.then(data => data.data)

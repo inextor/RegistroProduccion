@@ -1,5 +1,6 @@
 export interface Consumption {
 	id: number;
+	consumed: string;
 	item_id: number;
 	qty: number;
 	production_area_id: number | null;

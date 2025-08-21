@@ -95,22 +95,14 @@ export class ResumenProduccionCategoryComponent
 				obj[key] = query_params.get(key) as string;
 			}
 
-			if(!('created>=' in obj) )
+			if(!('produced>=' in obj) )
 			{
-				let d = new Date();
-				d.setHours(0,0,0,0);
 
-				obj['created>~'] = d.toISOString().substring(0,19).replace('T',' ');
 			}
 
-			if(!('created<=' in obj) )
+			if(!('produced>~' in obj) )
 			{
-				let d = new Date();
-				d.setHours(0,0,0,0);
-				d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
-				d.setSeconds(d.getSeconds() - 1);
 
-				obj['created<'] = d.toISOString().substring(0,19).replace('T',' ');
 			}
 
 			Promise.all
