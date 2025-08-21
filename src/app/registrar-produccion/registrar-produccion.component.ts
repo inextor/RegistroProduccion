@@ -50,7 +50,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 	stores: any[] = [];
 	selected_store_id: number | undefined;
-	loss_percent: number = 0;
+	loss_percent: number | '' = '';
 	total_loss=0;
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef)
@@ -88,6 +88,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		const selectedStore = this.stores.find(s => s.id === Number(store_id));
 		this.selected_production_area = null;
 		this.users = [];
+		this.reloadProduction();
 
 		if (selectedStore)
 		{
@@ -202,6 +203,8 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 		this.is_loading = true;
 
+		this.reloadProduction();
+
 		Promise.all
 		([
 			this.production.getUsersFromProductionArea(area.id),
@@ -244,9 +247,41 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		});
 	}
 
+	reloadProduction()
+	{
+		if( this.selected_production_area && this.selected_item_id && this.selected_store_id && this.produced_date )
+		{
+			this.production.getProductionInfo
+			({
+				item_id: this.selected_item_id,
+				'produced':this.produced_date,
+				production_area_id: this.selected_production_area.id,
+				store_id: this.selected_store_id,
+				_sort_order: 'control_DESC',
+				limit: 999999
+			})
+			.then((response:any) =>
+			{
+				console.log('Reloaded production info:', response);
+				this.last_production_info_list = response.map((production_info:any) =>
+				{
+					let ratio = production_info.production.qty / production_info.production.alternate_qty;
+					production_info.production.is_out_of_range = this.min_weight_limit !== null && this.max_weight_limit !== null
+						&& ( ratio < this.min_weight_limit || ratio > this.max_weight_limit );
+
+					return production_info;
+				});
+				this.control = response.length+1;
+				this.updateTotal();
+			});
+		}
+	}
+
 	onItemSelected(item_id: number): void
 	{
 		this.selected_item_id = item_id;
+
+		this.reloadProduction();
 
 		let item_info = this.item_info_array.find(item_info => item_info.item.id == item_id) as ItemInfo;
 		let item = item_info.item;
@@ -274,7 +309,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				this.production.getProductionInfo
 				({
 					item_id: this.selected_item_id,
-					'created>~':d.toISOString().substring(0,19).replace('T',' '),
+					'produced>~':d.toISOString().substring(0,19).replace('T',' '),
 					production_area_id: this.selected_production_area.id,
 					_sort_order: 'id_DESC',
 					limit: 999999
@@ -498,7 +533,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			pieces_total += parseInt( ''+production_info.production.alternate_qty);
 			total_loss += merma;
 
-			total_registrado = kgs + merma;
+			total_registrado += kgs + merma;
 		}
 
 		this.total_loss = total_loss;
