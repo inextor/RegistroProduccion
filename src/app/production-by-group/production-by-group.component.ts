@@ -46,14 +46,14 @@ export class ProductionByGroupComponent
 	{
 		this.start_date = date_string;
 		this.loadData(this.group_id, this.start_date, this.end_date);
-		console.log(this.start_date); //TODO BORRAR
+		console.log(this.start_date);
 	}
 
 	onEndDateChange(date_string:string)
 	{
 		this.end_date = date_string;
 		this.loadData(this.group_id, this.start_date, this.end_date);
-		console.log(this.end_date); //TODO BORRAR
+		console.log(this.end_date);
 	}
 
 	ngOnInit()
@@ -94,7 +94,6 @@ export class ProductionByGroupComponent
 	loadData(group_id:string, start_date:string, end_date:string)
 	{
 
-		//this.is_loading = true; //TODO BORRAR
 		let s = this.rest_production.getDateFromLocalMysqlString(start_date);
 		s.setHours(0,0,0,0);
 
@@ -106,7 +105,7 @@ export class ProductionByGroupComponent
 			this.rest_production.getProductionArea(group_id)
 		])
 		.then(([data,production_area]) =>
-		{//TODO BORRAR
+		{
 			this.production_area= production_area;
 			this.production_info_list = data;
 			let total_qty = 0;

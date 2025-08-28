@@ -1,5 +1,4 @@
 <div class="almacen-container mt-3">
-
 	<div class="row align-items-center">
 		<div class="col-12">
 			<div>
@@ -135,6 +134,9 @@
 				</div>
 				<div class="col-2 text-end px-1">
 					{{(production_info.production.qty/production_info.production.alternate_qty) | number:'1.2-2'}}
+				</div>
+				<div class="col-12 text-end px-1">
+					<button class="btn btn-danger" (click)="removeProduction(production_info.production.id)">Remove</button>
 				</div>
 			</div>
 		}

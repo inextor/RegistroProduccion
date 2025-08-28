@@ -461,5 +461,28 @@ export class RestProduction
 			.then(this.getJsonLambda())
 	}
 
+	delete(production_id:number):Promise<any>
+	{
+		let headers =	{
+			'Authorization': `Bearer ${this.rest_service.session.id}`,
+			'Content-Type': 'application/json'
+		};
+
+		let method = 'DELETE';
+		let options = { method, headers };
+		const url = `${this.rest_service.getBaseUrl()}/production.php?id=${production_id}`;
+
+		return fetch(url, options )
+			.then(this.getJsonLambda())
+			.then(data =>
+			{
+				if( 'total' in data )
+				{
+					return data.data;
+				}
+				return data.data;
+			})
+	}
+
 
 }

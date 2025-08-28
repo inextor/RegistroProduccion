@@ -6,6 +6,9 @@ import { RestProduction } from '../RestClases/RestProduction';
 import { GetEmpty } from '../RestClases/GetEmpty';
 import { ItemInfo } from '../Models/ItemInfo';
 
+import { ConfirmationService } from '../services/confirmation.service';
+import { filter, mergeMap, Subscription } from 'rxjs';
+
 @Component({
 	selector: 'app-registrar-produccion',
 	standalone: true,
@@ -52,8 +55,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	selected_store_id: number | undefined;
 	loss_percent: number | '' = '';
 	total_loss=0;
+	sink: Subscription | null = null;
 
-	constructor(public rest_service: RestService, private elementRef: ElementRef)
+	constructor(public rest_service: RestService, private elementRef: ElementRef, private confirmation: ConfirmationService)
 	{
 		// RestProduction is actually RestProduction
 		this.production = new RestProduction(rest_service);
@@ -480,7 +484,8 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				item_id: this.selected_item_id,
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_store_id,
-				qty: final_qty,
+				reported_qty: this.qty,
+				qty: Math.floor( final_qty*100 )/100,
 				alternate_qty: this.alternate_qty,
 				control: ""+this.control,
 				is_out_of_range: is_out_of_range,
@@ -488,7 +493,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				merma_qty: loss_qty
 			}
 		};
-
 
 		this.production.addProduction(data).then(response =>
 		{
@@ -555,6 +559,33 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		this.pieces_total = pieces_total;
 	}
 
+	removeProduction(production_id: number)
+	{
+		this.sink = this.confirmation.showConfirmAlert('Eliminar registro','¿Está seguro de que desea eliminar este registro de producción?')
+		.pipe(
+			filter(response => response.accepted),
+			mergeMap(() =>
+			{
+				this.is_loading = true;
+				return this.production.delete(production_id);
+			})
+		)
+		.subscribe({
+			next: () =>
+			{
+				this.last_production_info_list = this.last_production_info_list.filter(p => p.production.id !== production_id);
+				this.updateTotal();
+				this.control--;
+				this.is_loading = false;
+			},
+			error: (error) =>
+			{
+				this.rest_service.showError(error);
+				this.is_loading = false;
+			}
+		});
+	}
+
 	guraderProduction(event: Event):void
 	{
 		event.preventDefault();
@@ -563,5 +594,9 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	ngOnDestroy(): void
 	{
 		document.body.style.backgroundColor = ''; // Reset to default or global style
+		if(this.sink)
+		{
+			this.sink.unsubscribe();
+		}
 	}
 }
