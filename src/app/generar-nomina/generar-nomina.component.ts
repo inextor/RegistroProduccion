@@ -59,6 +59,8 @@ export class GenerarNominaComponent implements OnInit
 	total_kgs: number = 0;
     total_kgs_muerta: number = 0;
 	total_pieces_muerta: number = 0;
+    all_users_total_consumption: number = 0;
+    all_users_total_to_pay: number = 0;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
@@ -98,11 +100,30 @@ export class GenerarNominaComponent implements OnInit
 		this.production_info_list = [];
 
 
+		let start_param = this.start_date+' 00:00:00';
+		let end_param = this.end_date+' 23:59:59';
+
+		let prodution_search_params = {
+			production_area_id:this.production_area_id,
+			'produced>~':start_param,
+			'produced<~=': end_param,
+			status:'ACTIVE',
+			limit:99999
+		};
+
+		let consumption_search_params = {
+			production_area_id:this.production_area_id,
+			'consumed>~':start_param,
+			'consumed<~': end_param,
+			limit:9999999
+		};
+
 		Promise.all
 		([
 			this.rest_production.getUsersFromProductionArea(this.production_area_id),
-			this.rest_production.searchProductionInfo({'production_area_id':this.production_area_id, 'produced>~':this.start_date,'status':'ACTIVE', limit:99999}),
-			this.rest_consumption.searchConsumptionInfo({'production_area_id':this.production_area_id, 'consumed>~':this.start_date, limit:9999999}),
+
+			this.rest_production.searchProductionInfo( prodution_search_params ),
+			this.rest_consumption.searchConsumptionInfo(consumption_search_params),
 			this.rest_role.search({limit:999999})
 		])
 		.then(([users, production_info, consumption_info,role_response]) =>
@@ -136,20 +157,23 @@ export class GenerarNominaComponent implements OnInit
 	{
 		let days = [];
 
+		this.total_pieces = 0;
+		this.total_pieces_muerta = 0;
+		this.total_kgs = 0;
+		this.total_kgs_muerta = 0;
+
 		for(let pi of this.production_info_list)
 		{
 			let date = pi.production.produced.substring(0,10);
 
-			let r:Resume |undefined = days.find((d:any)=>date === d.date);
+			let resume:Resume |undefined = days.find((d:any)=>date === d.date);
 
 			if( pi.item.name.toLowerCase().includes('muerta') )
 			{
 				this.total_pieces_muerta += pi.production.alternate_qty;
 			}
-			else
-			{
-				this.total_pieces += pi.production.alternate_qty;
-			}
+
+			this.total_pieces += pi.production.alternate_qty;
 
 			if( pi.item.name.toLowerCase().includes('muerta') )
 			{
@@ -160,25 +184,20 @@ export class GenerarNominaComponent implements OnInit
 				this.total_kgs += pi.production.qty;
 			}
 
-			if( !r )
+			if( !resume )
 			{
-				r= {
+				resume= {
 					date,
 					piezas: 0,
 					kilos: 0,
 					production_info_list: []
 				};
-				days.push(r);
+				days.push(resume);
 			}
 
-			let pi_item = r.production_info_list.find((pi:any)=>pi.item.id === pi.item.id);
+			let pi_item = resume.production_info_list.find((pi_tmp:any)=>pi_tmp.item.id === pi.item.id);
 
-			if( pi_item )
-			{
-				pi_item.production.qty += pi.production.qty;
-				pi_item.production.alternate_qty += pi.production.alternate_qty;
-			}
-			else
+			if( !pi_item )
 			{
 				let pn = {...pi};
 				pn.production = {...pi.production};
@@ -187,14 +206,14 @@ export class GenerarNominaComponent implements OnInit
 				pn.production.alternate_qty = 0;
 				pi_item = pn;
 
-				r.production_info_list.push(pi_item);
+				resume.production_info_list.push(pi_item);
 			}
 
 			pi_item.production.qty += pi.production.qty;
 			pi_item.production.alternate_qty += pi.production.alternate_qty;
 
-			r.piezas += pi.production.alternate_qty;
-			r.kilos += pi.production.qty;
+			resume.piezas += pi.production.alternate_qty;
+			resume.kilos += pi.production.qty;
 		}
 
 		days.sort((a,b)=>
@@ -206,6 +225,12 @@ export class GenerarNominaComponent implements OnInit
 		{
 			r.production_info_list.sort((a,b)=>
 			{
+				if( a.item.name.toLowerCase().includes('muerta') )
+					return 1;
+
+				if( b.item.name.toLowerCase().includes('muerta') )
+					return -1;
+
 				return a.item.sort_weight < b.item.sort_weight ? 1 : -1;
 			});
 
@@ -221,6 +246,9 @@ export class GenerarNominaComponent implements OnInit
 		//Generarcion resumen usuario
 
 		let user_resume_list = [];
+
+		this.all_users_total_to_pay = 0;
+		this.all_users_total_consumption = 0;
 
 		for(let u of this.user_list)
 		{
@@ -253,6 +281,7 @@ export class GenerarNominaComponent implements OnInit
 						total_pieces += pi.production.alternate_qty;
 						total_kgs += pi.production.qty;
 						total_to_pay += pi.production.qty * pu.price;
+						this.all_users_total_to_pay += pi.production.qty * pu.price;
 						price = pu.price;
 						console.log
 						console.log('se conto'+u.name+' '+pi.production.id+' '+pi.production.qty );
@@ -286,6 +315,7 @@ export class GenerarNominaComponent implements OnInit
 					{
 						total_consumo_liters += ci.consumption.qty;
 						total_consumo_total += ci.consumption.qty * cu.price;
+						this.all_users_total_consumption += ci.consumption.qty * cu.price;
 						console.log('Consumo total', total_consumo_liters, total_consumo_total);
 					}
 					else

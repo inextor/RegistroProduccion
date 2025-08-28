@@ -65,26 +65,29 @@
 		@for(r of resume; track r.date)
 		{
 			<tr class="gray-row">
-				<th [attr.colspan]="r.production_info_list.length+1">Producto({{r.date}})</th>
+				<th [attr.colspan]="r.production_info_list.length+2">Producto({{r.date}})</th>
 			</tr>
 			<tr class="gray-row">
 				<th>Piezas</th>
 				@for(pi of r.production_info_list;track pi.production.id)
 				{
-					<th>{{pi.item.name}}</th>
+					@if(pi.item.name.toLowerCase().includes('muerta'))
+					{
+						<th>Piezas {{pi.item.name}}</th>
+					}
+					<th>Kgs {{pi.item.name}}</th>
 				}
 			</tr>
 			<tr>
-				<td>{{r.piezas}}</td>
-
 				@for(pi of r.production_info_list; track pi.production.id)
 				{
+					<td>{{pi.production.alternate_qty | number }}</td>
 					<td>{{pi.production.qty  | number:'1.2-2'}}</td>
 				}
 			</tr>
 		}
 		<tr class="gray-row">
-			<td>Total Pizas</td>
+			<td>Total Piezas</td>
 			<td>Total Kgs</td>
 			<td>Total Piezas Muerta</td>
 			<td>Total Kgs Muerta</td>
@@ -155,4 +158,16 @@
 			</tbody>
 		</table>
 	}
+
+	<h2>Totales</h2>
+	<table class="table">
+		<tr class="gray-row">
+			<td>Total Ingresos</td>
+			<td>Total</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>{{all_users_total_to_pay + all_users_total_consumption | currency}}</td>
+		</tr>
+	</table>
 </div>

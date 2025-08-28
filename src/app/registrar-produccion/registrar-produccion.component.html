@@ -20,6 +20,7 @@
 			[(ngModel)]="search_term"
 			(ngModelChange)="filterProductionAreas()"
 			(focus)="onSearchFocus()"
+			[disabled]="is_loading"
 		/>
 		<div *ngIf="show_autocomplete && filtered_production_areas.length > 0" class="autocomplete-dropdown">
 			<div *ngFor="let area of filtered_production_areas" class="autocomplete-item" (click)="selectProductionArea(area)" >
@@ -64,11 +65,12 @@
 		<div class="row">
 			<div class="col-12 py-3 form-group">
 				<label for="produced_date">Fecha</label>
-				<input type="date" class="form-control" name="produced_date" [(ngModel)]="produced_date" (ngModelChange)="reloadProduction()" required>
+				<input type="date" class="form-control" name="produced_date" [(ngModel)]="produced_date" (ngModelChange)="reloadProduction()" [disabled]="is_loading" required>
 			</div>
-			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)" required>
+			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)" [disabled]="is_loading" required>
 				<option value="">Producto</option>
-				<option *ngFor="let item_info of item_info_array" [value]="item_info.item.id">{{item_info.item.id}} - {{item_info.item.name}}</option> </select>
+				<option *ngFor="let item_info of item_info_array" [value]="item_info.item.id">{{item_info.item.id}} - {{item_info.item.name}}</option>
+			</select>
 			<div class="col-2 px-0">
 				<div class="form-group">
 					<label for="control" >#</label>

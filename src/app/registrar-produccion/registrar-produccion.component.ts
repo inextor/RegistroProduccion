@@ -88,7 +88,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		const selectedStore = this.stores.find(s => s.id === Number(store_id));
 		this.selected_production_area = null;
 		this.users = [];
-		this.reloadProduction();
 
 		if (selectedStore)
 		{
@@ -104,7 +103,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 			if( this.store.code in percents )
 			{
-				this.loss_percent = (percents as any)[this.store.code] as number;
+				this.loss_percent = '';//(percents as any)[this.store.code] as number;
 			}
 
 			this.rest_service.setStore(store_id).then(() =>
@@ -169,6 +168,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		{
 			console.log('finally',this.production_areas);
 			this.is_loading = false;
+			this.reloadProduction();
 		})
 
 	}
@@ -203,7 +203,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 		this.is_loading = true;
 
-		this.reloadProduction();
 
 		Promise.all
 		([
@@ -244,6 +243,11 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		.catch((error: any) =>
 		{
 			console.error('Error loading production area items:', error);
+		})
+		.finally(()=>
+		{
+			this.is_loading = false;
+			this.reloadProduction();
 		});
 	}
 
@@ -251,6 +255,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	{
 		if( this.selected_production_area && this.selected_item_id && this.selected_store_id && this.produced_date )
 		{
+			this.is_loading = true;
 			this.production.getProductionInfo
 			({
 				item_id: this.selected_item_id,
@@ -273,6 +278,10 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				});
 				this.control = response.length+1;
 				this.updateTotal();
+			})
+			.finally(()=>
+			{
+				this.is_loading = false;
 			});
 		}
 	}
@@ -281,7 +290,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	{
 		this.selected_item_id = item_id;
 
-		this.reloadProduction();
 
 		let item_info = this.item_info_array.find(item_info => item_info.item.id == item_id) as ItemInfo;
 		let item = item_info.item;
@@ -372,6 +380,10 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				console.error('Error loading last production info:', error);
 				this.control = 1; // Reset to 1 on error
 				this.updateTotal();
+			})
+			.finally(()=>
+			{
+				this.reloadProduction();
 			});
 		}
 		else

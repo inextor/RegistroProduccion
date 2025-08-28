@@ -22,7 +22,7 @@
 								@for(consumption_info of last_consumptions; track consumption_info.consumption.id)
 								{
 									<li class="list-group-item">
-										Fecha: {{consumption_info.consumption.created | date:'short'}}, Litros: {{consumption_info.consumption.qty}}, Total:
+										Fecha: {{consumption_info.consumption.consumed | date:'short'}}, Litros: {{consumption_info.consumption.qty}}, Total:
 										Total: {{consumption_info.consumption.price*consumption_info.consumption.qty | currency }}
 									</li>
 								}
