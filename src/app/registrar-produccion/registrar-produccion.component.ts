@@ -561,7 +561,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 	removeProduction(production_id: number)
 	{
-		this.sink = this.confirmation.showConfirmAlert('Eliminar registro','¿Está seguro de que desea eliminar este registro de producción?')
+		this.sink = this.confirmation.showConfirmAlert(null, 'Eliminar registro','¿Está seguro de que desea eliminar este registro de producción?')
 		.pipe(
 			filter(response => response.accepted),
 			mergeMap(() =>
