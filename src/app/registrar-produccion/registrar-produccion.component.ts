@@ -8,6 +8,8 @@ import { ItemInfo } from '../Models/ItemInfo';
 
 import { ConfirmationService } from '../services/confirmation.service';
 import { filter, mergeMap, Subscription } from 'rxjs';
+import { Utils } from '../classes/DateUtils';
+
 
 @Component({
 	selector: 'app-registrar-produccion',
@@ -35,7 +37,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	production_role_prices: any;
 	alternate_qty: number | '' = '';
 	total_registrado: number = 0;
-;
 	last_production_info_list:any[] = [];
 	control:number =  1;
 	selected_item: any = {name:'', background:''};
@@ -241,7 +242,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			});
 
 			this.last_production_info_list = [];
-
 			this.updateTotal()
 		})
 		.catch((error: any) =>
@@ -260,10 +260,22 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		if( this.selected_production_area && this.selected_item_id && this.selected_store_id && this.produced_date )
 		{
 			this.is_loading = true;
+
+			let d = Utils.getDateFromLocalMysqlString(this.produced_date);
+			d.setHours(0,0,0,0);
+
+			let end = new Date();
+			end.setTime(d.getTime());
+			end.setHours(23,59,59,0);
+			end.setDate(d.getDate()+1);
+
+			let end_local_string = Utils.getLocalMysqlStringFromDate(end);
+
 			this.production.getProductionInfo
 			({
 				item_id: this.selected_item_id,
-				'produced':this.produced_date,
+				'produced>~':this.produced_date+' 00:00:00',
+				'produced<~':end_local_string,
 				production_area_id: this.selected_production_area.id,
 				store_id: this.selected_store_id,
 				_sort_order: 'control_DESC',
@@ -272,14 +284,23 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			.then((response:any) =>
 			{
 				console.log('Reloaded production info:', response);
+				response.sort((a:any,b:any) =>{
+					let aa = parseInt(a.production.control);
+					let bb = parseInt(b.production.control);
+					return aa > bb ? -1 : 1;
+				});
+
 				this.last_production_info_list = response.map((production_info:any) =>
 				{
-					let ratio = production_info.production.qty / production_info.production.alternate_qty;
+					let ratio = production_info.production.qty_reported / production_info.production.alternate_qty;
 					production_info.production.is_out_of_range = this.min_weight_limit !== null && this.max_weight_limit !== null
 						&& ( ratio < this.min_weight_limit || ratio > this.max_weight_limit );
 
+					production_info.agua_percent = production_info.production.merma_qty / production_info.production.reported_qty;
+
 					return production_info;
 				});
+
 				this.control = response.length+1;
 				this.updateTotal();
 			})
@@ -323,7 +344,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 					item_id: this.selected_item_id,
 					'produced>~':d.toISOString().substring(0,19).replace('T',' '),
 					production_area_id: this.selected_production_area.id,
-					_sort_order: 'id_DESC',
+					_sort_order: 'alternate_qty_DESC,id_DESC',
 					limit: 999999
 				}),
 				this.production.getItemInfo(item_id)
@@ -343,8 +364,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 					this.max_weight_limit = maxWeightAttr ? parseFloat(maxWeightAttr.value) : null;
 				}
 
-				console.log('Weight limits:', this.min_weight_limit, this.max_weight_limit);
-
 				if (response && response.length > 0)
 				{
 					console.log('Last production info loaded:', response[0]);
@@ -361,12 +380,19 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 					this.control = 1;
 				}
 
-				let x = response ? response.reverse() : [];
+				response.sort((a:any,b:any) =>{
+					return a.production.id > b.production.id ? -1 : 1;
+				});
+
+
+				console.log( response );
+
+				let x = response;
 
 
 				this.last_production_info_list = x.map((production_info:any) =>
 				{
-					let ratio = production_info.production.qty / production_info.production.alternate_qty;
+					let ratio = production_info.production.qty_reported / production_info.production.alternate_qty;
 					production_info.production.is_out_of_range = this.min_weight_limit !== null && this.max_weight_limit !== null
 						&& ( ratio < this.min_weight_limit || ratio > this.max_weight_limit );
 
@@ -484,7 +510,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				item_id: this.selected_item_id,
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_store_id,
-				reported_qty: this.qty,
+				qty_reported: this.qty,
 				qty: Math.floor( final_qty*100 )/100,
 				alternate_qty: this.alternate_qty,
 				control: ""+this.control,
@@ -497,7 +523,8 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		this.production.addProduction(data).then(response =>
 		{
 			console.log('Production added:', response);
-			this.last_production_info_list.unshift({
+			this.last_production_info_list.unshift
+			({
 				production: data.production,
 				item: this.item_info_array.find(item_info => item_info.item.id == this.selected_item_id),
 				production_area: this.selected_production_area
@@ -542,14 +569,17 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 		for( let production_info of this.last_production_info_list )
 		{
-			let kgs = parseFloat( ''+production_info.production.qty);
+			let kgs = parseFloat( ''+production_info.production.qty_reported);
 			let merma = parseFloat( ''+production_info.production.merma_qty);
 
-			kg_total += kgs;
+			kg_total += production_info.production.qty;
+
 			pieces_total += parseInt( ''+production_info.production.alternate_qty);
 			total_loss += merma;
 
-			total_registrado += kgs + merma;
+			total_registrado += kgs;
+
+
 		}
 
 		this.total_loss = total_loss;
@@ -559,32 +589,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		this.pieces_total = pieces_total;
 	}
 
-	removeProduction(production_id: number)
-	{
-		this.sink = this.confirmation.showConfirmAlert(null, 'Eliminar registro','¿Está seguro de que desea eliminar este registro de producción?')
-		.pipe(
-			filter(response => response.accepted),
-			mergeMap(() =>
-			{
-				this.is_loading = true;
-				return this.production.delete(production_id);
-			})
-		)
-		.subscribe({
-			next: () =>
-			{
-				this.last_production_info_list = this.last_production_info_list.filter(p => p.production.id !== production_id);
-				this.updateTotal();
-				this.control--;
-				this.is_loading = false;
-			},
-			error: (error) =>
-			{
-				this.rest_service.showError(error);
-				this.is_loading = false;
-			}
-		});
-	}
 
 	guraderProduction(event: Event):void
 	{
@@ -598,5 +602,11 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		{
 			this.sink.unsubscribe();
 		}
+	}
+
+	producedDateChange(date: string)
+	{
+		this.produced_date = date;
+		this.reloadProduction();
 	}
 }

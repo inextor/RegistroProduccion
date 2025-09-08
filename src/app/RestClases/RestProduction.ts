@@ -238,6 +238,11 @@ export class RestProduction
 			{
 				return response.json().then((data:any) =>
 				{
+					if( typeof data === 'string' )
+					{
+						throw data;
+					}
+
 					if( 'error' in data )
 					{
 						throw data.error;
@@ -461,16 +466,15 @@ export class RestProduction
 			.then(this.getJsonLambda())
 	}
 
-	delete(production_id:number):Promise<any>
+	deleteProduction(production_id:number):Promise<any>
 	{
 		let headers =	{
 			'Authorization': `Bearer ${this.rest_service.session.id}`,
-			'Content-Type': 'application/json'
 		};
 
 		let method = 'DELETE';
 		let options = { method, headers };
-		const url = `${this.rest_service.getBaseUrl()}/production.php?id=${production_id}`;
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?id=${production_id}`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())

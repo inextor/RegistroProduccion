@@ -64,7 +64,7 @@
 		<div class="row">
 			<div class="col-12 py-3 form-group">
 				<label for="produced_date">Fecha</label>
-				<input type="date" class="form-control" name="produced_date" [(ngModel)]="produced_date" (ngModelChange)="reloadProduction()" [disabled]="is_loading" required>
+				<input type="date" class="form-control" name="produced_date" [ngModel]="produced_date" (ngModelChange)="producedDateChange($event)" [disabled]="is_loading" required>
 			</div>
 			<select class="input-select" name="selected_item_id" [ngModel]="selected_item_id" required (ngModelChange)="onItemSelected($event)" [disabled]="is_loading" required>
 				<option value="">Producto</option>
@@ -85,7 +85,7 @@
 			<div class="col-5">
 				<div class="form-group">
 					<label for="pieces_qty">Kilos</label>
-					<input type="number" placeholder="Kilos" class="input-text" step="any" name="qty" min="0.0001" [(ngModel)]="qty" required autocomplete="off"><!-- KILOS -->
+					<input type="number" placeholder="Kilos" class="input-text" step="any" name="qty" min="0.01" [(ngModel)]="qty" required autocomplete="off"><!-- KILOS -->
 				</div>
 			</div>
 			<div class="col-12">
@@ -111,7 +111,7 @@
 			<div class="col-2 text-end px-1">Reg</div>
 			<div class="col-2 text-end px-1">Agua</div>
 			<div class="col-2 text-end px-1">Kilos</div>
-			<div class="col-2 text-end px-1">%</div>
+			<div class="col-2 text-end px-1">Promedio</div>
 		</div>
 
 		@for (production_info of last_production_info_list; track production_info)
@@ -124,19 +124,16 @@
 					{{production_info.production.alternate_qty | number}}
 				</div>
 				<div class="col-2 text-end px-1">
-					{{production_info.production.qty+production_info.production.merma_qty | number:'1.2-2'}}
+					{{production_info.production.qty_reported | number:'1.2-2'}}
 				</div>
 				<div class="col-2 text-end px-1">
-					{{(production_info.production.merma_qty/(production_info.production.qty+production_info.production.merma_qty))*100|number:'1.2-2'}}%
+					{{(production_info.production.merma_qty/(production_info.production.qty_reported))*100|number:'1.2-2'}}%
 				</div>
 				<div class="col-2 text-end px-1">
 					{{production_info.production.qty | number:'1.2-2'}}
 				</div>
 				<div class="col-2 text-end px-1">
-					{{(production_info.production.qty/production_info.production.alternate_qty) | number:'1.2-2'}}
-				</div>
-				<div class="col-12 text-end px-1">
-					<button class="btn btn-danger" (click)="removeProduction(production_info.production.id)">Remove</button>
+					{{(production_info.production.qty_reported/production_info.production.alternate_qty) | number:'1.2-2'}}Kg
 				</div>
 			</div>
 		}

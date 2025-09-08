@@ -19,6 +19,7 @@ import { CommonModule } from '@angular/common';
 export class ListProductionAreaProductionComponent implements OnInit
 {
 
+
 	production_area_info_list: any[] = [];
 	production_area_info: any = {
 		production_area: { name: '' }
@@ -167,6 +168,43 @@ export class ListProductionAreaProductionComponent implements OnInit
 			next:(production:any)=> //production is the updated production
 			{
 				this.rest_service.showError({error:'Cambio guardado'}, false);
+			},
+			error:(error:any) =>
+			{
+				this.rest_service.showError(error);
+			}
+		});
+
+	}
+	removeProductionInfo(production_info: any): void
+	{
+		this.confirmation_service.showConfirmAlert
+		(
+			production_info,
+			'Confirmación',
+			'¿Está seguro de que desea eliminar este registro?',
+			'Aceptar',
+			'Cancelar'
+		)
+		.pipe
+		(
+			filter(result => result.accepted),
+			mergeMap((result:ConfirmationResult) =>
+			{
+				return from(this.rest_production.deleteProduction(result.obj.production.id));
+			})
+		)
+		.subscribe
+		({
+			next:(response:any)=>
+			{
+				this.rest_service.showError({error:'Registro eliminado'}, false);
+				const index = this.production_info_list.findIndex(pi => pi.production.id === production_info.production.id);
+				if (index > -1)
+				{
+					this.production_info_list.splice(index, 1);
+				}
+				this.filterProductionInfoList();
 			},
 			error:(error:any) =>
 			{

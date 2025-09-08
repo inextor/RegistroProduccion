@@ -25,9 +25,6 @@
 	@for (production_info of filtered_production_info_list; track production_info.production.id)
 	{
 		<div class="list-item border-bottom mb-3 pb-1">
-			<div class="list-item-icon">
-				<i class="material-icons"></i>
-			</div>
 			<div class="list-item-content">
 				<div class="list-item-title">
 					{{ production_info.production.control}} -
@@ -42,6 +39,9 @@
 					<div class="col-6 form-group">
 						<label>Kilos</label>
 						<input type="text" [name]="'qty'+production_info.production.id" placeholder="Kilos" class="form-control" name="qty" [(ngModel)]="production_info.production.qty"><!-- KILOS -->
+					</div>
+					<div>
+						<button type="button" class="btn btn-danger" (click)="removeProductionInfo(production_info)">Eliminar</button>
 					</div>
 				</div>
 			</div>

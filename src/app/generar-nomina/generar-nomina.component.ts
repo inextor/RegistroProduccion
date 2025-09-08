@@ -106,7 +106,7 @@ export class GenerarNominaComponent implements OnInit
 		let prodution_search_params = {
 			production_area_id:this.production_area_id,
 			'produced>~':start_param,
-			'produced<~=': end_param,
+			'produced<~': end_param,
 			status:'ACTIVE',
 			limit:99999
 		};
@@ -140,7 +140,8 @@ export class GenerarNominaComponent implements OnInit
 				throw new Error('No se encontraron usuarios asociados a la área de producción seleccionada');
 			}
 
-			return this.rest_consumption_user.search({'user_id,':user_ids,'consumed>~':this.start_date, 'consumed<~':this.end_date, limit:999999});
+			let consumption_ids = consumption_info.map((c:any) => c.consumption.id).join(',');
+			return this.rest_consumption_user.search({'id,':consumption_ids,limit:999999});
 		})
 		.then((response) =>
 		{
