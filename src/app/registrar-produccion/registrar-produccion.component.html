@@ -127,7 +127,7 @@
 					{{production_info.production.qty_reported | number:'1.2-2'}}
 				</div>
 				<div class="col-2 text-end px-1">
-					{{(production_info.production.merma_qty/(production_info.production.qty_reported))*100|number:'1.0-0'}}%
+					{{(1-(production_info.production.qty/(production_info.production.qty_reported)))*100|number:'1.0-0'}}%
 				</div>
 				<div class="col-2 text-end px-1">
 					{{production_info.production.qty | number:'1.2-2'}}
@@ -145,7 +145,7 @@
 			<div class="col-2 text-end px-0">{{total_registrado | number: '1.2-2'}} </div>
 			<div class="col-2 text-end px-1">{{total_loss |number:'1.2-2'}}kg</div>
 			<div class="col-2 text-end px-1">{{kg_total|number:'1.2-2'}}</div>
-			<div class="col-2 text-end px-1">{{(kg_total/pieces_total) |number:'1.2-2'}}</div>
+			<div class="col-2 text-end px-1">{{(total_registrado/pieces_total)|number:'1.2-2'}}Kg/Pieza</div>
 		</div>
 	</div>
 }

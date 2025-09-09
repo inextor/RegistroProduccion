@@ -498,7 +498,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 		if (this.loss_percent && this.loss_percent > 0)
 		{
-			loss_qty = final_qty * (this.loss_percent / 100);
+			loss_qty = Math.round(final_qty * this.loss_percent )/ 100;
 			final_qty -= loss_qty;
 		}
 
@@ -511,7 +511,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				production_area_id : this.selected_production_area.id,
 				store_id: this.selected_store_id,
 				qty_reported: this.qty,
-				qty: Math.floor( final_qty*100 )/100,
+				qty: Math.round( final_qty*100 )/100,
 				alternate_qty: this.alternate_qty,
 				control: ""+this.control,
 				is_out_of_range: is_out_of_range,
@@ -578,8 +578,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			total_loss += merma;
 
 			total_registrado += kgs;
-
-
 		}
 
 		this.total_loss = total_loss;
