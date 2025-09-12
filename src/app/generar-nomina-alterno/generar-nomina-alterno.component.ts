@@ -147,7 +147,13 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.user_production_list = [];
 
 		const filtered_production_info = this.production_info_list.filter(pi => {
-			return pi.users.some(u => u.price && u.price > 0);
+			return !pi.users.every((u:any) => !u.price || u.price === 0);
+		});
+
+		filtered_production_info.sort((a,b)=>{
+			let aa = a.production.produced.substring(0,10);
+			let bb = b.production.produced.substring(0,10);
+			return aa.localeCompare(bb);
 		});
 
 		for (const user of this.user_list) {
