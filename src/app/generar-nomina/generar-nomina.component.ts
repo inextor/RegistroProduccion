@@ -26,6 +26,7 @@ interface UserResume{
 	role: any;
 	total_consumo_liters: number;
 	total_consumo_total: number;
+	deductions: any[];
 };
 
 @Component({
@@ -61,6 +62,56 @@ export class GenerarNominaComponent implements OnInit
 	total_pieces_muerta: number = 0;
     all_users_total_consumption: number = 0;
     all_users_total_to_pay: number = 0;
+	is_modal_open:boolean = false;
+	deducciones:number = 0;
+	is_deduction_modal_open:boolean = false;
+	current_user:UserResume | null = null;
+	deduction_amount:number = 0;
+	deduction_description:string = '';
+
+	openModal()
+	{
+		this.is_modal_open = true;
+	}
+
+	closeModal()
+	{
+		this.is_modal_open = false;
+	}
+
+	saveNomina()
+	{
+		this.closeModal();
+	}
+
+	openDeductionModal(user: UserResume)
+	{
+		this.current_user = user;
+		this.is_deduction_modal_open = true;
+	}
+
+	closeDeductionModal()
+	{
+		this.is_deduction_modal_open = false;
+		this.current_user = null;
+		this.deduction_amount = 0;
+		this.deduction_description = '';
+	}
+
+	addDeduction()
+	{
+		if(this.current_user)
+		{
+			this.current_user.deductions.push({amount: this.deduction_amount, description: this.deduction_description});
+			this.closeDeductionModal();
+		}
+	}
+
+	getTotalDeductions(user: UserResume): number
+	{
+		return user.deductions.reduce((total, deduction) => total + deduction.amount, 0);
+	}
+
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, router: Router)
 	{
@@ -336,7 +387,8 @@ export class GenerarNominaComponent implements OnInit
 				role,
 				total_consumo_liters,
 				total_consumo_total,
-				price
+				price,
+				deductions: []
 			});
 		}
 

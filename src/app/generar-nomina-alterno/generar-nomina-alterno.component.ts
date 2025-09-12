@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RestConsumption } from '../RestClases/RestConsumption';
@@ -27,7 +27,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	end_date: string = '';
 	totalesPorProducto: any[] = [];
 
-	constructor(public rest_service: RestService, public route: ActivatedRoute) {
+	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
 		this.rest_consumption = new RestConsumption(rest_service);
 	}
@@ -36,7 +36,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.route.queryParamMap.subscribe((params: any) => {
 			this.start_date = params.get('start_date') || '';
 			this.end_date = params.get('end_date') || '';
-			this.production_area_id = params.get('production_area_id') || '';
+			let index = 'production_area_id';
+			this.production_area_id = params.has(index) ? parseInt( params.get(index) ):'';
 		});
 
 		this.rest_production.getAllProductionAreas()
@@ -49,29 +50,42 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		}
 	}
 
+	submitSearch(evt:any)
+	{
+		const search_params: any = {
+			'production_area_id': this.production_area_id,
+			'status': 'ACTIVE',
+			'limit': 99999,
+			'start_date': this.start_date,
+			'end_date': this.end_date
+		};
+
+		this.router.navigate(['/generar-nomina-alterno'], {queryParams: search_params });
+	}
+
 	searchProductionAreaData() {
 		this.production_info_list = [];
 		this.totalesPorProducto = [];
 
 		const search_params: any = {
-				'production_area_id': this.production_area_id,
-				'status': 'ACTIVE',
-				'limit': 99999
+			'production_area_id': this.production_area_id,
+			'status': 'ACTIVE',
+			'limit': 99999,
 		};
 
 
-	let production_search = {...search_params};
-	let consumed_search = {...search_params};
+		let production_search = {...search_params};
+		let consumed_search = {...search_params};
 
 		if (this.start_date) {
-				production_search['produced>~'] = this.start_date;
-		consumed_search['consumed>~'] = this.start_date;
+			production_search['produced>~'] = this.start_date;
+			consumed_search['consumed>~'] = this.start_date;
 
 		}
 
 		if (this.end_date) {
-				production_search['produced<~'] = this.end_date;
-		consumed_search['consumed<~'] = this.start_date;
+			production_search['produced<~'] = this.end_date;
+			consumed_search['consumed<~'] = this.start_date;
 		}
 
 
@@ -79,14 +93,27 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.rest_production.searchProductionInfo(production_search),
 			this.rest_consumption.searchConsumptionInfo(consumed_search)
 		])
-			.then(([production_info, consumption_info]) => {
-				this.production_info_list = production_info;
-				this.consumption_info_list = consumption_info;
-				this.agruparYCalcularTotales();
+		.then(([production_info, consumption_info]) => {
+
+			production_info.sort((a,b)=>{
+				if(a.production.produced.localeCompare(b.production.produced) ==0 )
+			{
+					if( a.item.name.toLowerCase().includes('muerta'))
+						return 1;
+
+					return a.item.name.toLowerCase().localeCompare(b.item.name.toLowerCase());
+				}
+
+				return a.item.name.localeCompare(b.production.produced);
 			})
-			.catch((error) => {
-				this.rest_service.showError(error);
-			});
+
+			this.production_info_list = production_info;
+			this.consumption_info_list = consumption_info;
+			this.agruparYCalcularTotales();
+		})
+		.catch((error) => {
+			this.rest_service.showError(error);
+		});
 	}
 
 	agruparYCalcularTotales() {

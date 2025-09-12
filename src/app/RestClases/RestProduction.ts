@@ -1,9 +1,25 @@
 import { Utils } from "../classes/DateUtils";
 import { Attribute } from "../Models/attribute";
 import { ConsumptionInfo } from "../Models/ConsumptionInfo";
+import { Item } from "../Models/Item";
 import { ItemInfo } from "../Models/ItemInfo";
+import { Production } from "../Models/Production";
+import { Production_Area } from "../Models/Production_Area";
 import { ProductionAreaInfo } from "../Models/ProductionAreaInfo";
+import { User } from "../Models/User";
 import { RestService } from "../rest.service";
+
+
+export interface ProductionInfo
+{
+	user: User;
+	production:Production;
+	production_area: Production_Area | null;
+	item:Item;
+	category:any;
+}
+
+
 
 
 export class RestProduction
@@ -34,7 +50,7 @@ export class RestProduction
 		});
 	}
 
-	searchProductionInfo(p: URLSearchParams | Object):Promise<ProductionAreaInfo[]>
+	searchProductionInfo(p: URLSearchParams | Object):Promise<ProductionInfo[]>
 	{
 		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
 		const url = new URL(`${this.rest_service.getBaseUrl()}/production_info.php`);
