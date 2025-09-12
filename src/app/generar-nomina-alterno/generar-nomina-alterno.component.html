@@ -60,45 +60,35 @@
 		</div>
 	}
 
-  <h2>Producción por Día</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th>Día</th>
-        <th class="text-end">Piezas</th>
-        <th class="text-end">Kgs</th>
-        <th class="text-end">Merma</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let prod of produccionPorDia">
-        <td>{{ prod.producto }}</td>
-        <td>{{ prod.dia | shortDate }}</td>
-        <td class="text-end">{{ prod.piezas }}</td>
-        <td class="text-end">{{ prod.kgs | number:'1.2-2' }}</td>
-        <td class="text-end">{{ prod.merma | number:'1.2-2' }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>Totales por Producto</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th class="text-end">Total Piezas</th>
-        <th class="text-end">Total Kgs</th>
-        <th class="text-end">Total Merma</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let total of totalesPorProducto">
-        <td>{{ total.producto }}</td>
-        <td class="text-end">{{ total.piezas }}</td>
-        <td class="text-end">{{ total.kgs | number:'1.2-2' }}</td>
-        <td class="text-end">{{ total.merma | number:'1.2-2' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngFor="let up of user_production_list">
+    <h3>{{ up.user.name }}</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Date</th>
+          <th class="text-end">Qty</th>
+          <th class="text-end">Price</th>
+          <th class="text-end">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let item of up.items">
+          <tr *ngFor="let d of item.dates">
+            <td>{{ item.item.name }}</td>
+            <td>{{ d.date | shortDate }}</td>
+            <td class="text-end">{{ d.qty | number:'1.2-2' }}</td>
+            <td class="text-end">{{ d.price | currency:'$' }}</td>
+            <td class="text-end">{{ d.total | currency:'$' }}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="text-end"><strong>Total del usuario:</strong></td>
+          <td class="text-end"><strong>{{ up.total_amount | currency:'$' }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>

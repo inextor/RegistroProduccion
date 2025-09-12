@@ -6,6 +6,27 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RestConsumption } from '../RestClases/RestConsumption';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
+import { Item } from '../Models/Item';
+
+interface ProductionByDate {
+  date: string;
+  qty: number;
+  price: number;
+  total: number;
+}
+
+interface ProductionByItem {
+  item: Item;
+  dates: ProductionByDate[];
+  total_qty: number;
+  total_amount: number;
+}
+
+interface UserProduction {
+  user: any;
+  items: ProductionByItem[];
+  total_amount: number;
+}
 
 @Component({
 	selector: 'app-generar-nomina-alterno',
@@ -26,6 +47,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	start_date: string = '';
 	end_date: string = '';
 	totalesPorProducto: any[] = [];
+	user_list: any[] = [];
+	user_production_list: UserProduction[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
@@ -38,6 +61,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.end_date = params.get('end_date') || '';
 			let index = 'production_area_id';
 			this.production_area_id = params.has(index) ? parseInt( params.get(index) ):'';
+			this.searchProductionAreaData();
 		});
 
 		this.rest_production.getAllProductionAreas()
@@ -90,10 +114,13 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 
 		Promise.all([
+			this.rest_production.getUsersFromProductionArea(this.production_area_id),
 			this.rest_production.searchProductionInfo(production_search),
 			this.rest_consumption.searchConsumptionInfo(consumed_search)
 		])
-		.then(([production_info, consumption_info]) => {
+		.then(([users, production_info, consumption_info]) => {
+
+			this.user_list = users;
 
 			production_info.sort((a,b)=>{
 				if(a.production.produced.localeCompare(b.production.produced) ==0 )
@@ -117,36 +144,57 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	}
 
 	agruparYCalcularTotales() {
-		const produccionMap = new Map<string, { producto: string, dia: string, piezas: number, kgs: number, merma: number }>();
-		const totalesMap = new Map<string, { producto: string, piezas: number, kgs: number, merma: number }>();
+		this.user_production_list = [];
 
-		for (const pi of this.production_info_list) {
-			const item = pi.item;
-			const dia = new Date(pi.production.produced).toLocaleDateString();
-			const claveDia = `${item.name}-${dia}`;
+		for (const user of this.user_list) {
+			const user_production: UserProduction = {
+				user: user,
+				items: [],
+				total_amount: 0
+			};
 
-			let produccionDia = produccionMap.get(claveDia);
-			if (!produccionDia) {
-				produccionDia = { producto: item.name, dia, piezas: 0, kgs: 0, merma: 0 };
-				produccionMap.set(claveDia, produccionDia);
+			const production_by_item = new Map<number, ProductionByItem>();
+
+			for (const pi of this.production_info_list) {
+				for (const pu of pi.users) {
+					if (pu.user_id === user.id) {
+						let production_item = production_by_item.get(pi.item.id);
+
+						if (!production_item) {
+							production_item = {
+								item: pi.item,
+								dates: [],
+								total_qty: 0,
+								total_amount: 0
+							};
+							production_by_item.set(pi.item.id, production_item);
+						}
+
+						const date = pi.production.produced.substring(0, 10);
+						let production_date = production_item.dates.find(d => d.date === date);
+
+						if (!production_date) {
+							production_date = {
+								date: date,
+								qty: 0,
+								price: pu.price,
+								total: 0
+							};
+							production_item.dates.push(production_date);
+						}
+
+						const amount = pi.production.qty * pu.price;
+						production_date.qty += pi.production.qty;
+						production_date.total += amount;
+						production_item.total_qty += pi.production.qty;
+						production_item.total_amount += amount;
+						user_production.total_amount += amount;
+					}
+				}
 			}
 
-			let totalProducto = totalesMap.get(item.name);
-			if (!totalProducto) {
-				totalProducto = { producto: item.name, piezas: 0, kgs: 0, merma: 0 };
-				totalesMap.set(item.name, totalProducto);
-			}
-
-			produccionDia.piezas += pi.production.alternate_qty;
-			produccionDia.kgs += pi.production.qty;
-			produccionDia.merma += pi.production.merma_qty;
-
-			totalProducto.piezas += pi.production.alternate_qty;
-			totalProducto.kgs += pi.production.qty;
-			totalProducto.merma += pi.production.merma_qty;
+			user_production.items = Array.from(production_by_item.values());
+			this.user_production_list.push(user_production);
 		}
-
-		this.produccionPorDia = Array.from(produccionMap.values());
-		this.totalesPorProducto = Array.from(totalesMap.values());
 	}
 }
