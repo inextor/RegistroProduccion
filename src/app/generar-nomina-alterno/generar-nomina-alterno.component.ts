@@ -146,6 +146,10 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	agruparYCalcularTotales() {
 		this.user_production_list = [];
 
+		const filtered_production_info = this.production_info_list.filter(pi => {
+			return pi.users.some(u => u.price && u.price > 0);
+		});
+
 		for (const user of this.user_list) {
 			const user_production: UserProduction = {
 				user: user,
@@ -155,9 +159,9 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 			const production_by_item = new Map<number, ProductionByItem>();
 
-			for (const pi of this.production_info_list) {
+			for (const pi of filtered_production_info) {
 				for (const pu of pi.users) {
-					if (pu.user_id === user.id) {
+					if (pu.user_id === user.id && pu.price && pu.price > 0) {
 						let production_item = production_by_item.get(pi.item.id);
 
 						if (!production_item) {
