@@ -267,7 +267,6 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			let end = new Date();
 			end.setTime(d.getTime());
 			end.setHours(23,59,59,0);
-			end.setDate(d.getDate()+1);
 
 			let end_local_string = Utils.getLocalMysqlStringFromDate(end);
 
