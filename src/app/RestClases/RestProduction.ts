@@ -313,10 +313,9 @@ export class RestProduction
 		let end = new Date();
 		end.setTime(d.getTime() );
 		end.setHours(23,59,59);
-		end.setDate(d.getDate()+1);
 
-		let start_utc_string = Utils.getLocalMysqlStringFromDate(d);
-		let end_utc_string = Utils.getLocalMysqlStringFromDate(end);
+		let start_utc_string = date+' 00:00:00';
+		let end_utc_string = date+' 23:59:59';
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&produced>=${start_utc_string}&produced<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;

@@ -22,6 +22,19 @@ interface UserConcepts {
   total: number;
 }
 
+interface ProductionDetail {
+  date: string;
+  product: string;
+  pieces: number;
+  kg: number;
+}
+
+interface ItemTotal {
+  product: string;
+  pieces: number;
+  kg: number;
+}
+
 @Component({
 	selector: 'app-generar-nomina-alterno',
 	standalone: true,
@@ -43,6 +56,10 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	totalesPorProducto: any[] = [];
 	user_list: any[] = [];
 	user_concepts_list: UserConcepts[] = [];
+	production_detail_list: ProductionDetail[] = [];
+	item_total_list: ItemTotal[] = [];
+	total_pieces: number = 0;
+	total_kg: number = 0;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
@@ -103,7 +120,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 		if (this.end_date) {
 			production_search['produced<~'] = this.end_date;
-			consumed_search['consumed<~'] = this.start_date;
+			consumed_search['consumed<~'] = this.end_date;
 		}
 
 
@@ -149,28 +166,51 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 			for (const pi of this.production_info_list) {
 				for (const pu of pi.users) {
-					if(pu.price == 0 )
-						continue;
-
 					if (pu.user_id === user.id) {
 						const date = pi.production.produced.substring(0, 10);
-						const key = `${pi.item.name}-${date}`;
+						const key = `Producción-${date}`;
 
 						let concept = concepts_map.get(key);
 
 						if (!concept) {
 							concept = {
-								description: pi.item.name,
+								description: 'Producción',
 								date: date,
 								qty: 0,
-								price: pu.price,
+								price: 0, // Price is not relevant for the grouped concept
 								total: 0
 							};
 							concepts_map.set(key, concept);
 						}
 
-						concept.qty += pi.production.qty;
 						concept.total += pi.production.qty * pu.price;
+					}
+				}
+			}
+
+			for (const ci of this.consumption_info_list) {
+				for (const cu of ci.users) {
+					if (cu.user_id === user.id && cu.price && cu.price > 0) {
+						const date = ci.consumption.consumed.substring(0, 10);
+						const key = `${ci.item.name}-${date}`;
+
+						let concept = concepts_map.get(key);
+
+						if (!concept) {
+							concept = {
+								description: ci.item.name,
+								date: date,
+								qty: 0,
+								price: cu.price,
+								total: 0
+							};
+							concepts_map.set(key, concept);
+						}
+
+						console.log('QTY is '+cu.total, ci.consumption.consumed );
+
+						concept.qty += ci.consumption.qty;
+						concept.total -= cu.total;
 					}
 				}
 			}
@@ -180,5 +220,54 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 			this.user_concepts_list.push(user_concepts);
 		}
+
+		const production_detail_map = new Map<string, ProductionDetail>();
+
+		for (const pi of this.production_info_list) {
+			const date = pi.production.produced.substring(0, 10);
+			const key = `${pi.item.name}-${date}`;
+
+			let detail = production_detail_map.get(key);
+
+			if (!detail) {
+				detail = {
+					date: date,
+					product: pi.item.name,
+					pieces: 0,
+					kg: 0
+				};
+				production_detail_map.set(key, detail);
+			}
+
+			detail.pieces += pi.production.alternate_qty;
+			detail.kg += pi.production.qty;
+		}
+
+		this.production_detail_list = Array.from(production_detail_map.values());
+
+		const item_total_map = new Map<string, ItemTotal>();
+
+		for (const pi of this.production_info_list) {
+			const key = pi.item.name;
+
+			let total = item_total_map.get(key);
+
+			if (!total) {
+				total = {
+					product: pi.item.name,
+					pieces: 0,
+					kg: 0
+				};
+				item_total_map.set(key, total);
+			}
+
+			total.pieces += pi.production.alternate_qty;
+			total.kg += pi.production.qty;
+		}
+
+		this.item_total_list = Array.from(item_total_map.values());
+
+		this.total_pieces = this.item_total_list.reduce((acc, item) => acc + item.pieces, 0);
+		this.total_kg = this.item_total_list.reduce((acc, item) => acc + item.kg, 0);
 	}
 }

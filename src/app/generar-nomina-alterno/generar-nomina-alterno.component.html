@@ -8,7 +8,7 @@
 		<div class="row">
 			<div class="col-12 col-md-4">
 				<div class="form-group">
-					<label for="production_area">Area de producción</label>
+					<label for="production_area">Área de producción</label>
 					<select class="form-control" name="production_area_id" id="production_area_id" [(ngModel)]="production_area_id" required>
 						<option value="">Seleccionar</option>
 						@for (area of production_area_list; track area.id)
@@ -60,15 +60,58 @@
 		</div>
 	}
 
+  <h2>Producción Detallada</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Producto</th>
+        <th class="text-end">Piezas</th>
+        <th class="text-end">KG</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let detail of production_detail_list">
+        <td>{{ detail.date | shortDate }}</td>
+        <td>{{ detail.product }}</td>
+        <td class="text-end">{{ detail.pieces | number:'1.2-2' }}</td>
+        <td class="text-end">{{ detail.kg | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Totales por Producto</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th class="text-end">Piezas</th>
+        <th class="text-end">KG</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let total of item_total_list">
+        <td>{{ total.product }}</td>
+        <td class="text-end">{{ total.pieces | number:'1.2-2' }}</td>
+        <td class="text-end">{{ total.kg | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td class="text-end"><strong>{{ total_pieces | number:'1.2-2' }}</strong></td>
+        <td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
   <div *ngFor="let uc of user_concepts_list">
     <h3>{{ uc.user.name }}</h3>
     <table class="table">
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Description</th>
-          <th class="text-end">Qty</th>
-          <th class="text-end">Price</th>
+          <th>Fecha</th>
+          <th>Descripción</th>
           <th class="text-end">Total</th>
         </tr>
       </thead>
@@ -76,14 +119,12 @@
         <tr *ngFor="let concept of uc.concepts">
           <td>{{ concept.date | shortDate }}</td>
           <td>{{ concept.description }}</td>
-          <td class="text-end">{{ concept.qty | number:'1.2-2' }}</td>
-          <td class="text-end">{{ concept.price | currency:'$' }}</td>
           <td class="text-end">{{ concept.total | currency:'$' }}</td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="3" class="text-end"><strong>Total:</strong></td>
+          <td colspan="2" class="text-end"><strong>Total:</strong></td>
           <td class="text-end"><strong>{{ uc.total | currency:'$' }}</strong></td>
         </tr>
       </tfoot>
