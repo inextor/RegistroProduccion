@@ -6,21 +6,9 @@ import { ItemInfo } from "../Models/ItemInfo";
 import { Production } from "../Models/Production";
 import { Production_Area } from "../Models/Production_Area";
 import { ProductionAreaInfo } from "../Models/ProductionAreaInfo";
+import { ProductionInfo } from "../Models/ProductionInfo";
 import { User } from "../Models/User";
 import { RestService } from "../rest.service";
-
-
-export interface ProductionInfo
-{
-	user: User;
-	production:Production;
-	production_area: Production_Area | null;
-	item:Item;
-	category:any;
-}
-
-
-
 
 export class RestProduction
 {
