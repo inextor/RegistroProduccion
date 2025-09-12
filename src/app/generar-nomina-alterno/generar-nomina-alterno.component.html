@@ -60,33 +60,31 @@
 		</div>
 	}
 
-  <div *ngFor="let up of user_production_list">
-    <h3>{{ up.user.name }}</h3>
+  <div *ngFor="let uc of user_concepts_list">
+    <h3>{{ uc.user.name }}</h3>
     <table class="table">
       <thead>
         <tr>
-          <th>Description</th>
           <th>Date</th>
+          <th>Description</th>
           <th class="text-end">Qty</th>
           <th class="text-end">Price</th>
           <th class="text-end">Total</th>
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let item of up.items">
-          <tr *ngFor="let d of item.dates">
-            <td>{{ item.item.name }}</td>
-            <td>{{ d.date | shortDate }}</td>
-            <td class="text-end">{{ d.qty | number:'1.2-2' }}</td>
-            <td class="text-end">{{ d.price | currency:'$' }}</td>
-            <td class="text-end">{{ d.total | currency:'$' }}</td>
-          </tr>
-        </ng-container>
+        <tr *ngFor="let concept of uc.concepts">
+          <td>{{ concept.date | shortDate }}</td>
+          <td>{{ concept.description }}</td>
+          <td class="text-end">{{ concept.qty | number:'1.2-2' }}</td>
+          <td class="text-end">{{ concept.price | currency:'$' }}</td>
+          <td class="text-end">{{ concept.total | currency:'$' }}</td>
+        </tr>
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="4" class="text-end"><strong>Total del usuario:</strong></td>
-          <td class="text-end"><strong>{{ up.total_amount | currency:'$' }}</strong></td>
+          <td colspan="3" class="text-end"><strong>Total:</strong></td>
+          <td class="text-end"><strong>{{ uc.total | currency:'$' }}</strong></td>
         </tr>
       </tfoot>
     </table>

@@ -6,26 +6,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RestConsumption } from '../RestClases/RestConsumption';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
-import { Item } from '../Models/Item';
 
-interface ProductionByDate {
-  date: string;
-  qty: number;
-  price: number;
-  total: number;
+interface NominaConcept
+{
+	description:string;
+	date: string;
+	qty:number;
+	price:number;
+	total:number;
 }
 
-interface ProductionByItem {
-  item: Item;
-  dates: ProductionByDate[];
-  total_qty: number;
-  total_amount: number;
-}
-
-interface UserProduction {
+interface UserConcepts {
   user: any;
-  items: ProductionByItem[];
-  total_amount: number;
+  concepts: NominaConcept[];
+  total: number;
 }
 
 @Component({
@@ -48,7 +42,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	end_date: string = '';
 	totalesPorProducto: any[] = [];
 	user_list: any[] = [];
-	user_production_list: UserProduction[] = [];
+	user_concepts_list: UserConcepts[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
@@ -123,15 +117,13 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.user_list = users;
 
 			production_info.sort((a,b)=>{
-				if(a.production.produced.localeCompare(b.production.produced) ==0 )
-			{
-					if( a.item.name.toLowerCase().includes('muerta'))
-						return 1;
+				let date_a = a.production.produced.substring(0,10);
+				let date_b = b.production.produced.substring(0,10);
 
-					return a.item.name.toLowerCase().localeCompare(b.item.name.toLowerCase());
+				if (date_a.localeCompare(date_b) === 0) {
+					return a.item.name.localeCompare(b.item.name);
 				}
-
-				return a.item.name.localeCompare(b.production.produced);
+				return date_a.localeCompare(date_b);
 			})
 
 			this.production_info_list = production_info;
@@ -144,67 +136,49 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	}
 
 	agruparYCalcularTotales() {
-		this.user_production_list = [];
-
-		const filtered_production_info = this.production_info_list.filter(pi => {
-			return !pi.users.every((u:any) => !u.price || u.price === 0);
-		});
-
-		filtered_production_info.sort((a,b)=>{
-			let aa = a.production.produced.substring(0,10);
-			let bb = b.production.produced.substring(0,10);
-			return aa.localeCompare(bb);
-		});
+		this.user_concepts_list = [];
 
 		for (const user of this.user_list) {
-			const user_production: UserProduction = {
+			const user_concepts: UserConcepts = {
 				user: user,
-				items: [],
-				total_amount: 0
+				concepts: [],
+				total: 0
 			};
 
-			const production_by_item = new Map<number, ProductionByItem>();
+			const concepts_map = new Map<string, NominaConcept>();
 
-			for (const pi of filtered_production_info) {
+			for (const pi of this.production_info_list) {
 				for (const pu of pi.users) {
-					if (pu.user_id === user.id && pu.price && pu.price > 0) {
-						let production_item = production_by_item.get(pi.item.id);
+					if(pu.price == 0 )
+						continue;
 
-						if (!production_item) {
-							production_item = {
-								item: pi.item,
-								dates: [],
-								total_qty: 0,
-								total_amount: 0
-							};
-							production_by_item.set(pi.item.id, production_item);
-						}
-
+					if (pu.user_id === user.id) {
 						const date = pi.production.produced.substring(0, 10);
-						let production_date = production_item.dates.find(d => d.date === date);
+						const key = `${pi.item.name}-${date}`;
 
-						if (!production_date) {
-							production_date = {
+						let concept = concepts_map.get(key);
+
+						if (!concept) {
+							concept = {
+								description: pi.item.name,
 								date: date,
 								qty: 0,
 								price: pu.price,
 								total: 0
 							};
-							production_item.dates.push(production_date);
+							concepts_map.set(key, concept);
 						}
 
-						const amount = pi.production.qty * pu.price;
-						production_date.qty += pi.production.qty;
-						production_date.total += amount;
-						production_item.total_qty += pi.production.qty;
-						production_item.total_amount += amount;
-						user_production.total_amount += amount;
+						concept.qty += pi.production.qty;
+						concept.total += pi.production.qty * pu.price;
 					}
 				}
 			}
 
-			user_production.items = Array.from(production_by_item.values());
-			this.user_production_list.push(user_production);
+			user_concepts.concepts = Array.from(concepts_map.values());
+			user_concepts.total = user_concepts.concepts.reduce((acc, c) => acc + c.total, 0);
+
+			this.user_concepts_list.push(user_concepts);
 		}
 	}
 }
