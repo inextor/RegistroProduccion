@@ -1,10 +1,10 @@
 <div class="container">
-	<div class="row">
+	<div class="row d-print-none">
 		<div class="col-12">
 			<h1>Producción por Área</h1>
 		</div>
 	</div>
-	<form (submit)="submitSearch($event)" ngNativeValidate>
+	<form class="d-print-none" (submit)="submitSearch($event)" ngNativeValidate>
 		<div class="row">
 			<div class="col-12 col-md-4">
 				<div class="form-group">
@@ -35,30 +35,27 @@
 
   <h2>Consumos</h2>
 
-	<div class="row titulo-subheader">
-		<div class="col-12 col-md-3"></div>
-		<div class="col-12 col-md-3">Precio</div>
-		<div class="col-12 col-md-3 text-end">Litros</div>
-		<div class="col-12 col-md-3 text-end">Total</div>
-	</div>
-
-	@for (consumption_info of consumption_info_list; track consumption_info.consumption.id; let index = $index)
-	{
-		<div class="row gasolina">
-			<div class="col-12 col-md-3">
-				{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})
-			</div>
-			<div class="col-12 col-md-3">
-				{{consumption_info.consumption.price}}
-			</div>
-			<div class="col-12 col-md-3 text-end">
-				{{consumption_info.consumption.qty}}
-			</div>
-			<div class="col-12 col-md-3 text-end">
-				{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
-			</div>
-		</div>
-	}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th class="text-end">Precio</th>
+        <th class="text-end">Litros</th>
+        <th class="text-end">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (consumption_info of consumption_info_list; track consumption_info.consumption.id)
+      {
+        <tr>
+          <td>{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})</td>
+          <td class="text-end">{{consumption_info.consumption.price | currency:'$'}}</td>
+          <td class="text-end">{{consumption_info.consumption.qty}}</td>
+          <td class="text-end">{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 
   <h2>Producción Detallada</h2>
   <table class="table">
@@ -74,10 +71,17 @@
       <tr *ngFor="let detail of production_detail_list">
         <td>{{ detail.date | shortDate }}</td>
         <td>{{ detail.product }}</td>
-        <td class="text-end">{{ detail.pieces | number:'1.2-2' }}</td>
+        <td class="text-end">{{ detail.pieces | number:'1.0-0' }}</td>
         <td class="text-end">{{ detail.kg | number:'1.2-2' }}</td>
       </tr>
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2" class="text-end"><strong>Total</strong></td>
+        <td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
+        <td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
+      </tr>
+    </tfoot>
   </table>
 
   <h2>Totales por Producto</h2>
@@ -92,14 +96,14 @@
     <tbody>
       <tr *ngFor="let total of item_total_list">
         <td>{{ total.product }}</td>
-        <td class="text-end">{{ total.pieces | number:'1.2-2' }}</td>
+        <td class="text-end">{{ total.pieces | number:'1.0-0' }}</td>
         <td class="text-end">{{ total.kg | number:'1.2-2' }}</td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
         <td><strong>Total</strong></td>
-        <td class="text-end"><strong>{{ total_pieces | number:'1.2-2' }}</strong></td>
+        <td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
         <td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
       </tr>
     </tfoot>
@@ -119,7 +123,7 @@
         <tr *ngFor="let concept of uc.concepts">
           <td>{{ concept.date | shortDate }}</td>
           <td>{{ concept.description }}</td>
-          <td class="text-end">{{ concept.total | currency:'$' }}</td>
+          <td class="text-end"><strong>{{ concept.total | currency:'$' }}</strong></td>
         </tr>
       </tbody>
       <tfoot>

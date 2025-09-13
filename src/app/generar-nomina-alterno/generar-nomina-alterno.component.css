@@ -1,0 +1,23 @@
+@media print {
+  :host {
+    font-size: 8pt !important;
+  }
+
+  h1 {
+    font-size: 16pt !important;
+  }
+
+  h2 {
+    font-size: 12pt !important;
+  }
+
+  h3 {
+    font-size: 10pt !important;
+  }
+
+  td, th {
+    font-size: 8pt !important;
+    padding: 2px !important;
+    margin: 0 !important;
+  }
+}
