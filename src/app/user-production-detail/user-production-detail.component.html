@@ -1,0 +1,33 @@
+<div *ngIf="user_production">
+  <h3>{{ user_production.user.name }}</h3>
+  <div *ngFor="let d of user_production.dates">
+    <h4>{{ d.date | shortDate }}</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="text-end">Qty</th>
+          <th class="text-end">Price</th>
+          <th class="text-end">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of d.items">
+          <td>{{ i.item.name }}</td>
+          <td class="text-end">{{ i.qty | number:'1.2-2' }}</td>
+          <td class="text-end">{{ i.price | currency:'$' }}</td>
+          <td class="text-end">{{ i.total | currency:'$' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-end"><strong>Total del día:</strong></td>
+          <td class="text-end"><strong>{{ d.total_amount | currency:'$' }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="text-end">
+    <h4><strong>Total del usuario: {{ user_production.total_amount | currency:'$' }}</strong></h4>
+  </div>
+</div>

@@ -33,113 +33,113 @@
 		</div>
 	</form>
 
-  <h2>Consumos</h2>
+	<h2>Consumos</h2>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th class="text-end">Precio</th>
-        <th class="text-end">Litros</th>
-        <th class="text-end">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (consumption_info of consumption_info_list; track consumption_info.consumption.id)
-      {
-        <tr>
-          <td>{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})</td>
-          <td class="text-end">{{consumption_info.consumption.price | currency:'$'}}</td>
-          <td class="text-end">{{consumption_info.consumption.qty}}</td>
-          <td class="text-end">{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Producto</th>
+				<th class="text-end">Precio</th>
+				<th class="text-end">Litros</th>
+				<th class="text-end">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for (consumption_info of consumption_info_list; track consumption_info.consumption.id)
+			{
+				<tr>
+					<td>{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})</td>
+					<td class="text-end">{{consumption_info.consumption.price | currency:'$'}}</td>
+					<td class="text-end">{{consumption_info.consumption.qty}}</td>
+					<td class="text-end">{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 
-  <h2>Producción Detallada</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Producto</th>
-        <th class="text-end">Piezas</th>
-        <th class="text-end">KG</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let detail of production_detail_list">
-        <td>{{ detail.date | shortDate }}</td>
-        <td>{{ detail.product }}</td>
-        <td class="text-end">{{ detail.pieces | number:'1.0-0' }}</td>
-        <td class="text-end">{{ detail.kg | number:'1.2-2' }}</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="2" class="text-end"><strong>Total</strong></td>
-        <td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
-        <td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
-      </tr>
-    </tfoot>
-  </table>
+	<h2>Producción Detallada</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Fecha</th>
+				<th>Producto</th>
+				<th class="text-end">Piezas</th>
+				<th class="text-end">KG</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let detail of production_detail_list">
+				<td>{{ detail.date | shortDate }}</td>
+				<td>{{ detail.product }}</td>
+				<td class="text-end">{{ detail.pieces | number:'1.0-0' }}</td>
+				<td class="text-end">{{ detail.kg | number:'1.2-2' }}</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="2" class="text-end"><strong>Total</strong></td>
+				<td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
+				<td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
+			</tr>
+		</tfoot>
+	</table>
 
-  <h2>Totales por Producto</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Producto</th>
-        <th class="text-end">Piezas</th>
-        <th class="text-end">KG</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let total of item_total_list">
-        <td>{{ total.product }}</td>
-        <td class="text-end">{{ total.pieces | number:'1.0-0' }}</td>
-        <td class="text-end">{{ total.kg | number:'1.2-2' }}</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td><strong>Total</strong></td>
-        <td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
-        <td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
-      </tr>
-    </tfoot>
-  </table>
+	<h2>Totales por Producto</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Producto</th>
+				<th class="text-end">Piezas</th>
+				<th class="text-end">KG</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let total of item_total_list">
+				<td>{{ total.product }}</td>
+				<td class="text-end">{{ total.pieces | number:'1.0-0' }}</td>
+				<td class="text-end">{{ total.kg | number:'1.2-2' }}</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td><strong>Total</strong></td>
+				<td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
+				<td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
+			</tr>
+		</tfoot>
+	</table>
 
-  <div *ngFor="let payroll_info of payroll_info_list">
-    <h3>{{ payroll_info.user.name }}</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Descripción</th>
-          <th class="text-end">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let value of payroll_info.values">
-          <td>{{ value.created | shortDate }}</td>
-          <td>{{ value.description }}</td>
-          <td class="text-end" [class.text-danger]="value.type === 'DEDUCTION'"><strong>{{ value.value}}</strong></td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2" class="text-end"><strong>Subtotal:</strong></td>
-          <td class="text-end"><strong>{{ payroll_info.payroll.subtotal  }}</strong></td>
-        </tr>
-        <tr>
-          <td colspan="2" class="text-end"><strong>Deducciones:</strong></td>
-          <td class="text-end"><strong>{{ (payroll_info.payroll.subtotal - payroll_info.payroll.total) }}</strong></td>
-        </tr>
-        <tr>
-          <td colspan="2" class="text-end"><strong>Total:</strong></td>
-          <td class="text-end"><strong>{{ payroll_info.payroll.total  }}</strong></td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
+	<div *ngFor="let payroll_info of payroll_info_list">
+		<h3>{{ payroll_info.user.name }}</h3>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Descripción</th>
+					<th class="text-end">Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let value of payroll_info.values">
+					<td>{{ value.description }}</td>
+					<td class="text-end" [class.text-danger]="value.type === 'DEDUCTION'">
+						<strong>{{ value.value | number: '1.2-2'}}</strong>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td class="text-end"><strong>Subtotal:</strong></td>
+					<td class="text-end"><strong>{{ payroll_info.payroll.subtotal | currency }}</strong></td>
+				</tr>
+				<tr>
+					<td class="text-end"><strong>Deducciones:</strong></td>
+					<td class="text-end"><strong>{{ (payroll_info.payroll.subtotal - payroll_info.payroll.total) | currency }}</strong></td>
+				</tr>
+				<tr>
+					<td class="text-end"><strong>Total:</strong></td>
+					<td class="text-end"><strong>{{ payroll_info.payroll.total | currency }}</strong></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 </div>

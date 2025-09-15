@@ -159,7 +159,7 @@ export class RestProduction
 		return this.getItemInfoListByProductionAreaIds(production_area_id);
 	}
 
-	getProductionAreaInfo(production_area_id: number):Promise<any>
+	getProductionAreaInfo(production_area_id: number):Promise<ProductionAreaInfo>
 	{
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		const url = `${this.rest_service.getBaseUrl()}/production_area_info.php?id=${production_area_id}`;
