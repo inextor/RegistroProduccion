@@ -297,6 +297,8 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 					production_info.agua_percent = production_info.production.merma_qty / production_info.production.reported_qty;
 
+					console.log('Percent '+Math.round((1-(production_info.production.qty/production_info.production.reported_qty))*100));
+
 					return production_info;
 				});
 
