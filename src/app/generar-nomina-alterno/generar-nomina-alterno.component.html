@@ -109,8 +109,8 @@
     </tfoot>
   </table>
 
-  <div *ngFor="let uc of user_concepts_list">
-    <h3>{{ uc.user.name }}</h3>
+  <div *ngFor="let payroll_info of payroll_info_list">
+    <h3>{{ payroll_info.user.name }}</h3>
     <table class="table">
       <thead>
         <tr>
@@ -120,16 +120,24 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let concept of uc.concepts">
-          <td>{{ concept.date | shortDate }}</td>
-          <td>{{ concept.description }}</td>
-          <td class="text-end"><strong>{{ concept.total | currency:'$' }}</strong></td>
+        <tr *ngFor="let value of payroll_info.values">
+          <td>{{ value.created | shortDate }}</td>
+          <td>{{ value.description }}</td>
+          <td class="text-end" [class.text-danger]="value.type === 'DEDUCTION'"><strong>{{ value.value}}</strong></td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
+          <td colspan="2" class="text-end"><strong>Subtotal:</strong></td>
+          <td class="text-end"><strong>{{ payroll_info.payroll.subtotal  }}</strong></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="text-end"><strong>Deducciones:</strong></td>
+          <td class="text-end"><strong>{{ (payroll_info.payroll.subtotal - payroll_info.payroll.total) }}</strong></td>
+        </tr>
+        <tr>
           <td colspan="2" class="text-end"><strong>Total:</strong></td>
-          <td class="text-end"><strong>{{ uc.total | currency:'$' }}</strong></td>
+          <td class="text-end"><strong>{{ payroll_info.payroll.total  }}</strong></td>
         </tr>
       </tfoot>
     </table>
