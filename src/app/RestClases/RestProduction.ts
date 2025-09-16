@@ -331,8 +331,8 @@ export class RestProduction
 		d.setHours(0,0,0,0);
 
 		let end = new Date();
-		end.setTime(d.getTime() + 24 * 60 * 60 * 1000);
-		end.setSeconds(end.getSeconds() - 1);
+		end.setTime( d.getTime() );
+		end.setHours(23,59,59,0);
 
 		let start_utc_string = Utils.getLocalMysqlStringFromDate(d);
 		let end_utc_string = Utils.getLocalMysqlStringFromDate(end);
