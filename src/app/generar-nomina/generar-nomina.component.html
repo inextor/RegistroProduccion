@@ -1,10 +1,7 @@
 <div class="container">
 	<div class="row">
-		<div class="col-8 col-lg-10">
+		<div class="col-12">
 			<h1>Generar Nómina</h1>
-		</div>
-		<div class="col-4 col-lg-2">
-			<button type="button" class="btn btn-primary" (click)="openModal()" [disabled]="!production_area_id || !start_date || !end_date">Guardar Nomina</button>
 		</div>
 	</div>
 	<form (submit)="searchProductionAreaData()" ngNativeValidate>
@@ -137,39 +134,30 @@
 		</div>
 	</div>
 	-->
-	<div class="row">
-		@for(ur of user_resume_list; track ur.user.id)
-		{
-			<div class="col-12 col-md-6 col-lg-4">
-				<div class="card">
-					<div class="card-header">
-						<h3>{{ur.user.name}}</h3>
-						<p>{{ur.role.name}} - {{ur.price | currency}}</p>
-					</div>
-					<div class="card-body">
-						<h4>Producción</h4>
-						<p>Total a pagar: {{ur.total_to_pay | currency}}</p>
-
-						<h4>Deducciones</h4>
-						<ul class="list-group">
-							@for(deduction of ur.deductions; track $index)
-							{
-								<li class="list-group-item">{{deduction.description}}: {{deduction.amount | currency}}</li>
-							}
-						</ul>
-						<button class="btn btn-primary mt-2" (click)="openDeductionModal(ur)">Agregar Deducción</button>
-
-						<h4>Consumos</h4>
-						<p>Total: {{ur.total_consumo_total | currency}}</p>
-					</div>
-					<div class="card-footer">
-						<h4>Total a Pagar</h4>
-						<p>{{ur.total_to_pay - ur.total_consumo_total - getTotalDeductions(ur) | currency}}</p>
-					</div>
-				</div>
-			</div>
-		}
-	</div>
+	@for(ur of user_resume_list; track ur.user.id)
+	{
+		<h2>{{ur.role.name}} {{ur.price}}</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nombre</th>
+					<th>Efectivo</th>
+					<th>Consumos</th>
+					<th>Abono</th>
+					<th>Total</th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr>
+						<td>{{ur.user.name}}</td>
+						<td>{{ur.total_to_pay | currency}}</td>
+						<td>{{ur.total_consumo_total | currency}}</td>
+						<td>{{0| currency:'$'}}</td>
+						<td>{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
+					</tr>
+			</tbody>
+		</table>
+	}
 
 	<h2>Totales</h2>
 	<table class="table">
@@ -182,43 +170,4 @@
 			<td>{{all_users_total_to_pay - all_users_total_consumption | currency}}</td>
 		</tr>
 	</table>
-</div>
-
-<!-- Modal -->
-<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':is_modal_open ? 'block' : 'none'}">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-body">
-				<p>Total: {{all_users_total_to_pay - all_users_total_consumption | currency}}</p>
-				<div class="form-group">
-					<label for="deducciones">Deducciones</label>
-					<input type="number" class="form-control" id="deducciones" [(ngModel)]="deducciones">
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-			<!-- Deduction Modal -->
-<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':is_deduction_modal_open ? 'block' : 'none'}">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Agregar Deducción</h5>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<label for="deduction_description">Descripción</label>
-					<input type="text" class="form-control" id="deduction_description" [(ngModel)]="deduction_description">
-				</div>
-				<div class="form-group">
-					<label for="deduction_amount">Monto</label>
-					<input type="number" class="form-control" id="deduction_amount" [(ngModel)]="deduction_amount">
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" (click)="closeDeductionModal()">Cerrar</button>
-				<button type="button" class="btn btn-primary" (click)="addDeduction()">Guardar</button>
-			</div>
-		</div>
-	</div>
 </div>
