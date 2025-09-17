@@ -34,7 +34,7 @@
 					<th>Usuario</th>
 										<th>Periodo</th>
                     <th>Total</th>
-                    <th>Estado</th>
+                    <th>Pagado</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -44,7 +44,10 @@
                     <td>{{pi.user.name}}</td>
                     <td>{{pi.payroll.start_date | shortDate}} a {{pi.payroll.end_date|shortDate}}</td>
                     <td>{{pi.payroll.total | currency }}</td>
-                    <td>{{pi.payroll.paid_timestamp | shortDate}}</td>
+                    <td>{{pi.payroll.paid_timestamp | localDate | shortDate}}</td>
+					<th>
+						<button type="button" class="btn btn-primary" (click)="markAsPaid()">Pagar</button>
+					</th>
                   </tr>
                 </tbody>
               </table>

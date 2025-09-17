@@ -11,6 +11,7 @@ import { User } from '../Models/User';
 import { mergeMap } from 'rxjs';
 import { Utils } from '../classes/DateUtils';
 import { ShortDatePipe } from "../pipes/short-date.pipe";
+import { LocalDatePipe } from "../pipes/local-date.pipe";
 
 interface PayrollInfo{
 	payroll:Payroll;
@@ -21,11 +22,14 @@ interface PayrollInfo{
 @Component({
 	selector: 'app-listar-nominas',
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe],
+	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe, LocalDatePipe],
 	templateUrl: './listar-nominas.component.html',
 	styleUrls: ['./listar-nominas.component.css']
 })
 export class ListarNominasComponent {
+	markAsPaid() {
+
+	}
 	search_from_date: string = this.getDefaultStartDate();
 	search_to_date: string = this.getDefaultEndDate();
 
