@@ -28,43 +28,16 @@ interface PayrollInfo{
 	styleUrls: ['./listar-nominas.component.css']
 })
 export class ListarNominasComponent {
-	markAsPaid(pi: PayrollInfo) {
-		this.confirmation.showConfirmAlert(pi, 'Pagar Nómina', '¿Esta seguro de marcarlo como pagado?')
-		.pipe(
-			filter(response => response.accepted),
-			mergeMap(response => {
-				this.is_loading = true;
-				let payroll_info = { ...pi};
-				let payroll = { ...pi.payroll };
-				payroll_info.payroll = payroll;
 
-				payroll.paid_timestamp = (new Date()).toISOString().replace('T',' ');
-
-				return this.rest_payroll.update(payroll_info);
-			})
-		)
-		.subscribe({
-			next: (response) => {
-				this.is_loading = false;
-				this.searchData();
-			},
-			error: (error) => {
-				this.is_loading = false;
-				this.rest_service.showError(error);
-			}
-		});
-	}
 	search_from_date: string = this.getDefaultStartDate();
 	search_to_date: string = this.getDefaultEndDate();
 
-	rest_paryroll_info:Rest;
-	rest_payroll: Rest;
+	rest_payroll_info:Rest;
 	is_loading:boolean	= false;
 	payroll_list: PayrollInfo[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router, public confirmation: ConfirmationService) {
-		this.rest_paryroll_info = new Rest(rest_service,'payroll_info');
-		this.rest_payroll = new Rest(rest_service, 'payroll');
+		this.rest_payroll_info = new Rest(rest_service,'payroll_info');
 	}
 
 	ngOnInit(): void {
@@ -104,11 +77,38 @@ export class ListarNominasComponent {
 		return Utils.getLocalMysqlStringFromDate( end_date ).substring( 0, 10);
 	}
 
+	markAsPaid(pi: PayrollInfo) {
+		this.confirmation.showConfirmAlert(pi, 'Pagar Nómina', '¿Esta seguro de marcarlo como pagado?')
+		.pipe(
+			filter(response => response.accepted),
+			mergeMap(response => {
+				this.is_loading = true;
+				let payroll_info = { ...pi};
+				let payroll = { ...pi.payroll };
+				payroll_info.payroll = payroll;
+
+				payroll.paid_timestamp = (new Date()).toISOString().replace('T',' ').substring(0,19);
+
+				return this.rest_payroll_info.update(payroll_info);
+			})
+		)
+		.subscribe({
+			next: (response) => {
+				this.is_loading = false;
+				this.searchData();
+			},
+			error: (error) => {
+				this.is_loading = false;
+				this.rest_service.showError(error);
+			}
+		});
+	}
+
 	searchData() {
 
 		this.is_loading = true;
 
-		this.rest_paryroll_info.search({
+		this.rest_payroll_info.search({
 			'start_date>~': this.search_from_date,
 			'start_date<~':this.search_to_date,
 			'status':'ACTIVE'
