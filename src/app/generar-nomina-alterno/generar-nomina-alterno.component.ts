@@ -178,6 +178,11 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 						let payroll_value = payroll_values_map.get(key);
 
+						if( pu.price == 0)
+						{
+							continue;
+						}
+
 						if (payroll_value == undefined) {
 
 							payroll_value = {
@@ -186,7 +191,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 								description: 'Producción del día ' + date,
 								type: 'PERCEPTION',
 								value: 0,
-								datetime: null,
+								datetime: pi.production.produced,
 								status: 'ACTIVE',
 								created: date
 							};
@@ -212,9 +217,9 @@ export class GenerarNominaAlternoComponent implements OnInit {
 							payroll_value = {
 								id: 0,
 								payroll_id: 0,
-								description: 'CONSUMO',
+								description: ci.item.name,
 								type: 'DEDUCTION',
-								datetime: null,
+								datetime: date,
 								value: 0,
 								status: 'ACTIVE',
 								created: date
@@ -227,7 +232,34 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			}
 
 			const payroll_values = Array.from(payroll_values_map.values());
-			payroll_values.sort((a, b) => a.description.localeCompare(b.description));
+			payroll_values.sort((a, b) =>{
+				let a_v = a.type === 'PERCEPTION' ? 0 : 1;
+				let b_v = b.type === 'PERCEPTION' ? 0 : 1;
+
+				if( a_v === b_v)
+				{
+					if( a.datetime === b.datetime)
+					{
+						return a.description.localeCompare(b.description);
+					}
+
+					if( a.datetime && !b.datetime)
+					{
+						return -1;
+					}
+
+					if( !a.datetime && b.datetime)
+					{
+						return 1;
+					}
+					let aa = a.datetime as string;
+					let bb = b.datetime as string;
+
+					return aa.localeCompare(bb);
+				}
+
+				return a_v - b_v;
+			});
 
 			const subtotal = payroll_values.filter(pv => pv.type === 'PERCEPTION').reduce((acc, pv) => acc + pv.value, 0);
 			const deductions = payroll_values.filter(pv => pv.type === 'DEDUCTION').reduce((acc, pv) => acc + pv.value, 0);

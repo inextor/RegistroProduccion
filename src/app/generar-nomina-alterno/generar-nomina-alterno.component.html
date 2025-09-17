@@ -39,6 +39,7 @@
 		<thead>
 			<tr>
 				<th>Producto</th>
+				<th>Fecha</th>
 				<th class="text-end">Precio</th>
 				<th class="text-end">Litros</th>
 				<th class="text-end">Total</th>
@@ -48,7 +49,8 @@
 			@for (consumption_info of consumption_info_list; track consumption_info.consumption.id)
 			{
 				<tr>
-					<td>{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})</td>
+					<td>{{consumption_info.item.name}}
+					<td>{{consumption_info.consumption.consumed | shortDate}}</td>
 					<td class="text-end">{{consumption_info.consumption.price | currency:'$'}}</td>
 					<td class="text-end">{{consumption_info.consumption.qty}}</td>
 					<td class="text-end">{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}</td>
@@ -61,16 +63,16 @@
 	<table class="table">
 		<thead>
 			<tr>
-				<th>Fecha</th>
 				<th>Producto</th>
+				<th>Fecha</th>
 				<th class="text-end">Piezas</th>
 				<th class="text-end">KG</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr *ngFor="let detail of production_detail_list">
-				<td>{{ detail.date | shortDate }}</td>
 				<td>{{ detail.product }}</td>
+				<td>{{ detail.date | shortDate }}</td>
 				<td class="text-end">{{ detail.pieces | number:'1.0-0' }}</td>
 				<td class="text-end">{{ detail.kg | number:'1.2-2' }}</td>
 			</tr>
@@ -110,19 +112,21 @@
 	</table>
 
 	<div *ngFor="let payroll_info of payroll_info_list">
-		<h3>{{ payroll_info.user.name }}</h3>
+		<div class="fw-bold">{{ payroll_info.user.name }}</div>
 		<table class="table">
 			<thead>
 				<tr>
 					<th>Descripción</th>
+					<th>Fecha</th>
 					<th class="text-end">Total</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr *ngFor="let value of payroll_info.values">
 					<td>{{ value.description }}</td>
-					<td class="text-end" [class.text-danger]="value.type === 'DEDUCTION'">
-						<strong>{{ value.value | number: '1.2-2'}}</strong>
+					<td>{{ value.datetime | shortDate }}</td>
+					<td class="text-end fw-bold" [class.text-danger]="value.type === 'DEDUCTION'">
+						{{ value.value | number: '1.2-2'}}
 					</td>
 				</tr>
 			</tbody>

@@ -8,7 +8,7 @@ export class ShortDatePipe implements PipeTransform {
 
   private readonly months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-  transform(value: Date | string): string {
+  transform(value: Date | string | null): string {
     if (!value) {
       return '';
     }
