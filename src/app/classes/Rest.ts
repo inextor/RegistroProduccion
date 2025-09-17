@@ -21,6 +21,21 @@ export class Rest
 			.then(this.getJsonLambda())
 	}
 
+	create(x:any):Promise<any>
+	{
+		const url = `${this.rest_service.getBaseUrl()}/${this.path}.php`;
+		let headers = {
+			'Authorization': `Bearer ${this.rest_service.session.id}`,
+			'Content-Type': 'application/json'
+		};
+		let options = { method: 'POST', headers, body: JSON.stringify(x) };
+		return fetch(url, options )
+			.then(this.getJsonLambda())
+			.then(data =>{
+				return data;
+			});
+	}
+
 	search(p: URLSearchParams | Object):Promise<RestResponse<any>>
 	{
 		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);

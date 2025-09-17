@@ -177,6 +177,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				store_id: 1,
 				start_date: this.start_date,
 				end_date: this.end_date,
+				user_id: user.id,
 				status: 'ACTIVE',
 				created: new Date().toISOString().slice(0, 19).replace('T', ' '),
 				paid_status: 'PENDING',
@@ -366,6 +367,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 					created:'',
 					end_date:this.end_date,
 					paid_status: 'PENDING',
+					user_id: production_user.user_id,
 					start_date:this.start_date,
 					status: 'ACTIVE',
 					store_id: 1,
@@ -427,5 +429,13 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	cancelNewDeduction() {
 		this.is_adding_deduction = false;
+	}
+
+	async save()
+	{
+		this.rest_payroll_info.create(this.payroll_info_list);
+
+		this.rest_service.showSuccess('Nóminas guardadas');
+		this.router.navigate(['/payroll']);
 	}
 }
