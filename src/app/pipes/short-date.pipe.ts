@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { Utils } from '../classes/DateUtils';
 
 @Pipe({
   name: 'shortDate',
@@ -17,7 +18,7 @@ export class ShortDatePipe implements PipeTransform {
     if (typeof value === 'string') {
       // Replace space with T to make it compatible with ISO 8601
       const isoString = value.replace(' ', 'T');
-      date = new Date(isoString);
+      date = Utils.getDateFromLocalMysqlString( value );
     } else {
       date = value;
     }
