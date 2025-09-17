@@ -129,14 +129,14 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		let consumed_search = {...search_params};
 
 		if (this.start_date) {
-			production_search['produced>~'] = this.start_date;
-			consumed_search['consumed>~'] = this.start_date;
+			production_search['produced>~'] = this.start_date+' 00:00:00';
+			consumed_search['consumed>~'] = this.start_date+' 00:00:00';
 
 		}
 
 		if (this.end_date) {
-			production_search['produced<~'] = this.end_date;
-			consumed_search['consumed<~'] = this.end_date;
+			production_search['produced<~'] = this.end_date+' 23:59:59';
+			consumed_search['consumed<~'] = this.end_date+' 23:59:59';
 		}
 
 
