@@ -36,7 +36,23 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.route.queryParamMap.subscribe((params: any) => {
 			this.start_date = params.get('start_date') || '';
 			this.end_date = params.get('end_date') || '';
-			this.production_area_id = params.get('production_area_id') || '';
+
+			this.production_area_id = params.has('production_area_id')
+				? parseInt( params.get('production_area_id') )
+				: '';
+
+			let p = this.production_area_list.length > 0
+				?  Promise.resolve( this.production_area_list )
+				:  this.rest_production.getAllProductionAreas();
+
+			p.then((data: any) => {
+				if(this.production_area_list.length == 0 )
+				{
+					this.production_area_list = data;
+				}
+				this.searchProductionAreaData();
+			})
+
 		});
 
 		this.rest_production.getAllProductionAreas()
@@ -59,19 +75,17 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				'limit': 99999
 		};
 
-
-	let production_search = {...search_params};
-	let consumed_search = {...search_params};
+		let production_search = {...search_params};
+		let consumed_search = {...search_params};
 
 		if (this.start_date) {
-				production_search['produced>~'] = this.start_date;
-		consumed_search['consumed>~'] = this.start_date;
-
+			production_search['produced>~'] = this.start_date;
+			consumed_search['consumed>~'] = this.start_date+' 00:00:00';
 		}
 
 		if (this.end_date) {
-				production_search['produced<~'] = this.end_date;
-		consumed_search['consumed<~'] = this.start_date;
+			production_search['produced<~'] = this.end_date+' 23:59:59';
+			consumed_search['consumed<~'] = this.end_date+' 23:59:59';
 		}
 
 
@@ -79,14 +93,14 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.rest_production.searchProductionInfo(production_search),
 			this.rest_consumption.searchConsumptionInfo(consumed_search)
 		])
-			.then(([production_info, consumption_info]) => {
-				this.production_info_list = production_info;
-				this.consumption_info_list = consumption_info;
-				this.agruparYCalcularTotales();
-			})
-			.catch((error) => {
-				this.rest_service.showError(error);
-			});
+		.then(([production_info, consumption_info]) => {
+			this.production_info_list = production_info;
+			this.consumption_info_list = consumption_info;
+			this.agruparYCalcularTotales();
+		})
+		.catch((error) => {
+			this.rest_service.showError(error);
+		});
 	}
 
 	agruparYCalcularTotales() {
