@@ -10,6 +10,7 @@ import { Payroll_Value } from '../Models/Payroll_Value';
 import { User } from '../Models/User';
 import { mergeMap } from 'rxjs';
 import { Utils } from '../classes/DateUtils';
+import { ShortDatePipe } from "../pipes/short-date.pipe";
 
 interface PayrollInfo{
 	payroll:Payroll;
@@ -20,7 +21,7 @@ interface PayrollInfo{
 @Component({
 	selector: 'app-listar-nominas',
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule],
+	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe],
 	templateUrl: './listar-nominas.component.html',
 	styleUrls: ['./listar-nominas.component.css']
 })

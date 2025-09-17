@@ -3,6 +3,7 @@ export interface Payroll
 	id: number;
 	created:string;
 	end_date:string;
+	paid_timestamp: string | null;
 	paid_status: 'PENDING'|'PAID',
 	start_date:string;
 	status: 'ACTIVE'|'DELETED';
