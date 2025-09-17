@@ -154,7 +154,7 @@
 		</table>
 	</div>
 	<div class="row">
-		<button type="button" class="btn btn-primary" (click)="save()">Guardar Nominas</button>
+		<button type="button" class="btn btn-primary" (click)="save()" [disabled]="!production_area_id || payroll_info_list.length ==0">Guardar Nominas</button>
 	</div>
 </div>
 
