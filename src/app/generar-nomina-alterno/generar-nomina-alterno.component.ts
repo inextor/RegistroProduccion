@@ -21,16 +21,16 @@ interface PayrollInfo
 
 
 interface ProductionDetail {
-  date: string;
-  product: string;
-  pieces: number;
-  kg: number;
+	date: string;
+	product: string;
+	pieces: number;
+	kg: number;
 }
 
 interface ItemTotal {
-  product: string;
-  pieces: number;
-  kg: number;
+	product: string;
+	pieces: number;
+	kg: number;
 }
 
 @Component({
