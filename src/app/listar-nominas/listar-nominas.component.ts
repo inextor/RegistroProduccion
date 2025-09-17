@@ -108,9 +108,11 @@ export class ListarNominasComponent {
 
 		this.is_loading = true;
 
+		//'_custom' => 'start_date <= "'.$payroll->end_date.'" AND end_date >= "'.$payroll->start_date.'"'
+
 		this.rest_payroll_info.search({
-			'start_date>~': this.search_from_date,
-			'start_date<~':this.search_to_date,
+			'start_date<~': this.search_to_date,
+			'end_date>~': this.search_from_date,
 			'status':'ACTIVE'
 		})
 		.then((response:RestResponse<PayrollInfo>)=>{
