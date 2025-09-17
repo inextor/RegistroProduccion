@@ -11,6 +11,7 @@ import { Payroll } from '../Models/Payroll';
 import { User } from '../Models/User';
 import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
 import { mergeMap } from 'rxjs';
+import { Rest } from '../classes/Rest';
 
 interface PayrollInfo
 {
@@ -44,6 +45,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	rest_production: RestProduction;
 	rest_consumption: RestConsumption;
+	rest_payroll_info: Rest;
 	production_area_list: any[] = [];
 	production_area_id: number | '' = '';
 	production_info_list: any[] = [];
@@ -79,6 +81,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
 		this.rest_consumption = new RestConsumption(rest_service);
+		this.rest_payroll_info = new Rest(rest_service,'payroll_info');
 	}
 
 	ngOnInit() {
