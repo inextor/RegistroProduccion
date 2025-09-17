@@ -8,10 +8,11 @@ import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router'
 import { Rest, RestResponse } from '../classes/Rest';
 import { Payroll_Value } from '../Models/Payroll_Value';
 import { User } from '../Models/User';
-import { mergeMap } from 'rxjs';
+import { ConfirmationService } from '../services/confirmation.service';
+import { filter, mergeMap } from 'rxjs';
 import { Utils } from '../classes/DateUtils';
-import { ShortDatePipe } from "../pipes/short-date.pipe";
-import { LocalDatePipe } from "../pipes/local-date.pipe";
+import { ShortDatePipe } from '../pipes/short-date.pipe';
+import { LocalDatePipe } from '../pipes/local-date.pipe';
 
 interface PayrollInfo{
 	payroll:Payroll;
@@ -27,18 +28,43 @@ interface PayrollInfo{
 	styleUrls: ['./listar-nominas.component.css']
 })
 export class ListarNominasComponent {
-	markAsPaid() {
+	markAsPaid(pi: PayrollInfo) {
+		this.confirmation.showConfirmAlert(pi, 'Pagar Nómina', '¿Esta seguro de marcarlo como pagado?')
+		.pipe(
+			filter(response => response.accepted),
+			mergeMap(response => {
+				this.is_loading = true;
+				let payroll_info = { ...pi};
+				let payroll = { ...pi.payroll };
+				payroll_info.payroll = payroll;
 
+				payroll.paid_timestamp = (new Date()).toISOString().replace('T',' ');
+
+				return this.rest_payroll.update(payroll_info);
+			})
+		)
+		.subscribe({
+			next: (response) => {
+				this.is_loading = false;
+				this.searchData();
+			},
+			error: (error) => {
+				this.is_loading = false;
+				this.rest_service.showError(error);
+			}
+		});
 	}
 	search_from_date: string = this.getDefaultStartDate();
 	search_to_date: string = this.getDefaultEndDate();
 
 	rest_paryroll_info:Rest;
+	rest_payroll: Rest;
 	is_loading:boolean	= false;
 	payroll_list: PayrollInfo[] = [];
 
-	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
+	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router, public confirmation: ConfirmationService) {
 		this.rest_paryroll_info = new Rest(rest_service,'payroll_info');
+		this.rest_payroll = new Rest(rest_service, 'payroll');
 	}
 
 	ngOnInit(): void {

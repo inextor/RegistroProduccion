@@ -46,7 +46,7 @@
                     <td>{{pi.payroll.total | currency }}</td>
                     <td>{{pi.payroll.paid_timestamp | localDate | shortDate}}</td>
 					<th>
-						<button type="button" class="btn btn-primary" (click)="markAsPaid()">Pagar</button>
+						<button type="button" class="btn btn-primary" (click)="markAsPaid(pi)">Pagar</button>
 					</th>
                   </tr>
                 </tbody>
