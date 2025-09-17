@@ -59,6 +59,20 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	total_pieces: number = 0;
 	total_kg: number = 0;
 
+	is_adding_deduction:boolean = false;
+	editing_payroll_info: PayrollInfo | null = null;
+	new_deduction: Payroll_Value =  {
+		id: 0,
+		payroll_id: 0,
+		type: 'DEDUCTION',
+		description: '',
+		value: 0,
+		datetime: new Date().toISOString().slice(0, 10),
+		status: 'ACTIVE',
+		created: new Date().toISOString().slice(0, 10)
+	};
+
+
 	production_area_info:ProductionAreaInfo | null = null;
 	user_extra_deductions:Map<number,Payroll_Value[]> = new Map();
 
@@ -325,6 +339,16 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.total_kg = this.item_total_list.reduce((acc, item) => acc + item.kg, 0);
 	}
 
+	updatePayrollInfoTotal(payroll_info:PayrollInfo)
+	{
+		let payroll_values = payroll_info.values;
+		const subtotal = payroll_values.filter(pv => pv.type === 'PERCEPTION').reduce((acc, pv) => acc + pv.value, 0);
+		const deductions = payroll_values.filter(pv => pv.type === 'DEDUCTION').reduce((acc, pv) => acc + pv.value, 0);
+
+		payroll_info.payroll.subtotal = subtotal;
+		payroll_info.payroll.total = subtotal - deductions;
+	}
+
 
 	savePayroll()
 	{
@@ -356,5 +380,49 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				return payroll_info;
 			});
 		});
+	}
+
+	showAddExtraDeduction(payroll_info: any) {
+		this.editing_payroll_info = payroll_info;
+		this.new_deduction = {
+			id: 0,
+			payroll_id: payroll_info.payroll.id,
+			type: 'DEDUCTION',
+			description: '',
+			value: 0,
+			datetime: new Date().toISOString().slice(0, 10),
+			status: 'ACTIVE',
+			created: new Date().toISOString().slice(0, 10)
+		};
+		this.is_adding_deduction = true;
+	}
+
+	saveNewDeduction() {
+		if( this.editing_payroll_info == null)
+		{
+			this.rest_service.showError('Ocurrió un error al agregar la deducción');
+			return;
+		}
+
+		this.editing_payroll_info.values.push({...this.new_deduction});
+
+		this.new_deduction = {
+			id: 0,
+			payroll_id: 0,
+			type: 'DEDUCTION',
+			description: '',
+			value: 0,
+			datetime: new Date().toISOString().slice(0, 10),
+			status: 'ACTIVE',
+			created: new Date().toISOString().slice(0, 10)
+		};
+
+		this.updatePayrollInfoTotal(this.editing_payroll_info);
+		// TODO: Save to backend
+		this.is_adding_deduction = false;
+	}
+
+	cancelNewDeduction() {
+		this.is_adding_deduction = false;
 	}
 }
