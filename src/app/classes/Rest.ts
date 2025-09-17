@@ -2,7 +2,7 @@ import { RestService } from "../rest.service";
 
 export interface RestResponse<T>
 {
-	data:T;
+	data:T[];
 	total:number;
 }
 
