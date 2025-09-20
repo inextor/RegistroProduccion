@@ -1,60 +1,54 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <h4 class="card-title">Listar Nóminas</h4>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Fecha Inicial</label>
-                <input type="date" class="form-control" [(ngModel)]="search_from_date">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Fecha Final</label>
-                <input type="date" class="form-control" [(ngModel)]="search_to_date">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <button class="btn btn-primary" (click)="search()">Buscar</button>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
+<div class="container-fluid"  style="max-width:900px;margin: 0 auto">
+	<div class="row align-middle">
+		<div class="col-10">
+			<h4 class="my-3">Listar Nóminas</h4>
+		</div>
+		<div class="col-2">
+			<a routerLink="/generar-nomina-alterno" class="btn bnt-primary mt-2">Agregar</a>
+		</div>
+	</div>
+	<div class="card p-3">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label>Fecha Inicial</label>
+					<input type="date" class="form-control" [(ngModel)]="search_from_date">
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group">
+					<label>Fecha Final</label>
+					<input type="date" class="form-control" [(ngModel)]="search_to_date">
+				</div>
+			</div>
+			<div class="col-md-4 form-group">
+				<label>&nbsp;</label>
+				<button class="btn btn-primary" (click)="search()">Buscar</button>
+			</div>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>ID</th>
 					<th>Usuario</th>
-										<th>Periodo</th>
-                    <th>Total</th>
-                    <th>Pagado</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let pi of payroll_list">
-                    <td>{{pi.payroll.id}}</td>
-                    <td>{{pi.user.name}}</td>
-                    <td>{{pi.payroll.start_date | shortDate}} a {{pi.payroll.end_date|shortDate}}</td>
-                    <td>{{pi.payroll.total | currency }}</td>
-                    <td>{{pi.payroll.paid_timestamp | localDate | shortDate}}</td>
+					<th>Periodo</th>
+					<th>Total</th>
+					<th>Pagado</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let pi of payroll_list">
+					<td>{{pi.payroll.id}}</td>
+					<td>{{pi.user.name}}</td>
+					<td>{{pi.payroll.start_date | shortDate}} a {{pi.payroll.end_date|shortDate}}</td>
+					<td>{{pi.payroll.total | currency }}</td>
+					<td>{{pi.payroll.paid_timestamp | localDate | shortDate}}</td>
 					<th>
 						<button type="button" class="btn btn-primary" (click)="markAsPaid(pi)">Pagar</button>
 					</th>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>

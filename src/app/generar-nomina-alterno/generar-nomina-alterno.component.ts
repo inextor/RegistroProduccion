@@ -139,15 +139,38 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			consumed_search['consumed<~'] = this.end_date+' 23:59:59';
 		}
 
-
 		Promise.all([
 			this.rest_production.getUsersFromProductionArea(this.production_area_id),
 			this.rest_production.searchProductionInfo(production_search),
-			this.rest_consumption.searchConsumptionInfo(consumed_search)
+			this.rest_consumption.searchConsumptionInfo(consumed_search),
 		])
-		.then(([users, production_info, consumption_info]) => {
+		.then(([users, production_info, consumption_info]) =>
+		{
+			let user_ids = users.map((user:User)=>user.id);
+			const payroll_search= {
+				'start_date<~': this.end_date,
+				'end_date>~': this.start_date,
+				'user_id,' : user_ids.join(','),
+				'status' : 'ACTIVE',
+				limit : 1
+			};
 
+			return Promise.all
+			([
+				users,
+				production_info,
+				consumption_info,
+				this.rest_payroll_info.search( payroll_search )
+			])
+		})
+		.then(([users, production_info, consumption_info, response_payroll_info])=>
+		{
 			this.user_list = users;
+
+			if( response_payroll_info.total )
+			{
+				this.rest_service.showError('Ya existe una nomina para el equipo en el rango de fecha', false);
+			}
 
 			production_info.sort((a,b)=>{
 				let date_a = a.production.produced.substring(0,10);
