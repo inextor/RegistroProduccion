@@ -7,6 +7,16 @@ import { FormsModule } from '@angular/forms';
 import { RestConsumption } from '../RestClases/RestConsumption';
 import { Rest } from '../classes/Rest';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
+import { Payroll } from '../Models/Payroll';
+import { Payroll_Value } from '../Models/Payroll_Value';
+import { User } from '../Models/User';
+
+interface PayrollInfo
+{
+	values: Payroll_Value[];
+	user: User;
+	payroll:Payroll;
+}
 
 interface Resume{
 	date:string;
@@ -46,6 +56,7 @@ export class GenerarNominaPrintComponent implements OnInit
 	production_info_list: any[] = [];
 	consumption_info_list: any[] = [];
 	rest_ledger:Rest;
+	rest_payroll_info: Rest;
 	start_date: string = '';
 	ledger_info_list:any[] = [];
 	end_date: string = '';
@@ -68,6 +79,7 @@ export class GenerarNominaPrintComponent implements OnInit
 	current_user:UserResume | null = null;
 	deduction_amount:number = 0;
 	deduction_description:string = '';
+	current_payroll_info_list: PayrollInfo[] = [];
 
 	openModal()
 	{
@@ -112,6 +124,15 @@ export class GenerarNominaPrintComponent implements OnInit
 		return user.deductions.reduce((total, deduction) => total + deduction.amount, 0);
 	}
 
+	getAbono(user_resume: UserResume): number {
+		if (!user_resume.deductions) {
+			return 0;
+		}
+		return user_resume.deductions
+			.filter(d => d.description.toLowerCase() !== 'gasolina')
+			.reduce((total, deduction) => total + deduction.value, 0);
+	}
+
 	trackByConsumptionId(index: number, item: any): number {
 		return item.consumption.id;
 	}
@@ -136,6 +157,7 @@ export class GenerarNominaPrintComponent implements OnInit
 		this.rest_consumption_user = new Rest(rest_service,'consumption_user');
 		this.rest_ledger = new Rest(rest_service,'ledger_info');
 		this.rest_role = new Rest(rest_service,'role');
+		this.rest_payroll_info = new Rest(rest_service,'payroll_info');
 	}
 
 	ngOnInit()
@@ -196,14 +218,16 @@ export class GenerarNominaPrintComponent implements OnInit
 
 			this.rest_production.searchProductionInfo( prodution_search_params ),
 			this.rest_consumption.searchConsumptionInfo(consumption_search_params),
-			this.rest_role.search({limit:999999})
+			this.rest_role.search({limit:999999}),
+			this.rest_payroll_info.search({start_date: this.start_date, end_date: this.end_date, production_area_id: this.production_area_id, limit: 99999})
 		])
-		.then(([users, production_info, consumption_info,role_response]) =>
+		.then(([users, production_info, consumption_info,role_response, payroll_info]) =>
 		{
 			this.production_info_list = production_info;
 			this.consumption_info_list = consumption_info;
 			this.user_list = users;
 			this.role_list = role_response.data;
+			this.current_payroll_info_list = payroll_info.data;
 
 			let user_ids = users.map((user:any) => user.id);
 
@@ -416,6 +440,13 @@ export class GenerarNominaPrintComponent implements OnInit
 		this.resume = days;
 		this.user_resume_list = user_resume_list;
 		console.log('user_resume_list',this.user_resume_list);
+
+		for (const ur of this.user_resume_list) {
+			const payroll_info = this.current_payroll_info_list.find(p => p.user.id === ur.user.id);
+			if (payroll_info) {
+				ur.deductions = payroll_info.values.filter(v => v.type === 'DEDUCTION');
+			}
+		}
 	}
 
 

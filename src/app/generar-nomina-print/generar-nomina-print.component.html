@@ -3,34 +3,38 @@
 		<h1>Generar Nómina</h1>
 	</div>
 
-	<h2>Consumos</h2>
-
-	<div style="display: table; width: 100%;">
-		<div style="display: table-row; font-weight: bold;">
-			<div style="display: table-cell; padding: 4px;"></div>
-			<div style="display: table-cell; padding: 4px;">Precio</div>
-			<div style="display: table-cell; padding: 4px; text-align: right;">Litros</div>
-			<div style="display: table-cell; padding: 4px; text-align: right;">Total</div>
-		</div>
-
-		<div *ngFor="let consumption_info of consumption_info_list; let i = index; trackBy: trackByConsumptionId" style="display: table-row;">
-			<div style="display: table-cell; padding: 4px;">
-				{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})
-			</div>
-			<div style="display: table-cell; padding: 4px;">
-				{{consumption_info.consumption.price}}
-			</div>
-			<div style="display: table-cell; padding: 4px; text-align: right;">
-				{{consumption_info.consumption.qty}}
-			</div>
-			<div style="display: table-cell; padding: 4px; text-align: right;">
-				{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
-			</div>
-		</div>
-	</div>
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+		<thead>
+			<tr style="background-color: #f2f2f2;">
+				<th style="border: 1px solid #ddd; padding: 4px;" colspan="4">Consumos</th>
+			</tr>
+			<tr style="background-color: #f2f2f2;">
+				<th style="border: 1px solid #ddd; padding: 4px;"></th>
+				<th style="border: 1px solid #ddd; padding: 4px;">Precio</th>
+				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Litros</th>
+				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let consumption_info of consumption_info_list; let i = index; trackBy: trackByConsumptionId">
+				<td style="border: 1px solid #ddd; padding: 4px;">
+					{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})
+				</td>
+				<td style="border: 1px solid #ddd; padding: 4px;">
+					{{consumption_info.consumption.price}}
+				</td>
+				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+					{{consumption_info.consumption.qty}}
+				</td>
+				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+					{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
 	<h2>Resumen Produccion</h2>
-	<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
 		<ng-container *ngFor="let r of resume; trackBy: trackByDate">
 			<tr style="background-color: #f2f2f2;">
 				<th [attr.colspan]="r.production_info_list.length+2" style="border: 1px solid #ddd; padding: 4px;">Producto({{r.date}})</th>
@@ -64,24 +68,23 @@
 	</table>
 
 	<div *ngFor="let ur of user_resume_list; trackBy: trackByUserId">
-		<h2>{{ur.role.name}} {{ur.price}}</h2>
-		<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
 			<thead>
 				<tr>
-					<th style="border: 1px solid #ddd; padding: 4px;">Nombre</th>
-					<th style="border: 1px solid #ddd; padding: 4px;">Efectivo</th>
-					<th style="border: 1px solid #ddd; padding: 4px;">Consumos</th>
-					<th style="border: 1px solid #ddd; padding: 4px;">Abono</th>
-					<th style="border: 1px solid #ddd; padding: 4px;">Total</th>
+					<th style="width: 40%; border: 1px solid #ddd; padding: 4px;">Nombre: {{ur.role.name}}</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Efectivo</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Consumos</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Abono</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Total</th>
 				</tr>
 			</thead>
 			<tbody>
 					<tr>
-						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.user.name}}</td>
-						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.total_to_pay | currency}}</td>
-						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.total_consumo_total | currency}}</td>
-						<td style="border: 1px solid #ddd; padding: 4px;">{{0| currency:'$'}}</td>
-						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
+						<td style="width: 40%; border: 1px solid #ddd; padding: 4px; font-size: 10px;">{{ur.user.name}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_to_pay | currency}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_consumo_total | currency}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{getAbono(ur) | currency}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
 					</tr>
 			</tbody>
 		</table>
@@ -94,8 +97,8 @@
 			<td style="border: 1px solid #ddd; padding: 4px;">Total</td>
 		</tr>
 		<tr>
-			<td style="border: 1px solid #ddd; padding: 4px;"></td>
-			<td style="border: 1px solid #ddd; padding: 4px;">{{all_users_total_to_pay - all_users_total_consumption | currency}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;"></td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{all_users_total_to_pay - all_users_total_consumption | currency}}</td>
 		</tr>
 	</table>
 </div>
