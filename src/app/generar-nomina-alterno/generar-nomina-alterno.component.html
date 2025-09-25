@@ -184,6 +184,7 @@
 		{
 			<button type="button" class="btn btn-primary" (click)="save()" [disabled]="!production_area_id || payroll_info_list.length ==0">Guardar Nominas</button>
 		}
+		<a [routerLink]="['/generar-nomina-print']" [queryParams]="{start_date: start_date, end_date: end_date, production_area_id: production_area_id}" class="btn btn-secondary">Imprimir</a>
 	</div>
 </div>
 

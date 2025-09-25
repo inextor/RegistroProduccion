@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -464,5 +465,38 @@ export class GenerarNominaPrintComponent implements OnInit
 		f.push( components.length<6?0:parseInt(components[5]))
 
 		return new Date( f[0], f[1], f[2], f[3], f[4], f[5], 0);
+	}
+
+	generatePDF() {
+		const pdfContainer = document.getElementById('pdf_container');
+		if (pdfContainer) {
+			const html = pdfContainer.innerHTML;
+			const html_object = {
+				html: html,
+				orientation: 'P',
+				default_font_size: 9,
+				default_font: 'Helvetica',
+				download_name: 'nomina.pdf'
+			};
+
+			const url = environment.pdf_service_url + '/index.php';
+
+			this.rest_service.externalPost(url, html_object)
+				.then(response => {
+					const pdf_url = URL.createObjectURL(response);
+					window.open(pdf_url, '_blank');
+				})
+				.catch(error => {
+					this.rest_service.showError('Error al generar el PDF');
+				});
+		}
+	}
+
+	get production_area_name(): string {
+		if (this.production_area_id && this.production_area_list.length > 0) {
+			const area = this.production_area_list.find(a => a.id == this.production_area_id);
+			return area ? area.name : '';
+		}
+		return '';
 	}
 }
