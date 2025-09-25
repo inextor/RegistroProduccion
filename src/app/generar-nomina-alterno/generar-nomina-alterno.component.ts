@@ -320,6 +320,25 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.payroll_info_list.push(payroll_info);
 		}
 
+		if (this.current_payroll_info_list.length > 0) {
+			for (const current_payroll_info of this.current_payroll_info_list) {
+				const new_payroll_info = this.payroll_info_list.find(p => p.user.id === current_payroll_info.user.id);
+				if (new_payroll_info) {
+					for (const value of current_payroll_info.values) {
+						if (value.type === 'DEDUCTION') {
+							const existing_deduction = new_payroll_info.values.find(
+								v => v.type === 'DEDUCTION' && v.description === value.description && v.datetime === value.datetime
+							);
+							if (!existing_deduction) {
+								new_payroll_info.values.push(value);
+							}
+						}
+					}
+					this.updatePayrollInfoTotal(new_payroll_info);
+				}
+			}
+		}
+
 		const production_detail_map = new Map<string, ProductionDetail>();
 
 		for (const pi of this.production_info_list) {
