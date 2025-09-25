@@ -57,6 +57,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	loss_percent: number | '' = '';
 	total_loss=0;
 	sink: Subscription | null = null;
+    total_reported: number = 0;
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef, private confirmation: ConfirmationService)
 	{
@@ -296,6 +297,8 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 						&& ( ratio < this.min_weight_limit || ratio > this.max_weight_limit );
 
 					production_info.agua_percent = production_info.production.merma_qty / production_info.production.reported_qty;
+
+					console.log('Percent '+Math.round((1-(production_info.production.qty/production_info.production.reported_qty))*100));
 
 					return production_info;
 				});
@@ -565,6 +568,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		let pieces_total = 0;
 		let total_loss = 0;
 		let total_registrado = 0;
+		let total_reported = 0;
 
 		for( let production_info of this.last_production_info_list )
 		{
@@ -572,6 +576,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 			let merma = parseFloat( ''+production_info.production.merma_qty);
 
 			kg_total += production_info.production.qty;
+			total_reported += production_info.production.qty_reported;
 
 			pieces_total += parseInt( ''+production_info.production.alternate_qty);
 			total_loss += merma;
@@ -581,6 +586,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 
 		this.total_loss = total_loss;
 		this.total_registrado = total_registrado;
+		this.total_reported = total_reported;
 
 		this.kg_total = kg_total;
 		this.pieces_total = pieces_total;
