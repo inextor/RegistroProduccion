@@ -1,0 +1,55 @@
+<div class="container-fluid" style="max-width:900px;margin: 0 auto">
+  <div *ngIf="payroll_info.payroll">
+    <h4 class="my-3">Nómina #{{payroll_info.payroll.id}}</h4>
+    <div class="card p-3">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Usuario:</strong> {{payroll_info.user.name}}</p>
+          <p><strong>Periodo:</strong> {{payroll_info.payroll.start_date | date:'shortDate'}} - {{payroll_info.payroll.end_date | date:'shortDate'}}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Total:</strong> {{payroll_info.payroll.total | currency}}</p>
+          <p><strong>Pagado:</strong> {{payroll_info.payroll.paid_timestamp | date:'shortDate'}}</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h5>Percepciones</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of perceptions">
+                <td>{{item.description}}</td>
+                <td>{{item.value | currency}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-6">
+          <h5>Deducciones</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of deductions">
+                <td>{{item.description}}</td>
+                <td>{{item.value | currency}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
