@@ -1,0 +1,101 @@
+<div style="font-family: sans-serif;">
+	<div style="text-align: center;">
+		<h1>Generar Nómina</h1>
+	</div>
+
+	<h2>Consumos</h2>
+
+	<div style="display: table; width: 100%;">
+		<div style="display: table-row; font-weight: bold;">
+			<div style="display: table-cell; padding: 4px;"></div>
+			<div style="display: table-cell; padding: 4px;">Precio</div>
+			<div style="display: table-cell; padding: 4px; text-align: right;">Litros</div>
+			<div style="display: table-cell; padding: 4px; text-align: right;">Total</div>
+		</div>
+
+		<div *ngFor="let consumption_info of consumption_info_list; let i = index; trackBy: trackByConsumptionId" style="display: table-row;">
+			<div style="display: table-cell; padding: 4px;">
+				{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})
+			</div>
+			<div style="display: table-cell; padding: 4px;">
+				{{consumption_info.consumption.price}}
+			</div>
+			<div style="display: table-cell; padding: 4px; text-align: right;">
+				{{consumption_info.consumption.qty}}
+			</div>
+			<div style="display: table-cell; padding: 4px; text-align: right;">
+				{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
+			</div>
+		</div>
+	</div>
+
+	<h2>Resumen Produccion</h2>
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+		<ng-container *ngFor="let r of resume; trackBy: trackByDate">
+			<tr style="background-color: #f2f2f2;">
+				<th [attr.colspan]="r.production_info_list.length+2" style="border: 1px solid #ddd; padding: 4px;">Producto({{r.date}})</th>
+			</tr>
+			<tr style="background-color: #f2f2f2;">
+				<th style="border: 1px solid #ddd; padding: 4px;">Piezas</th>
+				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
+					<th *ngIf="pi.item.name.toLowerCase().includes('muerta')" style="border: 1px solid #ddd; padding: 4px;">Piezas {{pi.item.name}}</th>
+					<th style="border: 1px solid #ddd; padding: 4px;">Kgs {{pi.item.name}}</th>
+				</ng-container>
+			</tr>
+			<tr>
+				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
+					<td style="border: 1px solid #ddd; padding: 4px;">{{pi.production.alternate_qty | number }}</td>
+					<td style="border: 1px solid #ddd; padding: 4px;">{{pi.production.qty  | number:'1.2-2'}}</td>
+				</ng-container>
+			</tr>
+		</ng-container>
+		<tr style="background-color: #f2f2f2;">
+			<td style="border: 1px solid #ddd; padding: 4px;">Total Piezas</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">Total Kgs</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">Total Piezas Muerta</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">Total Kgs Muerta</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ddd; padding: 4px;">{{total_pieces | number}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">{{total_kgs | number:'1.2-2'}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">{{total_pieces_muerta | number:'1.2-2'}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">{{total_kgs_muerta | number:'1.2-2'}}</td>
+		</tr>
+	</table>
+
+	<div *ngFor="let ur of user_resume_list; trackBy: trackByUserId">
+		<h2>{{ur.role.name}} {{ur.price}}</h2>
+		<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+			<thead>
+				<tr>
+					<th style="border: 1px solid #ddd; padding: 4px;">Nombre</th>
+					<th style="border: 1px solid #ddd; padding: 4px;">Efectivo</th>
+					<th style="border: 1px solid #ddd; padding: 4px;">Consumos</th>
+					<th style="border: 1px solid #ddd; padding: 4px;">Abono</th>
+					<th style="border: 1px solid #ddd; padding: 4px;">Total</th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr>
+						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.user.name}}</td>
+						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.total_to_pay | currency}}</td>
+						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.total_consumo_total | currency}}</td>
+						<td style="border: 1px solid #ddd; padding: 4px;">{{0| currency:'$'}}</td>
+						<td style="border: 1px solid #ddd; padding: 4px;">{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<h2>Totales</h2>
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+		<tr style="background-color: #f2f2f2;">
+			<td style="border: 1px solid #ddd; padding: 4px;">Total Ingresos</td>
+			<td style="border: 1px solid #ddd; padding: 4px;">Total</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ddd; padding: 4px;"></td>
+			<td style="border: 1px solid #ddd; padding: 4px;">{{all_users_total_to_pay - all_users_total_consumption | currency}}</td>
+		</tr>
+	</table>
+</div>
