@@ -77,6 +77,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	production_area_info:ProductionAreaInfo | null = null;
 	user_extra_deductions:Map<number,Payroll_Value[]> = new Map();
+    super_total: number = 0;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
@@ -365,6 +366,20 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 		this.total_pieces = this.item_total_list.reduce((acc, item) => acc + item.pieces, 0);
 		this.total_kg = this.item_total_list.reduce((acc, item) => acc + item.kg, 0);
+
+
+		let super_total = 0;
+
+		for(let payroll_info of this.payroll_info_list )
+		{
+			for(let v of payroll_info.values)
+			{
+				if( v.type == 'PERCEPTION' )
+					super_total += v.value;
+			}
+		}
+
+		this.super_total = super_total;
 	}
 
 	updatePayrollInfoTotal(payroll_info:PayrollInfo)
@@ -442,7 +457,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			type: 'DEDUCTION',
 			description: '',
 			value: 0,
-			datetime: new Date().toISOString().slice(0, 10),
+			datetime: this.start_date+' 00:00:00',
 			status: 'ACTIVE',
 			created: new Date().toISOString().slice(0, 10)
 		};
@@ -450,6 +465,14 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.updatePayrollInfoTotal(this.editing_payroll_info);
 		// TODO: Save to backend
 		this.is_adding_deduction = false;
+	}
+
+	removeDeduction(payroll_info: PayrollInfo, value: Payroll_Value) {
+		const index = payroll_info.values.indexOf(value);
+		if (index > -1) {
+			payroll_info.values.splice(index, 1);
+			this.updatePayrollInfoTotal(payroll_info);
+		}
 	}
 
 	cancelNewDeduction() {

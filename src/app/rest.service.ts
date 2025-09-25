@@ -283,6 +283,7 @@ export class RestService
 		this.showErrorMessage(new ErrorMessage(str_error, 'alert-danger', auto_hide));
 	}
 
+
 	showErrorMessage(error: ErrorMessage)
 	{
 		this.error_behavior_subject.next(error);

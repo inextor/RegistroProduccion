@@ -13,9 +13,9 @@ export class Rest
 
 	}
 
-	get(id:number|string,path:string):Promise<any>
+	get(id:number|string):Promise<any>
 	{
-		const url = `${this.rest_service.getBaseUrl()}/${path}.php?id=${id}`;
+		const url = `${this.rest_service.getBaseUrl()}/${this.path}.php?id=${id}`;
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
 		return fetch(url, options )
 			.then(this.getJsonLambda())

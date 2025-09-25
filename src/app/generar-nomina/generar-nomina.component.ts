@@ -128,7 +128,12 @@ export class GenerarNominaComponent implements OnInit
 		{
 			this.start_date = params.get('start_date');
 			this.end_date = params.get('end_date');
-			this.production_area_id = params.get('production_area_id');
+			this.production_area_id = params.has('production_area_id') ?parseInt( params.get('production_area_id') ) : '';
+			this.rest_production.getAllProductionAreas().then((data)=>{
+				if( this.production_area_list.length == 0 )
+					this.production_area_list = data;
+				this.searchProductionAreaData();
+			});
 		});
 
 		this.rest_production.getAllProductionAreas()

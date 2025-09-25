@@ -52,5 +52,9 @@ export const routes: Routes = [
 	{
 		path: 'payroll',
 		loadComponent: () => import('./generar-nomina/generar-nomina.component').then(m => m.GenerarNominaComponent),
+	},
+	{
+		path: 'view-payroll/:id',
+		loadComponent: () => import('./view-payroll/view-payroll.component').then(m => m.ViewPayrollComponent),
 	}
 ];

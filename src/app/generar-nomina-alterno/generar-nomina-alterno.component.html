@@ -18,17 +18,28 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-12 col-md-4">
+			<div class="col-12 col-md-2">
 				<label for="start_date">Desde</label>
 				<input type="date" class="form-control" name="start_date" id="start_date" [(ngModel)]="start_date" required>
 			</div>
 
-			<div class="col-12 col-md-4">
+			<div class="col-12 col-md-2">
 				<label for="end_date">Hasta</label>
 				<input type="date" class="form-control" name="end_date" id="end_date" [(ngModel)]="end_date" required>
 			</div>
-			<div class="col-12 col-md-4">
-				<button type="submit" class="btn btn-primary">Buscar</button>
+			<div class="col-12 col-md-2 text-end">
+				@if( production_detail_list.length )
+				{
+					<a [routerLink]="['/generar-nomina']" [queryParams]="{start_date,end_date,production_area_id}">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
+					</a>
+				}
+			</div>
+			<div class="col-12 col-md-2">
+				<label>&nbsp;</label>
+				<div>
+					<button type="submit" class="btn btn-primary">Buscar</button>
+				</div>
 			</div>
 		</div>
 	</form>
@@ -104,9 +115,14 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<td><strong>Total</strong></td>
-				<td class="text-end"><strong>{{ total_pieces | number:'1.0-0' }}</strong></td>
-				<td class="text-end"><strong>{{ total_kg | number:'1.2-2' }}</strong></td>
+				<td>Total</td>
+				<td class="fw-bold text-end">{{ total_pieces | number:'1.0-0' }}</td>
+				<td class="fw-bold text-end">{{ total_kg | number:'1.2-2' }}</td>
+			</tr>
+			<tr>
+				<td class="fw-bold">Ingresos</td>
+				<td class="fw-bold text-end"></td>
+				<td class="fw-bold text-end">{{super_total | currency}}</td>
 			</tr>
 		</tfoot>
 	</table>
@@ -126,6 +142,7 @@
 					<th>Descripción</th>
 					<th>Fecha</th>
 					<th class="text-end">Total</th>
+					<th class="text-end">Acciones</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -134,6 +151,9 @@
 					<td>{{ value.datetime | shortDate }}</td>
 					<td class="text-end fw-bold" [class.text-danger]="value.type === 'DEDUCTION'">
 						{{ value.value | number: '1.2-2'}}
+					</td>
+					<td>
+						<button *ngIf="value.type === 'DEDUCTION'" type="button" class="btn btn-primary btn-sm btn-danger" (click)="removeDeduction(payroll_info, value)">Eliminar</button>
 					</td>
 				</tr>
 			</tbody>
@@ -177,10 +197,10 @@
 						<label>Cantidad</label>
 						<input type="number" class="form-control" [(ngModel)]="new_deduction.value">
 					</div>
-					<div class="col-6 form-group">
+					<!--div class="col-6 form-group">
 						<label>Fecha</label>
 						<input type="date" class="form-control" [(ngModel)]="new_deduction.datetime">
-					</div>
+					</div-->
 				</div>
 			</div>
 			<div class="row">

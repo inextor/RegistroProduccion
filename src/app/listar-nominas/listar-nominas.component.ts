@@ -78,6 +78,8 @@ export class ListarNominasComponent {
 	}
 
 	markAsPaid(pi: PayrollInfo) {
+
+		console.log('Updating ts',pi);
 		this.confirmation.showConfirmAlert(pi, 'Pagar Nómina', '¿Esta seguro de marcarlo como pagado?')
 		.pipe(
 			filter(response => response.accepted),
@@ -85,7 +87,9 @@ export class ListarNominasComponent {
 				this.is_loading = true;
 				let payroll_info = { ...pi};
 				let payroll = { ...pi.payroll };
+
 				payroll_info.payroll = payroll;
+				payroll_info.values = pi.values;
 
 				payroll.paid_timestamp = (new Date()).toISOString().replace('T',' ').substring(0,19);
 

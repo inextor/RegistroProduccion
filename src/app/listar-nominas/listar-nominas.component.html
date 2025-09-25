@@ -4,7 +4,7 @@
 			<h4 class="my-3">Listar Nóminas</h4>
 		</div>
 		<div class="col-2">
-			<a routerLink="/generar-nomina-alterno" class="btn bnt-primary mt-2">Agregar</a>
+			<a routerLink="/generar-nomina-alterno" class="btn btn-primary mt-2">Agregar</a>
 		</div>
 	</div>
 	<div class="card p-3">
@@ -23,7 +23,9 @@
 			</div>
 			<div class="col-md-4 form-group">
 				<label>&nbsp;</label>
-				<button class="btn btn-primary" (click)="search()">Buscar</button>
+				<div>
+					<button class="btn btn-primary" (click)="search()">Buscar</button>
+				</div>
 			</div>
 		</div>
 		<table class="table">
@@ -46,6 +48,8 @@
 					<td>{{pi.payroll.paid_timestamp | localDate | shortDate}}</td>
 					<th>
 						<button type="button" class="btn btn-primary" (click)="markAsPaid(pi)">Pagar</button>
+						<a [routerLink]="['/view-payroll', pi.payroll.id]" class="btn btn-secondary">View</a>
+						<a [routerLink]="['/generar-nomina-alterno']"  [queryParams]="{production_area:pi.user.production_area_id,start_date:pi.payroll.start_date,'}" class="btn btn-secondary">View</a>
 					</th>
 				</tr>
 			</tbody>
