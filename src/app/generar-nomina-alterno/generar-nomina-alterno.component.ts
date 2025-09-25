@@ -63,7 +63,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	is_adding_deduction:boolean = false;
 	editing_payroll_info: PayrollInfo | null = null;
-	new_deduction: Payroll_Value =  {
+	new_deduction: Payroll_Value = {
 		id: 0,
 		payroll_id: 0,
 		type: 'DEDUCTION',
@@ -77,7 +77,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	production_area_info:ProductionAreaInfo | null = null;
 	user_extra_deductions:Map<number,Payroll_Value[]> = new Map();
-    super_total: number = 0;
+	super_total: number = 0;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
