@@ -49,7 +49,7 @@
 					<th>
 						<button type="button" class="btn btn-primary" (click)="markAsPaid(pi)">Pagar</button>
 						<a [routerLink]="['/view-payroll', pi.payroll.id]" class="btn btn-secondary">View</a>
-						<a [routerLink]="['/generar-nomina-alterno']"  [queryParams]="{production_area:pi.user.production_area_id,start_date:pi.payroll.start_date,'}" class="btn btn-secondary">View</a>
+						<a [routerLink]="['/generar-nomina-alterno']"  [queryParams]="{production_area_id:pi.user.production_area_id,start_date:pi.payroll.start_date, end_date:pi.payroll.end_date}" class="btn btn-secondary">View</a>
 					</th>
 				</tr>
 			</tbody>
