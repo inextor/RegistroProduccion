@@ -78,6 +78,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	production_area_info:ProductionAreaInfo | null = null;
 	user_extra_deductions:Map<number,Payroll_Value[]> = new Map();
 	super_total: number = 0;
+	current_payroll_info_list: PayrollInfo[] = [];
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router) {
 		this.rest_production = new RestProduction(rest_service);
@@ -171,6 +172,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			if( response_payroll_info.total )
 			{
 				this.rest_service.showError('Ya existe una nomina para el equipo en el rango de fecha', false);
+				this.current_payroll_info_list = response_payroll_info.data;
 			}
 
 			production_info.sort((a,b)=>{
@@ -397,7 +399,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	{
 		let payroll_info_array = [];
 
-		this.rest_production.getProductionAreaInfo( this.production_area_id  as number)
+		this.rest_production.getProductionAreaInfo( this.production_area_id as number)
 		.then((production_area_info:ProductionAreaInfo)=>
 		{
 			let payroll_info_array = production_area_info.users.map((production_user)=>{
