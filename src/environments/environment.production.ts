@@ -2,6 +2,7 @@ export const environment =
 {
 	production: true,
 	base_url: 'https://mollusca.integranet.xyz/api',
-	name: 'Production'
+	name: 'Production',
+	pdf_service_url: 'https://pdf.integranet.xyz'
 	//base_url:'http://127.0.0.175/PointOfSale'
 };
