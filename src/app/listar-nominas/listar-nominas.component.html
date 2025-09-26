@@ -49,6 +49,7 @@
 						@if( pi.payroll.paid_timestamp == null )
 						{
 							<button type="button" class="btn btn-primary" (click)="markAsPaid(pi)">Pagar</button>
+							<button type="button" class="btn btn-danger ms-1" (click)="deletePayrroll(pi)">Eliminar</button>
 						}
 						@else
 						{

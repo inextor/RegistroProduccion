@@ -35,9 +35,11 @@ export class ListarNominasComponent {
 	rest_payroll_info:Rest;
 	is_loading:boolean	= false;
 	payroll_list: PayrollInfo[] = [];
+    rest_payroll:Rest;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router, public confirmation: ConfirmationService) {
 		this.rest_payroll_info = new Rest(rest_service,'payroll_info');
+		this.rest_payroll = new Rest(rest_service, 'payroll');
 	}
 
 	ngOnInit(): void {
@@ -135,5 +137,38 @@ export class ListarNominasComponent {
 		};
 
 		this.router.navigate(['/listar-nominas'],{queryParams});
+	}
+
+	deletePayrroll(payroll_info:PayrollInfo)
+	{
+		this.confirmation.showConfirmAlert(payroll_info, 'Eliminar Nómina', '¿Esta seguro de eliminarla?')
+		.pipe
+		(
+			filter(response=>response.accepted)
+		)
+		.subscribe
+		({
+			next:(response)=>
+			{
+				this.is_loading = true;
+				this.rest_payroll.delete({id:payroll_info.payroll.id})
+				.then(()=>
+				{
+					this.is_loading = false;
+					this.rest_service.showSuccess('Nómina eliminada');
+					this.searchData();
+				})
+				.catch((error)=>
+				{
+					this.is_loading = false;
+					this.rest_service.showError(error);
+				});
+			},
+			error:(error)=>
+			{
+				this.is_loading = false;
+				this.rest_service.showError(error)
+			}
+		});
 	}
 }
