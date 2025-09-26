@@ -438,4 +438,11 @@ export class RestConsumption
 			.then(this.getJsonLambda())
 			.then(data => data.data)
 	}
+
+	remove(id: number): Promise<any> {
+		const url = `${this.rest_service.getBaseUrl()}/consumption.php?id=${id}`;
+		let options = { method: 'DELETE', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
+		return fetch(url, options)
+			.then(this.getJsonLambda());
+	}
 }

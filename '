@@ -1,0 +1,57 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">Listar Nóminas</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Fecha Inicial</label>
+                <input type="date" class="form-control" [(ngModel)]="search_from_date">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Fecha Final</label>
+                <input type="date" class="form-control" [(ngModel)]="search_to_date">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <button class="btn btn-primary" (click)="search()">Buscar</button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+					<th>Usuario</th>
+										<th>Periodo</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pi of payroll_list">
+                    <td>{{pi.payroll.id}}</td>
+                    <td>{{pi.user.name}}</td>
+                    <td>{{pi.payroll.start_date}}-{{pi.payroll.end_date}}</td>
+                    <td>{{pi.payroll.total}}</td>
+                    <td>{{pi.payroll.status}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

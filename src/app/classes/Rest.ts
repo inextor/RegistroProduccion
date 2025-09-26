@@ -107,4 +107,27 @@ export class Rest
 			return response.json();
 		};
 	}
+
+	delete(obj: any): Promise<any>
+	{
+	    const params = this.getUrlParams(obj); // Use the same parameter conversion as search
+		const url = new URL(`${this.rest_service.getBaseUrl()}/${this.path}.php`);
+	    url.search = params.toString(); // Handles '?' and encoding automatically
+
+		let method = 'DELETE'
+
+		let headers = {
+			'Authorization': `Bearer ${this.rest_service.session.id}`
+		};
+
+		let credentials = 'include' as RequestCredentials;
+
+		let options = { method , headers, credentials };
+
+	    return fetch(url.toString(), options)
+	        .then(this.getJsonLambda())
+	        .then(data => {
+	            return data;
+	        });
+	}
 }

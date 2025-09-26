@@ -24,6 +24,7 @@
 									<li class="list-group-item">
 										Fecha: {{consumption_info.consumption.consumed | date:'short'}}, Litros: {{consumption_info.consumption.qty}}, Total:
 										Total: {{consumption_info.consumption.price*consumption_info.consumption.qty | currency }}
+										<button class="btn btn-danger btn-sm float-end" (click)="removeConsumption(consumption_info)">Eliminar</button>
 									</li>
 								}
 							</ul>

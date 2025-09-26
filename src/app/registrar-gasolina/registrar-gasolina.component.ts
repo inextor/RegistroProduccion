@@ -10,6 +10,7 @@ import { Consumption_User } from '../Models/Consumption_User'; // Import Consump
 import { Production_Area } from '../Models/Production_Area'; // Import ProductionArea interface
 import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
 import { RestConsumption } from '../RestClases/RestConsumption';
+import { ConfirmationService } from '../services/confirmation.service';
 
 @Component
 ({
@@ -37,7 +38,7 @@ export class RegistrarGasolinaComponent implements OnInit
 	users: any[] = [];
 	role_list:any[] = [];
 
-	constructor(public rest_service: RestService) {
+	constructor(public rest_service: RestService, private confirmation_service: ConfirmationService) {
 		this.production = new RestProduction(rest_service);
 		this.consumption = new RestConsumption(rest_service);
 	}
@@ -257,6 +258,25 @@ export class RegistrarGasolinaComponent implements OnInit
 		.catch((error:any) =>
 		{
 			this.rest_service.showError("No se pudieron cargar los últimos consumos")
+		});
+	}
+
+	removeConsumption(consumption_info: ConsumptionInfo): void {
+		this.confirmation_service.showConfirmAlert(
+			consumption_info,
+			'Eliminar consumo',
+			'¿Está seguro de que desea eliminar este consumo?'
+		).subscribe(result => {
+			if (result.accepted) {
+				this.consumption.remove(consumption_info.consumption.id)
+					.then(() => {
+						this.rest_service.showSuccess('Consumo eliminado correctamente');
+						this.loadLastConsumptions();
+					})
+					.catch(error => {
+						this.rest_service.showError(error);
+					});
+			}
 		});
 	}
 }
