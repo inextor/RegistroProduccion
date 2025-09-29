@@ -41,9 +41,9 @@ export class RestConsumption
 	}
 
 	/*
-	 * @param production_area_id: string|number|number[]
-	 * @returns Promise:<{total:number,data:ItemInfo[]}>
-	 */
+	* @param production_area_id: string|number|number[]
+	* @returns Promise:<{total:number,data:ItemInfo[]}>
+	*/
 
 	getItemsByConsumptionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
 	{
@@ -66,9 +66,9 @@ export class RestConsumption
 	}
 
 	/*
-	 * @param production_area_id: string|number|number[]
-	 * @returns Promise:<{total:number,data:ItemInfo[]}>
-	 */
+	* @param production_area_id: string|number|number[]
+	* @returns Promise:<{total:number,data:ItemInfo[]}>
+	*/
 
 	getItemInfoListByConsumptionAreaIds(production_area_id: string|number|number[]):Promise<any[]>
 	{
@@ -112,8 +112,8 @@ export class RestConsumption
 	}
 
 	/*
-	 * @deprecated
-	 */
+	* @deprecated
+	*/
 
 	getConsumptionAreaItems(production_area_id: string|number|number[]):Promise<any[]>
 	{
@@ -267,7 +267,7 @@ export class RestConsumption
 		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&produced>=${start_utc_string}&produced<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?item_id=${item_id}&produced>~=${start_utc_string}&produced<~=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())
@@ -288,7 +288,7 @@ export class RestConsumption
 		let end_utc_string = end.toISOString().substring(0,19).replace('T',' ');
 
 		let options = { method: 'GET', headers: { 'Authorization': `Bearer ${this.rest_service.session.id}` } };
-		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&produced>=${start_utc_string}&produced<=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
+		const url = `${this.rest_service.getBaseUrl()}/production_info.php?production_area_id=${production_area_id}&produced>~=${start_utc_string}&produced<~=${end_utc_string}&limit=999999&_sort_order=id_DESC`;
 
 		return fetch(url, options )
 			.then(this.getJsonLambda())

@@ -57,10 +57,10 @@ type ProductionData = ProductionArea[];
 
 
 @Component({
-  selector: 'app-resumen-produccion-category',
-  imports: [],
-  templateUrl: './resumen-produccion-category.component.html',
-  styleUrl: './resumen-produccion-category.component.css'
+	selector: 'app-resumen-produccion-category',
+	imports: [],
+	templateUrl: './resumen-produccion-category.component.html',
+	styleUrl: './resumen-produccion-category.component.css'
 })
 export class ResumenProduccionCategoryComponent
 {
@@ -93,16 +93,6 @@ export class ResumenProduccionCategoryComponent
 			for(let key of keys)
 			{
 				obj[key] = query_params.get(key) as string;
-			}
-
-			if(!('produced>=' in obj) )
-			{
-
-			}
-
-			if(!('produced>~' in obj) )
-			{
-
 			}
 
 			Promise.all

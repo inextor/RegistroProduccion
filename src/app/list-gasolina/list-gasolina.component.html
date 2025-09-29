@@ -1,0 +1,64 @@
+<div class="container mt-4">
+	<h2>Listado de Consumos de Gasolina</h2>
+
+	<div class="row mb-3">
+		<div class="col-md-4">
+			<label for="start_date" class="form-label">Fecha Inicio:</label>
+			<input type="date" id="start_date" class="form-control" [(ngModel)]="start_date" (change)="onFilterChange()">
+		</div>
+		<div class="col-md-4">
+			<label for="end_date" class="form-label">Fecha Fin:</label>
+			<input type="date" id="end_date" class="form-control" [(ngModel)]="end_date" (change)="onFilterChange()">
+		</div>
+		<div class="col-md-4">
+			<label for="production_area" class="form-label">Área de Producción:</label>
+			<select id="production_area" class="form-select" [(ngModel)]="selected_production_area_id" (change)="onFilterChange()">
+				<option value="">Todas</option>
+				@for (pa of production_area_info_list; track pa.production_area.id) {
+					<option [value]="pa.production_area.id">{{pa.production_area.name}}</option>
+				}
+			</select>
+		</div>
+	</div>
+
+	@if (is_loading) {
+		<div class="alert alert-info">Cargando consumos...</div>
+	} @else if (error_message) {
+		<div class="alert alert-danger">{{ error_message }}</div>
+	} @else if (gasolina_consumptions.length === 0) {
+		<div class="alert alert-warning">No se encontraron consumos de gasolina para los filtros seleccionados.</div>
+	} @else {
+		<div class="card mb-3">
+			<div class="card-body">
+				<h5 class="card-title">Totales</h5>
+				<p class="card-text"><strong>Litros Totales:</strong> {{ total_liters | number:'1.2-2' }}</p>
+				<p class="card-text"><strong>Costo Total:</strong> {{ total_cost | currency:'USD':'symbol':'1.2-2' }}</p>
+			</div>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Fecha</th>
+						<th>Área de Producción</th>
+						<th>Litros</th>
+						<th>Precio por Litro</th>
+						<th>Costo Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (consumption_info of gasolina_consumptions; track consumption_info.consumption.id) {
+						<tr>
+							<td>{{ consumption_info.consumption.consumed | date:'short' }}</td>
+							<td>{{ consumption_info?.production_area?.name }}</td>
+							<td>{{ consumption_info.consumption.qty | number:'1.2-2' }}</td>
+							<td>{{ consumption_info.consumption.price | currency:'USD':'symbol':'1.2-2' }}</td>
+							<td>{{ (consumption_info.consumption.qty * consumption_info.consumption.price) | currency:'USD':'symbol':'1.2-2' }}</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+</div>

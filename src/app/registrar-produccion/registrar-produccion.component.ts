@@ -321,6 +321,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 		let item_info = this.item_info_array.find(item_info => item_info.item.id == item_id) as ItemInfo;
 		let item = item_info.item;
 		this.selected_item = item_info.item;
+		this.loss_percent = ''; // Clear loss_percent when item changes
 
 		console.log('Item selected:', item);
 
