@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <h2>Estados de Cuenta por Área de Producción</h2>
+
+  @if (is_loading && !selected_area) {
+    <div class="alert alert-info">Cargando áreas de producción...</div>
+  } @else if (error_message) {
+    <div class="alert alert-danger">{{ error_message }}</div>
+  } @else if (production_areas.length === 0) {
+    <div class="alert alert-warning">No se encontraron áreas de producción.</div>
+  } @else {
+    <div class="list-group">
+      @for (pa of production_areas; track pa.production_area.id) {
+        <button type="button" class="list-group-item list-group-item-action" (click)="onAreaClick(pa)">
+          {{ pa.production_area.name }}
+        </button>
+      }
+    </div>
+  }
+</div>
+
+@if (selected_area) {
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show" style="display: block;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seleccionar Usuario de {{ selected_area.production_area.name }}</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          @if (is_loading) {
+            <div class="alert alert-info">Cargando usuarios...</div>
+          } @else if (users_of_selected_area.length === 0) {
+            <div class="alert alert-warning">No se encontraron usuarios para esta área.</div>
+          } @else {
+            <div class="list-group">
+              @for (user of users_of_selected_area; track user.id) {
+                <a [routerLink]="['/ver-estado-de-cuenta']" [queryParams]="{ user_id: user.id }" class="list-group-item list-group-item-action" (click)="closeModal()">
+                  {{ user.name }}
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

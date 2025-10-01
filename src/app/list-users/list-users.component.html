@@ -1,0 +1,27 @@
+<div class="container mt-4">
+	<h2>Listado de Áreas de Producción y Usuarios</h2>
+
+	@if (is_loading) {
+		<div class="alert alert-info">Cargando áreas de producción y usuarios...</div>
+	} @else if (error_message) {
+		<div class="alert alert-danger">{{ error_message }}</div>
+	} @else if (production_area_info_list.length === 0) {
+		<div class="alert alert-warning">No se encontraron áreas de producción.</div>
+	}
+
+	<table>
+	@for (pa_info of production_area_info_list; track pa_info.production_area.id) {
+		@if (pa_info.users.length > 0) {
+			<tr>
+				<th [colSpan]="2">{{ pa_info.production_area.name }}</th>
+			</tr>
+			@for (user of pa_info.users; track user.id) {
+				<tr>
+					<td>{{ user.name }})</td>
+					<td></td>
+				</tr>
+			}
+		}
+	}
+	</table>
+</div>
