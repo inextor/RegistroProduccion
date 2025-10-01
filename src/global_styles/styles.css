@@ -1,54 +1,23 @@
-/* You can add global styles to this file, and also import other style files */
-body
-{
-	margin: 0;
-	background-color: #f0f0f0;
+app-lateral-menu {
+  display: block;
+  position: fixed;
+  height: 100vh;
+  width: 250px;
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
 }
 
-
-input[type="date"],
-input[type="text"],
-input[type="number"],
-input[type="datetime-local"],
-input[type="email"]
-{
-	width: 100%;
-	padding: 10px;
-	border-radius: 10px;
-	border: 1px solid #ddd;
-	font-size: 14px;
-	box-sizing: border-box;
+app-lateral-menu.open {
+    transform: translateX(0);
 }
 
-dialog
-{
-	border: 1px solid #ccc;
-	border-radius: 10px;
+.main-content {
+  margin-left: 0;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
 }
 
-
- @keyframes gradientShift {
-     0% {
-         background-position: 0% 50%;
-     }
-     50% {
-         background-position: 100% 50%;
-     }
-     100% {
-         background-position: 0% 50%;
-     }
- }
-
-
-
-
-dialog::backdrop {
-
-	background: linear-gradient(45deg, rgba(255, 0, 255, 0.2), rgba(102, 51, 153, 0.2), rgba(0, 191, 255, 0.2), rgba(0, 128, 0, 0.2));
-    animation: gradientShift 15s ease infinite;
-	background-color: rgba(0, 0, 0, 0.1); /* optional: adds dimming effect */
-	backdrop-filter: blur(2px);	 /* ✅ Standard property */
-	-webkit-backdrop-filter: blur(2px);
+.main-content.open {
+  margin-left: 250px; /* Same as lateral menu width */
 }
-
-

@@ -1,8 +1,14 @@
 @if( rest_service.is_logged_in )
 {
-	<app-header class="d-print-none"></app-header>
+	<app-lateral-menu class="d-print-none" [class.open]="is_menu_open"></app-lateral-menu>
 }
-<router-outlet />
+<div class="main-content" [class.open]="is_menu_open">
+    @if( rest_service.is_logged_in )
+    {
+        <app-header class="d-print-none" (menuToggle)="toggleMenu()"></app-header>
+    }
+	<router-outlet />
+</div>
 
 <dialog id="confirmation">
 	<h4>{{confirmation_service.title}}</h4>

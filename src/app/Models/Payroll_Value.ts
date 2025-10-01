@@ -2,6 +2,7 @@
 export interface Payroll_Value
 {
 	id:number;
+	account_id: number | null;
 	created: string|Date;
 	datetime:string | null,
 	description:string;

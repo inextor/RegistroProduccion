@@ -9,9 +9,9 @@ import { ShortDatePipe } from '../pipes/short-date.pipe';
 import { Payroll_Value } from '../Models/Payroll_Value';
 import { Payroll } from '../Models/Payroll';
 import { User } from '../Models/User';
-import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
 import { mergeMap } from 'rxjs';
 import { Rest } from '../classes/Rest';
+import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
 
 interface PayrollInfo
 {
@@ -46,6 +46,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	rest_production: RestProduction;
 	rest_consumption: RestConsumption;
 	rest_payroll_info: Rest;
+	rest_account: Rest;
+	user_account_map: Map<number, number> = new Map();
 	production_area_list: any[] = [];
 	production_area_id: number | '' = '';
 	production_info_list: any[] = [];
@@ -71,7 +73,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		value: 0,
 		datetime: new Date().toISOString().slice(0, 10),
 		status: 'ACTIVE',
-		created: new Date().toISOString().slice(0, 10)
+		created: new Date().toISOString().slice(0, 10),
+		account_id: null
 	};
 
 
@@ -84,6 +87,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.rest_production = new RestProduction(rest_service);
 		this.rest_consumption = new RestConsumption(rest_service);
 		this.rest_payroll_info = new Rest(rest_service,'payroll_info');
+		this.rest_account = new Rest(rest_service, 'account');
 	}
 
 	ngOnInit() {
@@ -194,7 +198,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		});
 	}
 
-	agruparYCalcularTotales() {
+	processProductionAndConsumption() {
 		this.payroll_info_list = [];
 
 		for (const user of this.user_list) {
@@ -238,7 +242,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 								value: 0,
 								datetime: pi.production.produced,
 								status: 'ACTIVE',
-								created: date
+								created: date,
+								account_id: null
 							};
 
 							payroll_values_map.set(key, payroll_value as Payroll_Value);
@@ -267,8 +272,13 @@ export class GenerarNominaAlternoComponent implements OnInit {
 								datetime: date,
 								value: 0,
 								status: 'ACTIVE',
-								created: date
+								created: date,
+								account_id: null
 							};
+
+							if (ci.item.name.toLowerCase() !== 'gasolina') {
+								payroll_value.account_id = this.user_account_map.get(user.id) || null;
+							}
 							payroll_values_map.set(key, payroll_value as Payroll_Value);
 						}
 						payroll_value.value+= cu.total;
@@ -277,7 +287,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			}
 
 			const payroll_values = Array.from(payroll_values_map.values());
-			payroll_values.sort((a, b) =>{
+			payroll_values.sort((a, b) => {
 				let a_v = a.type === 'PERCEPTION' ? 0 : 1;
 				let b_v = b.type === 'PERCEPTION' ? 0 : 1;
 
@@ -403,6 +413,25 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.super_total = super_total;
 	}
 
+	agruparYCalcularTotales() {
+		const user_ids = this.user_list.map(u => u.id);
+		if (user_ids.length > 0) {
+			this.rest_account.search({ 'user_id,': user_ids.join(','), limit: 99999 })
+				.then(response => {
+					const accounts = response.data;
+					// Create a map of user_id -> account_id
+					for (const account of accounts) {
+						if (!this.user_account_map.has(account.user_id)) {
+							this.user_account_map.set(account.user_id, account.id);
+						}
+					}
+					this.processProductionAndConsumption();
+				});
+		} else {
+			this.processProductionAndConsumption();
+		}
+	}
+
 	updatePayrollInfoTotal(payroll_info:PayrollInfo)
 	{
 		let payroll_values = payroll_info.values;
@@ -458,7 +487,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			value: 0,
 			datetime: new Date().toISOString().slice(0, 10),
 			status: 'ACTIVE',
-			created: new Date().toISOString().slice(0, 10)
+			created: new Date().toISOString().slice(0, 10),
+			account_id: this.user_account_map.get(payroll_info.user.id) || null
 		};
 		this.is_adding_deduction = true;
 	}
@@ -480,7 +510,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			value: 0,
 			datetime: this.start_date+' 00:00:00',
 			status: 'ACTIVE',
-			created: new Date().toISOString().slice(0, 10)
+			created: new Date().toISOString().slice(0, 10),
+			account_id: null
 		};
 
 		this.updatePayrollInfoTotal(this.editing_payroll_info);

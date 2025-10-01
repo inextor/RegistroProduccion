@@ -1,75 +1,25 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
-import { combineLatest, mergeMap, Observable, of, startWith } from 'rxjs';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { RestService } from '../rest.service';
 
-interface LocationParameters
-{
-	query:ParamMap,
-	params:ParamMap
-}
-
 @Component({
-	selector: 'app-header',
-	imports: [RouterLink],
-	templateUrl: './header.component.html',
-	styleUrl: './header.component.css'
+  selector: 'app-header',
+  standalone: true,
+  imports: [],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
 })
-export class HeaderComponent
-{
+export class HeaderComponent {
+  @Output() menuToggle = new EventEmitter<void>();
 
-	is_logged_in: boolean = false;
+  constructor(private router: Router, private rest_service: RestService) {}
 
-	constructor(private route:ActivatedRoute,private router:Router,private rest_service:RestService)
-	{
+  toggleMenu() {
+    this.menuToggle.emit();
+  }
 
-	}
-
-	logout()
-	{
-		localStorage.clear();
-		this.rest_service.is_logged_in = false;
-		this.router.navigate(['/login']);
-	}
-
-	ngOnInit()
-	{
-		this.getQueryParamObservable()
-		.subscribe
-		(
-			(data:LocationParameters) =>
-			{
-				this.is_logged_in = localStorage.getItem('session') !== null;
-			}
-		);
-	}
-
-
-	getQueryParamObservable():Observable<LocationParameters>
-	{
-		let p:ParamMap = {
-			has:(_prop)=>false,
-			keys:[],
-			get:(_value:string)=>{ return null},
-			getAll:()=>{ return []},
-		};
-
-		return combineLatest
-		([
-			this.route.queryParamMap.pipe(startWith(p)),
-			this.route.paramMap
-		])
-		.pipe
-		(
-			mergeMap((foo:ParamMap[]) =>
-			{
-				return of
-				({
-					query: foo[0],
-					params: foo[1]
-				});
-			})
-		);
-	}
-
+  logout() {
+    this.rest_service.logout();
+    this.router.navigate(['/login']);
+  }
 }

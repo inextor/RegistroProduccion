@@ -1,43 +1,49 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RestService } from './rest.service';
-import { HeaderComponent } from './header/header.component';
+import { LateralMenuComponent } from './lateral-menu/lateral-menu.component';
 import { ConfirmationService } from './services/confirmation.service';
 import { NgIf } from '@angular/common';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ToastErrorComponent } from './toast-error/toast-error.component';
 import { environment } from '../environments/environment';
 
-@Component
-({
-	selector: 'app-root',
-	imports: [RouterModule,HeaderComponent,NgIf,FormsModule,ToastErrorComponent],
-	templateUrl: './app.component.html',
-	styleUrl: './app.component.css'
+import { HeaderComponent } from './header/header.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterModule, LateralMenuComponent, NgIf, FormsModule, ToastErrorComponent, HeaderComponent],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit
-{
-	constructor(public router: Router, public route: ActivatedRoute, public rest_service: RestService,public confirmation_service:ConfirmationService)
-	{
+export class AppComponent implements OnInit {
+  is_menu_open = true;
 
-		console.log('Environment', environment.name);
-	}
+  constructor(
+    public router: Router,
+    public route: ActivatedRoute,
+    public rest_service: RestService,
+    public confirmation_service: ConfirmationService
+  ) {
+    console.log('Environment', environment.name);
+  }
 
-	confirmation_note_label:string = '';
-	confirmation_note_required:boolean = false;
-	confirmation_note:string = '';
+  confirmation_note_label: string = '';
+  confirmation_note_required: boolean = false;
+  confirmation_note: string = '';
 
-	ngOnInit(): void
-	{
-		if( localStorage.getItem('session') )
-		{
-			//this.router.navigate(['/registrar-produccion']);
-		}
-		else
-		{
-			this.router.navigate(['/login']);
-		}
-	}
+  ngOnInit(): void {
+    if (localStorage.getItem('session')) {
+      //this.router.navigate(['/registrar-produccion']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
 
-	title = 'myapp';
+  toggleMenu() {
+    this.is_menu_open = !this.is_menu_open;
+  }
+
+  title = 'myapp';
 }

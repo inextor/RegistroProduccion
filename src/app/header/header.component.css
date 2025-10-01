@@ -1,27 +1,20 @@
-.header
-{
+.header {
   display: flex;
-  justify-content: space-around;
   align-items: center;
-  padding: 20px 0;
-  background-color: #f5f9fc;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
 }
 
-.menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #4a6c8a;
-  font-size: 14px;
-  text-decoration: none;
-  transition: color 0.2s;
+.menu-toggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 20px;
 }
 
-.menu-item svg {
-  margin-bottom: 5px;
-  fill: currentColor;
-}
-
-.menu-item.active {
-  color: black;
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
 }

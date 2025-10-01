@@ -222,6 +222,12 @@ export class RestService
 		localStorage.removeItem('store');
 	}
 
+	logout(): void
+	{
+		this.clearAuthData();
+		this.is_logged_in = false;
+	}
+
 	getUser(): any
 	{
 		return this.user;
