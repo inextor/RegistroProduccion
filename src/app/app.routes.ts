@@ -10,6 +10,10 @@ export const routes: Routes = [
 		loadComponent: () => import('./list-gasolina/list-gasolina.component').then(m => m.ListGasolinaComponent),
 	},
 	{
+		path: 'list-users',
+		loadComponent: () => import('./list-users/list-users.component').then(m => m.ListUsersComponent),
+	},
+	{
 		path: 'registrar-produccion',
 		loadComponent: () => import('./registrar-produccion/registrar-produccion.component').then(m => m.RegistrarProduccionComponent),
 	},
@@ -64,5 +68,13 @@ export const routes: Routes = [
 	{
 		path: 'view-payroll/:id',
 		loadComponent: () => import('./view-payroll/view-payroll.component').then(m => m.ViewPayrollComponent),
+	},
+	{
+		path: 'ver-estado-de-cuenta',
+		loadComponent: () => import('./ver-estado-de-cuenta/ver-estado-de-cuenta.component').then(m => m.VerEstadoDeCuentaComponent),
+	},
+	{
+		path: 'list-estados-cuenta',
+		loadComponent: () => import('./list-estados-cuenta/list-estados-cuenta.component').then(m => m.ListEstadosCuentaComponent),
 	}
 ];

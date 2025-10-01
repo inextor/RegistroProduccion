@@ -5,13 +5,13 @@ import { RouterLink } from '@angular/router';
 import { RestService } from '../rest.service';
 import { RestProduction } from '../RestClases/RestProduction';
 import { GetEmpty } from '../RestClases/GetEmpty';
-import { ConsumptionInfo } from '../Models/ConsumptionInfo';
 import { Consumption } from '../Models/Consumption'; // Import Consumption interface
 import { Consumption_User } from '../Models/Consumption_User'; // Import ConsumptionUser interface
 import { Production_Area } from '../Models/Production_Area'; // Import ProductionArea interface
-import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
 import { RestConsumption } from '../RestClases/RestConsumption';
 import { ConfirmationService } from '../services/confirmation.service';
+import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
+import { ConsumptionInfo } from '../ComplexModels/ConsumptionInfo';
 
 @Component
 ({

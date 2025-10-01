@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { RestService } from '../rest.service';
 import { RestProduction } from '../RestClases/RestProduction';
 import { RestConsumption } from '../RestClases/RestConsumption';
-import { ConsumptionInfo } from '../Models/ConsumptionInfo';
-import { ProductionAreaInfo } from '../Models/ProductionAreaInfo';
 import { Utils } from '../classes/DateUtils';
+import { ConsumptionInfo } from '../ComplexModels/ConsumptionInfo';
+import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
 
 @Component({
 	selector: 'app-list-gasolina',
 	standalone: true,
-	imports: [FormsModule, CommonModule],
+	imports: [FormsModule, CommonModule, RouterLink],
 	templateUrl: './list-gasolina.component.html',
 	styleUrls: ['./list-gasolina.component.css']
 })

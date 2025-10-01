@@ -1,12 +1,11 @@
 import { Utils } from "../classes/DateUtils";
+import { ItemInfo } from "../ComplexModels/ItemInfo";
+import { ProductionAreaInfo } from "../ComplexModels/ProductionAreaInfo";
+import { ProductionInfo } from "../ComplexModels/ProductionInfo";
 import { Attribute } from "../Models/attribute";
-import { ConsumptionInfo } from "../Models/ConsumptionInfo";
 import { Item } from "../Models/Item";
-import { ItemInfo } from "../Models/ItemInfo";
 import { Production } from "../Models/Production";
 import { Production_Area } from "../Models/Production_Area";
-import { ProductionAreaInfo } from "../Models/ProductionAreaInfo";
-import { ProductionInfo } from "../Models/ProductionInfo";
 import { User } from "../Models/User";
 import { RestService } from "../rest.service";
 
@@ -26,6 +25,7 @@ export class RestProduction
 	searchProductionAreaInfo(p: URLSearchParams | Object):Promise<ProductionAreaInfo[]>
 	{
 		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
+
 		const url = new URL(`${this.rest_service.getBaseUrl()}/production_area_info.php`);
 		url.search = params.toString(); // Handles '?' and encoding
 

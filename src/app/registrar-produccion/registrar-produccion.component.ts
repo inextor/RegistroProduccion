@@ -4,11 +4,11 @@ import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
 import { RestProduction } from '../RestClases/RestProduction';
 import { GetEmpty } from '../RestClases/GetEmpty';
-import { ItemInfo } from '../Models/ItemInfo';
 
 import { ConfirmationService } from '../services/confirmation.service';
 import { filter, mergeMap, Subscription } from 'rxjs';
 import { Utils } from '../classes/DateUtils';
+import { ItemInfo } from '../ComplexModels/ItemInfo';
 
 
 @Component({
