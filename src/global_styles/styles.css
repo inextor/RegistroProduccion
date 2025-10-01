@@ -14,7 +14,6 @@ app-lateral-menu.open {
 
 .main-content {
   margin-left: 0;
-  padding: 20px;
   transition: margin-left 0.3s ease-in-out;
 }
 
