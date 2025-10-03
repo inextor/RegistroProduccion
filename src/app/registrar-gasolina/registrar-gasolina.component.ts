@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { RestService } from '../rest.service';
 import { RestProduction } from '../RestClases/RestProduction';
 import { GetEmpty } from '../RestClases/GetEmpty';
@@ -17,7 +16,7 @@ import { ConsumptionInfo } from '../ComplexModels/ConsumptionInfo';
 ({
 	selector: 'app-registrar-gasolina',
 	standalone: true,
-	imports: [FormsModule, CommonModule, RouterLink],
+	imports: [FormsModule, CommonModule],
 	templateUrl: './registrar-gasolina.component.html',
 	styleUrls: ['./registrar-gasolina.component.css']
 })
