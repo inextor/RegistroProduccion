@@ -1,5 +1,5 @@
 export interface User{
-	created:Date;
+	created:string;
 	created_by_user_id:number | null;
 	credit_days:number | null;
 	credit_limit:number;
@@ -20,7 +20,7 @@ export interface User{
 	status:'ACTIVE'|'DELETED';
 	store_id:number | null;
 	type:'CLIENT'|'USER';
-	updated:Date;
+	updated:string;
 	updated_by_user_id:number | null;
 	username:string | null;
 	workshift_id:number | null;

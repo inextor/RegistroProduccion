@@ -1,4 +1,4 @@
-interface Ledger {
+export interface Ledger {
   id: number;
   account_id: number;
   amount: number;
@@ -12,7 +12,7 @@ interface Ledger {
   payment_id: number;
   previous_balance: number;
   source_document_id: string;
-  source_document_type: string;
+  source_document_type: string | null;
   transaction_type: string;
   updated: string;
   updated_by_user_id: number;
