@@ -18,7 +18,7 @@ import { HeaderComponent } from './header/header.component';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  is_menu_open = true;
+  is_menu_open = false;
 
   constructor(
     public router: Router,
