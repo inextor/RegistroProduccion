@@ -1,0 +1,21 @@
+<div class="container mt-4">
+  <div *ngIf="is_loading" class="loading-indicator">Cargando...</div>
+
+  <div *ngIf="!is_loading">
+    <h2>Agregar Préstamo para {{ user.name }}</h2>
+
+    <form (ngSubmit)="onGuardar()">
+      <div class="form-group">
+        <label for="amount">Monto</label>
+        <input type="number" id="amount" name="amount" class="form-control" [(ngModel)]="amount" required>
+      </div>
+
+      <div class="form-group">
+        <label for="date">Fecha</label>
+        <input type="date" id="date" name="date" class="form-control" [(ngModel)]="date" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+  </div>
+</div>

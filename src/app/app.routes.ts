@@ -76,5 +76,9 @@ export const routes: Routes = [
 	{
 		path: 'list-estados-cuenta',
 		loadComponent: () => import('./list-estados-cuenta/list-estados-cuenta.component').then(m => m.ListEstadosCuentaComponent),
+	},
+	{
+		path: 'agregar-prestamo',
+		loadComponent: () => import('./agregar-prestamo/agregar-prestamo.component').then(m => m.AgregarPrestamoComponent),
 	}
 ];
