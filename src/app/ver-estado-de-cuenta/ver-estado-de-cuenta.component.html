@@ -1,1 +1,48 @@
-<p>ver-estado-de-cuenta works!</p>
+<div class="container mt-4">
+	<h2 class="text-center">Estado de Cuenta</h2>
+
+	<div class="card mb-4">
+		<div class="card-header">
+			<h5>Información de la Cuenta</h5>
+		</div>
+		<div class="card-body">
+			<p><strong>Usuario:</strong> {{ user.name }}</p>
+			<p><strong>Balance Actual:</strong> {{ account.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+			<p><strong>Moneda:</strong> {{ account.currency_id }}</p>
+			<a [routerLink]="['/agregar-prestamo']" [queryParams]="{ user_id: user.id }" class="btn btn-primary">Agregar Préstamo</a>
+		</div>
+	</div>
+
+	<div class="card p-3">
+		<h5>Movimientos</h5>
+		@if (ledgers.length === 0) {
+			<div class="alert alert-warning">No hay movimientos registrados para esta cuenta.</div>
+		} @else {
+			<div class="table-responsive">
+				<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th>Fecha</th>
+							<th>Descripción</th>
+							<th class="text-end">Monto</th>
+							<th class="text-end">Balance</th>
+						</tr>
+					</thead>
+					<tbody>
+						@for (ledger of ledgers; track ledger.id) {
+							<tr>
+								<td>{{ ledger.created | date:'short' }}</td>
+								<td>{{ ledger.description }}</td>
+								<td class="text-end">{{ ledger.amount | currency:'USD':'symbol':'1.2-2' }}</td>
+								<td class="text-end" [class.text-danger]="ledger.transaction_type == 'CREDIT'">
+										{{ ledger.final_balance| currency:'USD':'symbol':'1.2-2' }}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
+
+</div>
