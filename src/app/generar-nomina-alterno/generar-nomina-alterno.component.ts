@@ -48,6 +48,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	rest_payroll_info: Rest;
 	rest_account: Rest;
 	user_account_map: Map<number, number> = new Map();
+	user_account_balance_map: Map<number, number> = new Map();
 	production_area_list: any[] = [];
 	production_area_id: number | '' = '';
 	production_info_list: any[] = [];
@@ -65,6 +66,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	is_adding_deduction:boolean = false;
 	editing_payroll_info: PayrollInfo | null = null;
+	editing_user_balance:number = 0;
 	new_deduction: Payroll_Value = {
 		id: 0,
 		payroll_id: 0,
@@ -423,6 +425,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 					for (const account of accounts) {
 						if (!this.user_account_map.has(account.user_id)) {
 							this.user_account_map.set(account.user_id, account.id);
+							this.user_account_balance_map.set(account.user_id, account.balance);
 						}
 					}
 					this.processProductionAndConsumption();
@@ -479,6 +482,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	showAddExtraDeduction(payroll_info: any) {
 		this.editing_payroll_info = payroll_info;
+		this.editing_user_balance = this.user_account_balance_map.get(payroll_info.user.id) || 0;
 		this.new_deduction = {
 			id: 0,
 			payroll_id: payroll_info.payroll.id,
@@ -488,7 +492,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			datetime: new Date().toISOString().slice(0, 10),
 			status: 'ACTIVE',
 			created: new Date().toISOString().slice(0, 10),
-			account_id: this.user_account_map.get(payroll_info.user.id) || null
+			account_id: -1
 		};
 		this.is_adding_deduction = true;
 	}
@@ -500,10 +504,17 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			return;
 		}
 
+		if( this.new_deduction.value == 0)
+		{
+			this.rest_service.showError('Debe ingresar un valor para la deducción');
+			return;
+		}
+
 		this.editing_payroll_info.values.push({...this.new_deduction});
 
 		this.new_deduction = {
 			id: 0,
+			account_id: -1,
 			payroll_id: 0,
 			type: 'DEDUCTION',
 			description: '',
@@ -511,7 +522,6 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			datetime: this.start_date+' 00:00:00',
 			status: 'ACTIVE',
 			created: new Date().toISOString().slice(0, 10),
-			account_id: null
 		};
 
 		this.updatePayrollInfoTotal(this.editing_payroll_info);
@@ -533,9 +543,17 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	async save()
 	{
-		this.rest_payroll_info.create(this.payroll_info_list);
 
-		this.rest_service.showSuccess('Nóminas guardadas');
-		this.router.navigate(['/payroll']);
+		let to_save = this.payroll_info_list.filter(p => p.values.length > 0);
+
+		this.rest_payroll_info.create( to_save ).then(()=>
+		{
+			this.rest_service.showSuccess('Nóminas guardadas');
+			this.router.navigate(['/listar-nominas']);
+		})
+		.catch((error)=>
+		{
+			this.rest_service.showError(error);
+		});
 	}
 }

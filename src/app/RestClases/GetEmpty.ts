@@ -87,7 +87,7 @@ export class GetEmpty
 			},
 			values: [],
 			user:{
-				created: new Date(),
+				created: new Date().toISOString(),
 				created_by_user_id: null,
 				credit_days: null,
 				credit_limit: 0,
@@ -108,7 +108,7 @@ export class GetEmpty
 				status: 'ACTIVE',
 				store_id: null,
 				type: 'CLIENT',
-				updated: new Date(),
+				updated: new Date().toISOString(),
 				updated_by_user_id: null,
 				username: null,
 				workshift_id: null
