@@ -1,114 +1,114 @@
-<div>
+<div class="d-print-none">
 	<button (click)="generatePDF()">Generate PDF</button>
 </div>
-<div id="pdf_container">
-	<div style="font-family: sans-serif;">
-	<div id="pdfcontainer">
-		<div style="text-align: center;font-family: sans-serif;">
-			<h1>{{production_area_name}}</h1>
-		</div>
+<div id="pdf_container" style="font-family: sans-serif;">
+	<div style="text-align: center;font-family: sans-serif;">
+		<h1>{{production_area_name}}</h1>
+	</div>
 
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+		<thead>
+			<tr style="background-color: #f2f2f2;">
+				<th style="border: 1px solid #ddd; padding: 4px;" colspan="4">Consumos</th>
+			</tr>
+			<tr style="background-color: #f2f2f2;">
+				<th style="border: 1px solid #ddd; padding: 4px;"></th>
+				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Precio</th>
+				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Litros</th>
+				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let consumption_info of consumption_info_list; let i = index; trackBy: trackByConsumptionId">
+				<td style="border: 1px solid #ddd; padding: 4px;">
+					{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})
+				</td>
+				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+					{{consumption_info.consumption.price}}
+				</td>
+				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+					{{consumption_info.consumption.qty}}
+				</td>
+				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+					{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Resumen Produccion</h2>
+	<ng-container *ngFor="let r of resume; trackBy: trackByDate">
+		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+			<tr style="background-color: #f2f2f2;">
+				<th [attr.colspan]="r.production_info_list.length+2" style="border: 1px solid #ddd; padding: 4px;">
+					Producto({{r.date}})
+				</th>
+			</tr>
+			<tr style="background-color: #f2f2f2;">
+				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Piezas</th>
+				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
+					<th *ngIf="pi.item.name.toLowerCase().includes('muerta')" style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+						Piezas {{pi.item.name}}
+					</th>
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Kgs {{pi.item.name}}</th>
+				</ng-container>
+			</tr>
+			<tr>
+				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.alternate_qty | number }}</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.qty | number:'1.2-2'}}</td>
+				</ng-container>
+			</tr>
+		</table>
+	</ng-container>
+
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+		<tr style="background-color: #f2f2f2;">
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas</th>
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Kgs</th>
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas Muerta</th>
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Kgs Muerta</th>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_pieces | number}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_kgs | number:'1.2-2'}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_pieces_muerta | number:'1.2-2'}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_kgs_muerta | number:'1.2-2'}}</td>
+		</tr>
+	</table>
+
+	<div *ngFor="let ur of user_resume_list; trackBy: trackByUserId">
 		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
 			<thead>
-				<tr style="background-color: #f2f2f2;">
-					<th style="border: 1px solid #ddd; padding: 4px;" colspan="4">Consumos</th>
-				</tr>
-				<tr style="background-color: #f2f2f2;">
-					<th style="border: 1px solid #ddd; padding: 4px;"></th>
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Precio</th>
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Litros</th>
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total</th>
+				<tr>
+					<th style="width: 40%; border: 1px solid #ddd; padding: 4px;">Nombre: {{ur.role.name}}</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Efectivo</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Consumos</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Abono</th>
+					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Total</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let consumption_info of consumption_info_list; let i = index; trackBy: trackByConsumptionId">
-					<td style="border: 1px solid #ddd; padding: 4px;">
-						{{consumption_info.item.name}} ({{consumption_info.consumption.consumed | shortDate}})
-					</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
-						{{consumption_info.consumption.price}}
-					</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
-						{{consumption_info.consumption.qty}}
-					</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
-						{{consumption_info.consumption.price * consumption_info.consumption.qty | currency:'$' }}
-					</td>
-				</tr>
+					<tr>
+						<td style="width: 40%; border: 1px solid #ddd; padding: 4px; font-size: 10px;">{{ur.user.name}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_to_pay | currency}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_consumo_total | currency}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{getAbono(ur) | currency}}</td>
+						<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
+					</tr>
 			</tbody>
 		</table>
+	</div>
 
-		<h2>Resumen Produccion</h2>
-		<ng-container *ngFor="let r of resume; trackBy: trackByDate">
-			<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
-				<tr style="background-color: #f2f2f2;">
-					<th [attr.colspan]="r.production_info_list.length+2" style="border: 1px solid #ddd; padding: 4px;">Producto({{r.date}})</th>
-				</tr>
-				<tr style="background-color: #f2f2f2;">
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Piezas</th>
-					<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
-						<th *ngIf="pi.item.name.toLowerCase().includes('muerta')" style="border: 1px solid #ddd; padding: 4px; text-align: right;">Piezas {{pi.item.name}}</th>
-						<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Kgs {{pi.item.name}}</th>
-					</ng-container>
-				</tr>
-				<tr>
-					<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
-						<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.alternate_qty | number }}</td>
-						<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.qty  | number:'1.2-2'}}</td>
-					</ng-container>
-				</tr>
-			</table>
-		</ng-container>
-
-		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
-			<tr style="background-color: #f2f2f2;">
-				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas</th>
-				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Kgs</th>
-				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas Muerta</th>
-				<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Kgs Muerta</th>
-			</tr>
-			<tr>
-				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_pieces | number}}</td>
-				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_kgs | number:'1.2-2'}}</td>
-				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_pieces_muerta | number:'1.2-2'}}</td>
-				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_kgs_muerta | number:'1.2-2'}}</td>
-			</tr>
-		</table>
-
-		<div *ngFor="let ur of user_resume_list; trackBy: trackByUserId">
-			<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
-				<thead>
-					<tr>
-						<th style="width: 40%; border: 1px solid #ddd; padding: 4px;">Nombre: {{ur.role.name}}</th>
-						<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Efectivo</th>
-						<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Consumos</th>
-						<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Abono</th>
-						<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Total</th>
-					</tr>
-				</thead>
-				<tbody>
-						<tr>
-							<td style="width: 40%; border: 1px solid #ddd; padding: 4px; font-size: 10px;">{{ur.user.name}}</td>
-							<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_to_pay | currency}}</td>
-							<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_consumo_total | currency}}</td>
-							<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{getAbono(ur) | currency}}</td>
-							<td style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">{{ur.total_to_pay - ur.total_consumo_total| currency}}</td>
-						</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<h2>Totales</h2>
-		<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-			<tr style="background-color: #f2f2f2;">
-				<th style="border: 1px solid #ddd; padding: 4px;">Total Ingresos</th>
-				<th style="border: 1px solid #ddd; padding: 4px;">Total</th>
-			</tr>
-			<tr>
-				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;"></td>
-				<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{all_users_total_to_pay - all_users_total_consumption | currency}}</td>
-			</tr>
-		        </table>
-		    </div>
-		</div>
-		</div>
+	<h2>Totales</h2>
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+		<tr style="background-color: #f2f2f2;">
+			<th style="border: 1px solid #ddd; padding: 4px;">Total Ingresos</th>
+			<th style="border: 1px solid #ddd; padding: 4px;">Total</th>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;"></td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{all_users_total_to_pay - all_users_total_consumption | currency}}</td>
+		</tr>
+	</table>
+</div>
