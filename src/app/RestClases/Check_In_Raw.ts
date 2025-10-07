@@ -1,8 +1,0 @@
-export interface Check_In_Raw {
-  created_by_user_id: number;
-  created: string;
-  id: number;
-  user_id: number;
-}
-
-
