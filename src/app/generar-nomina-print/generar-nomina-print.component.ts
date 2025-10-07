@@ -38,6 +38,7 @@ interface UserResume{
 	total_consumo_liters: number;
 	total_consumo_total: number;
 	deductions: any[];
+	total_abono: number;
 };
 
 @Component({
@@ -81,6 +82,7 @@ export class GenerarNominaPrintComponent implements OnInit
 	deduction_amount:number = 0;
 	deduction_description:string = '';
 	current_payroll_info_list: PayrollInfo[] = [];
+all_users_total_abono: any;
 
 	openModal()
 	{
@@ -314,14 +316,14 @@ export class GenerarNominaPrintComponent implements OnInit
 			resume.kilos += pi.production.qty;
 		}
 
-		days.sort((a,b)=> 
+		days.sort((a,b)=>
 		{
 			return a.date > b.date ? 1 : -1;
 		});
 
 		for(let r of days)
 		{
-			r.production_info_list.sort((a,b)=> 
+			r.production_info_list.sort((a,b)=>
 			{
 				if( a.item.name.toLowerCase().includes('muerta') )
 					return 1;
@@ -434,6 +436,7 @@ export class GenerarNominaPrintComponent implements OnInit
 				total_consumo_liters,
 				total_consumo_total,
 				price,
+				total_abono:0,
 				deductions: []
 			});
 		}
@@ -442,12 +445,16 @@ export class GenerarNominaPrintComponent implements OnInit
 		this.user_resume_list = user_resume_list;
 		console.log('user_resume_list',this.user_resume_list);
 
+		let total_abono = 0;
 		for (const ur of this.user_resume_list) {
 			const payroll_info = this.current_payroll_info_list.find(p => p.user.id === ur.user.id);
 			if (payroll_info) {
 				ur.deductions = payroll_info.values.filter(v => v.type === 'DEDUCTION');
 			}
+			ur.total_abono = this.getAbono(ur);
+			total_abono += ur.total_abono;
 		}
+		this.all_users_total_abono = total_abono;
 	}
 
 
