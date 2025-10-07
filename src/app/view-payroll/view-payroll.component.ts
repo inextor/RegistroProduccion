@@ -6,7 +6,7 @@ import { User } from '../Models/User';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Rest } from '../classes/Rest';
 import { Payroll_Value } from '../Models/Payroll_Value';
-import { GetEmpty, PayrollInfo } from '../RestClases/GetEmpty';
+import { GetEmpty } from '../classes/GetEmpty';
 
 
 @Component({
