@@ -60,7 +60,7 @@ export class LoginComponent
 
 					this.rest_service.is_logged_in = true;
 					// Redirect to registrar-produccion
-					this.router.navigate(['/registrar-produccion']);
+					this.router.navigate(['/molusca-home']);
 				}
 				else
 				{
