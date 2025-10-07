@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { RestService } from '../rest.service';
 import { combineLatest, Observable, of, startWith } from 'rxjs';
-import { RestProduction } from '../RestClases/RestProduction';
+import { RestProduction } from '../classes/RestProduction';
 import { CommonModule, DatePipe, JsonPipe } from '@angular/common';
 import { Utils } from '../classes/DateUtils';
 import { FormsModule } from '@angular/forms';

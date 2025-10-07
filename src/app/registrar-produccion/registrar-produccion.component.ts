@@ -2,9 +2,8 @@ import { Component, OnInit, ElementRef, HostListener, OnDestroy } from '@angular
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
-import { RestProduction } from '../RestClases/RestProduction';
-import { GetEmpty } from '../RestClases/GetEmpty';
-
+import { GetEmpty } from '../classes/GetEmpty';
+import { RestProduction } from '../classes/RestProduction';
 import { ConfirmationService } from '../services/confirmation.service';
 import { filter, mergeMap, Subscription } from 'rxjs';
 import { Utils } from '../classes/DateUtils';

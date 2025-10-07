@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RestService } from '../rest.service';
 import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
-import { RestProduction } from '../RestClases/RestProduction';
+import { RestProduction } from '../classes/RestProduction';
 import { User } from '../Models/User';
 
 @Component({

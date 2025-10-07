@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RestService } from '../rest.service';
 import { combineLatest, mergeMap, Observable, of, startWith } from 'rxjs';
-import { RestProduction } from '../RestClases/RestProduction';
+import { RestProduction } from '../classes/RestProduction';
 import { ActivatedRoute, ParamMap, Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule} from '@angular/forms';

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RestConsumption } from '../RestClases/RestConsumption';
+import { RestProduction } from '../classes/RestProduction';
+import { RestConsumption } from '../classes/RestConsumption';
 import { Rest } from '../classes/Rest';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
 import { Payroll } from '../Models/Payroll';

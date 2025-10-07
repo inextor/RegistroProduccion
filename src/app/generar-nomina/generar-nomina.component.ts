@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RestConsumption } from '../RestClases/RestConsumption';
 import { Rest } from '../classes/Rest';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
+import { RestProduction } from '../classes/RestProduction';
+import { RestConsumption } from '../classes/RestConsumption';
 
 interface Resume{
 	date:string;

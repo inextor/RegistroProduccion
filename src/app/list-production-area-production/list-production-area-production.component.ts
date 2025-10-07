@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RestService } from '../rest.service';
-import { RestProduction } from '../RestClases/RestProduction';
+import { RestProduction } from '../classes/RestProduction';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { filter, mergeMap } from 'rxjs/operators';

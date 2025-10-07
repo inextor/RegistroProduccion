@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RestConsumption } from '../RestClases/RestConsumption';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
 import { Payroll_Value } from '../Models/Payroll_Value';
 import { Payroll } from '../Models/Payroll';
@@ -12,6 +10,8 @@ import { User } from '../Models/User';
 import { mergeMap } from 'rxjs';
 import { Rest } from '../classes/Rest';
 import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
+import { RestProduction } from '../classes/RestProduction';
+import { RestConsumption } from '../classes/RestConsumption';
 
 interface PayrollInfo
 {

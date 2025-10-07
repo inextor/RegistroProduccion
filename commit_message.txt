@@ -1,0 +1,12 @@
+feat: Implement Mollusca home page and update login redirection
+
+This commit introduces a new default home page for the application after successful login, named 'Mollusca Home'.
+
+Key changes include:
+- **New Component:** Created `molusca-home` component (`src/app/molusca-home/`) to serve as the new landing page.
+- **Mollusca Home Content:** The `molusca-home.component.html` now displays an `<h1>Mollusca</h1>` title and includes an "Agregar Registro" button that navigates to the `/registrar-produccion` route.
+- **RouterLink Integration:** Configured `molusca-home.component.ts` to correctly use `RouterLink` for navigation.
+- **Routing Update:** Added a new route for `/molusca-home` in `src/app/app.routes.ts`.
+- **Login Redirection Change:** Modified `src/app/login/login.component.ts` to redirect users to `/molusca-home` instead of `/registrar-produccion` upon successful login.
+
+This change provides a more appropriate default landing experience for users after authentication.

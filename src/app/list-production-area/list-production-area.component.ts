@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RestProduction } from '../RestClases/RestProduction';
+import { RestProduction } from '../classes/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 

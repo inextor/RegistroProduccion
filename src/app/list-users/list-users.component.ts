@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
-import { RestProduction } from '../RestClases/RestProduction';
+import { RestProduction } from '../classes/RestProduction';
 import { Rest, RestResponse } from '../classes/Rest';
 import { Account } from '../Models/Account';
 import { User } from '../Models/User';

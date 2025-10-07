@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { RestService } from '../rest.service';
 import { RouterLink } from '@angular/router';
-import { RestProduction } from '../RestClases/RestProduction';
-
+import { RestProduction } from '../classes/RestProduction';
 import { Observable, combineLatest } from 'rxjs';
 
 @Component({
