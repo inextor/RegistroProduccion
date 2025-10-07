@@ -9,6 +9,7 @@ import { Rest } from '../classes/Rest';
 import { BaseComponent } from '../base/base.component';
 import { ActivatedRoute } from '@angular/router';
 import { Account } from '../Models/Account';
+import { Utils } from '../classes/DateUtils';
 
 @Component({
 	selector: 'app-agregar-prestamo',
@@ -35,8 +36,8 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.is_loading = true;
-		this.route.queryParamMap.subscribe(params => {
-
+		this.route.queryParamMap.subscribe(params =>
+		{
 			this.account = null;
 
 			const userIdFromParams = params.get('user_id');
@@ -80,7 +81,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 		const newLedger: Partial<Ledger> = {
 			account_id: this.account ? this.account.id : -1,
 			amount: Number(this.amount) * -1, // Los préstamos son un débito (negativo) en la cuenta
-			description: 'Préstamo',
+			description: 'Préstamo '+Utils.getDateString(this.date),
 			transaction_type: 'DEBIT',
 			source_document_type: null,
 			currency_id: 'MXN'
