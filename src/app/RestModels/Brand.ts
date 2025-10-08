@@ -1,11 +1,11 @@
 export interface Brand {
   id: number;
-  created_by_user_id: number;
-  created: string;
-  description: string;
-  image_id: number;
+  created_by_user_id: number | null;
+  created: string | Date;
+  description: string | null;
+  image_id: number | null;
   name: string;
-  updated_by_user_id: number;
+  updated_by_user_id: number | null;
   updated: string;
 }
 

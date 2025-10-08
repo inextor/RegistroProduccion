@@ -1,22 +1,22 @@
 export interface Billing_Data {
   id: number;
-  address: string;
-  city: string;
-  created_by_user_id: number;
-  created: string;
-  password: string;
-  porcentaje_ISR: number;
+  address: string | null;
+  city: string | null;
+  created_by_user_id: number | null;
+  created: string | Date;
+  password: string | null;
+  porcentaje_ISR: number | null;
   precision: number;
-  razon_social: string;
-  regimen_capital: string;
-  regimen_fiscal: string;
+  razon_social: string | null;
+  regimen_capital: string | null;
+  regimen_fiscal: string | null;
   remaining_credits: number;
   rfc: string;
-  state: string;
-  updated_by_user_id: number;
+  state: string | null;
+  updated_by_user_id: number | null;
   updated: string;
-  usuario: string;
-  zipcode: string;
+  usuario: string | null;
+  zipcode: string | null;
 }
 
 

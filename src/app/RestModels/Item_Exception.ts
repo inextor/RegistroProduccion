@@ -1,12 +1,12 @@
 export interface Item_Exception {
   id: number;
-  created: string;
+  created: string | Date;
   description: string;
   item_id: number;
-  list_as_exception: string;
-  order_type: string;
-  stock_item_id: number;
-  stock_qty: number;
+  list_as_exception: string | null;
+  order_type: string | null;
+  stock_item_id: number | null;
+  stock_qty: number | null;
   updated: string;
 }
 

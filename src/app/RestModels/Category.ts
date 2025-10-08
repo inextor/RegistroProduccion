@@ -1,21 +1,21 @@
 export interface Category {
   id: number;
-  available_online: string;
+  available_online: string | null;
   background: string;
-  code: string;
-  created_by_user_id: number;
-  created: string;
-  default_clave_prod_serv: string;
-  display_status: string;
-  image_id: number;
-  image_style: string;
+  code: string | null;
+  created_by_user_id: number | null;
+  created: string | Date;
+  default_clave_prod_serv: string | null;
+  display_status: string | null;
+  image_id: number | null;
+  image_style: string | null;
   name: string;
   shadow_color: string;
   sort_weight: number;
   text_color: string;
-  text_style: string;
-  type: string;
-  updated_by_user_id: number;
+  text_style: string | null;
+  type: string | null;
+  updated_by_user_id: number | null;
   updated: string;
 }
 

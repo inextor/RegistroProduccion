@@ -1,8 +1,8 @@
 export interface Production_Area {
   id: number;
-  created: string;
+  created: string | Date;
   name: string;
-  status: string;
+  status: string | null;
   store_id: number;
   updated: string;
 }

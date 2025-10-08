@@ -3,7 +3,7 @@ export interface Labels {
   store: string;
   production_area: string;
   ingredients: string;
-  created: string;
+  created: string | Date;
   updated: string;
 }
 

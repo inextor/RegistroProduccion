@@ -1,7 +1,7 @@
 export interface Serie_Counter {
   id: string;
   counter: number;
-  created: string;
+  created: string | Date;
   updated: string;
 }
 

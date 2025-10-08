@@ -1,18 +1,18 @@
 export interface Work_Log {
   id: number;
   break_seconds: number;
-  date: string | Date;
-  disciplinary_actions: string;
-  docking_pay: number;
-  end_timestamp: string;
-  extra_hours: number;
-  hours: number;
+  date: string;
+  disciplinary_actions: string | null;
+  docking_pay: number | null;
+  end_timestamp: string | Date | null;
+  extra_hours: number | null;
+  hours: number | null;
   in_out_count: number;
-  json_values: string;
-  on_time: string;
+  json_values: string | null;
+  on_time: string | null;
   seconds_log: number;
-  start_timestamp: string;
-  total_payment: number;
+  start_timestamp: string | Date | null;
+  total_payment: number | null;
   updated: string;
   user_id: number;
 }

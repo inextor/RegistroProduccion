@@ -1,9 +1,9 @@
 export interface Production_Area_Item {
   id: number;
-  created: string;
+  created: string | Date;
   item_id: number;
   production_area_id: number;
-  status: string;
+  status: string | null;
   updated: string;
 }
 

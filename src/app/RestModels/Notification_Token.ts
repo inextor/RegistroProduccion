@@ -3,9 +3,9 @@ export interface Notification_Token {
   user_id: number;
   provider: string;
   token: string;
-  created: string;
+  created: string | Date;
   updated: string;
-  status: string;
+  status: string | null;
 }
 
 

@@ -1,11 +1,11 @@
 export interface Requisition_Item {
-  aproved_status: string;
-  created: string;
+  aproved_status: string | null;
+  created: string | Date;
   id: number;
   item_id: number;
   qty: number;
   requisition_id: number;
-  status: string;
+  status: string | null;
   updated: string;
 }
 

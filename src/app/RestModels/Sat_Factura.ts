@@ -1,23 +1,23 @@
 export interface Sat_Factura {
   id: number;
-  system_cancelled_timestamp: string;
-  billing_data_id: number;
-  created_by_user_id: number;
-  created: string;
-  folio: string;
-  order_id: number;
-  payment_id: number;
-  pdf_attachment_id: number;
-  request: string;
-  serie: string;
-  transaccion: string;
-  type: string;
-  updated_by_user_id: number;
+  system_cancelled_timestamp: string | Date | null;
+  billing_data_id: number | null;
+  created_by_user_id: number | null;
+  created: string | Date;
+  folio: string | null;
+  order_id: number | null;
+  payment_id: number | null;
+  pdf_attachment_id: number | null;
+  request: string | null;
+  serie: string | null;
+  transaccion: string | null;
+  type: string | null;
+  updated_by_user_id: number | null;
   updated: string;
-  uuid: string;
-  xml_attachment_id: number;
-  cancelado_por_sat: string;
-  solicitud_cancelacion_sat_timestamp: string;
+  uuid: string | null;
+  xml_attachment_id: number | null;
+  cancelado_por_sat: string | null;
+  solicitud_cancelacion_sat_timestamp: string | Date | null;
 }
 
 

@@ -1,6 +1,6 @@
 export interface Ecommerce_Role_Item {
   created_by_user_id: number;
-  created: string;
+  created: string | Date;
   ecommerce_item_id: number;
   id: number;
   role_id: number;

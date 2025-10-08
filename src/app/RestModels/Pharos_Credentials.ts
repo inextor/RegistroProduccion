@@ -1,7 +1,7 @@
 export interface Pharos_Credentials {
   id: number;
   created_by_user_id: number;
-  created: string;
+  created: string | Date;
   endpoint: string;
   name: string;
   password: string;

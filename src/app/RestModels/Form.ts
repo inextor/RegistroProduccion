@@ -1,10 +1,10 @@
 export interface Form {
   id: number;
-  created: string;
+  created: string | Date;
   created_by_user_id: number;
-  description: string;
-  is_active: number;
-  is_response_title_required: number;
+  description: string | null;
+  is_active: number | null;
+  is_response_title_required: number | null;
   responses_allowed: number;
   title: string;
   updated: string;

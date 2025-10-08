@@ -1,7 +1,7 @@
 export interface Delivery_Assignment {
   id: number;
   created_by_user_id: number;
-  created: string;
+  created: string | Date;
   reservation_item_id: number;
   updated_by_user_id: number;
   updated: string;

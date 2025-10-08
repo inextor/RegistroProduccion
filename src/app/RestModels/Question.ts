@@ -1,12 +1,12 @@
 export interface Question {
   id: number;
-  created: string;
+  created: string | Date;
   form_id: number;
-  help: string;
+  help: string | null;
   priority: number;
   question: string;
-  type: string;
-  required: number;
+  type: string | null;
+  required: number | null;
   updated: string;
 }
 

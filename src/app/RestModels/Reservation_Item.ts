@@ -1,22 +1,22 @@
 export interface Reservation_Item {
   id: number;
-  created: string;
+  created: string | Date;
   delivered_qty: number;
-  end: string | Date;
+  end: string | null;
   item_id: number;
-  last_period_id: number;
-  note: string;
-  period_type: string;
-  price: number;
-  tax_included: string;
+  last_period_id: number | null;
+  note: string | null;
+  period_type: string | null;
+  price: number | null;
+  tax_included: string | null;
   qty: number;
   reservation_id: number;
   returned_qty: number;
-  scheduled_delivery: string | Date;
-  scheduled_return: string | Date;
+  scheduled_delivery: string | null;
+  scheduled_return: string | null;
   stock_item_id: number;
-  start: string | Date;
-  status: string;
+  start: string;
+  status: string | null;
   updated: string;
 }
 

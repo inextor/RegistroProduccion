@@ -1,9 +1,9 @@
 export interface Pallet {
   id: number;
-  created_by_user_id: number;
-  created: string;
-  production_item_id: number;
-  store_id: number;
+  created_by_user_id: number | null;
+  created: string | Date;
+  production_item_id: number | null;
+  store_id: number | null;
   updated: string;
 }
 

@@ -1,13 +1,13 @@
 export interface Period {
   id: number;
-  created: string;
+  created: string | Date;
   created_by_user_id: number;
-  end_timestamp: string;
+  end_timestamp: string | Date;
   minutes_offset: number;
-  note: string;
+  note: string | null;
   reservation_id: number;
-  start_timestamp: string;
-  status: string;
+  start_timestamp: string | Date;
+  status: string | null;
   updated: string;
   updated_by_user_id: number;
 }

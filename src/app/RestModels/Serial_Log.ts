@@ -3,7 +3,7 @@ export interface Serial_Log {
   serial_id: number;
   note: string;
   reservation_item_id: number;
-  timestamp: string;
+  timestamp: string | Date;
 }
 
 

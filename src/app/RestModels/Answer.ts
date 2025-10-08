@@ -1,8 +1,8 @@
 export interface Answer {
   id: number;
-  answer_choice_id: number;
-  answer_number: number;
-  answer_text: string;
+  answer_choice_id: number | null;
+  answer_number: number | null;
+  answer_text: string | null;
   question_id: number;
   response_id: number;
 }

@@ -1,10 +1,10 @@
 export interface Attribute {
   id: number;
   created_by_user_id: number;
-  created: string;
+  created: string | Date;
   name: string;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

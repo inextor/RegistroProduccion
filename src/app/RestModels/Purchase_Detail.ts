@@ -1,15 +1,15 @@
 export interface Purchase_Detail {
   id: number;
-  created: string;
-  description: string;
+  created: string | Date;
+  description: string | null;
   item_id: number;
   purchase_id: number;
-  qty: number;
-  serial_number: string;
-  status: string;
-  stock_status: string;
+  qty: number | null;
+  serial_number: string | null;
+  status: string | null;
+  stock_status: string | null;
   total: number;
-  unitary_price: number;
+  unitary_price: number | null;
   updated: string;
 }
 

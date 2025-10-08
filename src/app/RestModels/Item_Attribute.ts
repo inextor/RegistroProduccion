@@ -3,7 +3,7 @@ export interface Item_Attribute {
   attribute_id: number;
   created_by_user_id: number;
   item_id: number;
-  created: string;
+  created: string | Date;
   updated_by_user_id: number;
   updated: string;
   value: string;

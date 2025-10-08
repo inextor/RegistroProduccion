@@ -1,6 +1,6 @@
 export interface Category_Type {
   id: string;
-  TYPE: string;
+  TYPE: string | null;
 }
 
 

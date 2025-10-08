@@ -1,17 +1,17 @@
 export interface Serial {
   id: number;
-  available_status: string;
-  additional_data: string;
-  created_by_user_id: number;
-  created: string;
-  description: string;
-  last_order_id: number;
-  last_reservation_id: number;
+  available_status: string | null;
+  additional_data: string | null;
+  created_by_user_id: number | null;
+  created: string | Date;
+  description: string | null;
+  last_order_id: number | null;
+  last_reservation_id: number | null;
   item_id: number;
   serial_number: string;
-  status: string;
+  status: string | null;
   store_id: number;
-  updated_by_user_id: number;
+  updated_by_user_id: number | null;
   updated: string;
 }
 

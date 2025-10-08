@@ -1,15 +1,15 @@
 export interface Stocktake_Item {
   id: number;
-  box_content_id: number;
-  box_id: number;
-  created_by_user_id: number;
-  created: string;
-  db_qty: number;
+  box_content_id: number | null;
+  box_id: number | null;
+  created_by_user_id: number | null;
+  created: string | Date;
+  db_qty: number | null;
   item_id: number;
-  pallet_id: number;
-  real_qty: number;
+  pallet_id: number | null;
+  real_qty: number | null;
   stocktake_id: number;
-  updated_by_user_id: number;
+  updated_by_user_id: number | null;
   updated: string;
 }
 
