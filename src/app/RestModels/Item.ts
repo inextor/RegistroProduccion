@@ -1,0 +1,51 @@
+export interface Item {
+  id: number;
+  applicable_tax: string;
+  availability_type: string;
+  background: string;
+  brand_id: number;
+  category_id: number;
+  clave_sat: string;
+  code: string;
+  commanda_type_id: number;
+  commission_currency_id: string;
+  commission_type: string;
+  commission: number;
+  created_by_user_id: number;
+  created: string;
+  currency_id: string;
+  description: string;
+  extra_name: string;
+  form_id: number;
+  response_requirement_qty: string;
+  for_reservation: string;
+  has_serial_number: string;
+  ieps_type: string;
+  ieps_value: number;
+  image_id: number;
+  image_style: string;
+  json_tags: string;
+  measurement_unit: string;
+  name: string;
+  note_required: string;
+  on_sale: string;
+  stock_type: string;
+  partial_sale: string;
+  period_type: string;
+  product_id: number;
+  provider_user_id: number;
+  reference_currency_id: string;
+  reference_price: number;
+  return_action: string;
+  shadow_color: string;
+  sort_weight: number;
+  status: string;
+  tax_percent: number;
+  text_color: string;
+  text_style: string;
+  unidad_medida_sat_id: string;
+  updated_by_user_id: number;
+  updated: string;
+}
+
+
