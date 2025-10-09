@@ -1,13 +1,13 @@
 export interface Order_Offer {
   id: number;
-  amount: number | null;
+  amount: number;
   coupon_code: string;
   order_id: number;
   offer_id: number | null;
   created_by_user_id: number;
   updated_by_user_id: number;
   created: string | Date;
-  updated: string;
+  updated: string | Date;
 }
 
 

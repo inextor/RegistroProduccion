@@ -2,8 +2,8 @@ export interface Payroll_Concept {
   id: number;
   formula: string;
   name: string;
-  status: string | null;
-  type: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  type: 'DEDUCTION' | 'PERCEPTION';
 }
 
 

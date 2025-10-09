@@ -4,7 +4,7 @@ export interface Item_Points {
   created: string | Date;
   item_id: number;
   qty: number;
-  type: string | null;
+  type: 'AMOUNT' | 'PERCENT' | 'AMOUNT';
   updated_by_user_id: number;
   updated: string | Date;
 }

@@ -5,9 +5,9 @@ export interface Question {
   help: string | null;
   priority: number;
   question: string;
-  type: string | null;
-  required: number | null;
-  updated: string;
+  type: 'text' | 'textarea' | 'multiple_choice' | 'rating' | 'ranking' | 'date' | 'number' | 'tel';
+  required: any | null;
+  updated: string | Date;
 }
 
 

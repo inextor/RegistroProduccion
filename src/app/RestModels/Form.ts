@@ -3,11 +3,11 @@ export interface Form {
   created: string | Date;
   created_by_user_id: number;
   description: string | null;
-  is_active: number | null;
-  is_response_title_required: number | null;
+  is_active: any | null;
+  is_response_title_required: any | null;
   responses_allowed: number;
   title: string;
-  updated: string;
+  updated: string | Date;
   updated_by_user_id: number;
 }
 

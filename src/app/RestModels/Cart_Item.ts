@@ -4,8 +4,8 @@ export interface Cart_Item {
   item_id: number;
   qty: number;
   session_id: string | null;
-  type: string | null;
-  updated: string;
+  type: 'IN_CART' | 'BUY_LATER' | 'IN_CART';
+  updated: string | Date;
   user_id: number | null;
 }
 

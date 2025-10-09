@@ -4,7 +4,7 @@ export interface Workshift {
   duration: any;
   name: number;
   start_time: any;
-  updated: string;
+  updated: string | Date;
 }
 
 

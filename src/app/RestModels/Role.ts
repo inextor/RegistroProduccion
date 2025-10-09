@@ -4,7 +4,7 @@ export interface Role {
   created_by_user_id: number;
   created: string | Date;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

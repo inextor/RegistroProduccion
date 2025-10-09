@@ -6,9 +6,9 @@ export interface Attachment {
   filename: string | null;
   height: number | null;
   original_filename: string;
-  size: number;
-  status: string | null;
-  updated: string;
+  size: any;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  updated: string | Date;
   uploader_user_id: number | null;
   width: number | null;
 }

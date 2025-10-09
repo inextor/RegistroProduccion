@@ -1,19 +1,19 @@
 export interface Order_Item_Cost {
   id: number;
-  child_items_cost: number | null;
-  cost: number | null;
+  child_items_cost: number;
+  cost: number;
   created: string | Date;
-  ingredients_cost: number | null;
-  item_cost: number | null;
+  ingredients_cost: number;
+  item_cost: number;
   item_id: number;
   name: string;
   order_id: number;
   order_item_id: number;
-  qty: number | null;
-  sale_profit: number | null;
-  sale_total: number | null;
+  qty: number;
+  sale_profit: number;
+  sale_total: number;
   store_id: number;
-  total: number | null;
+  total: number;
 }
 
 

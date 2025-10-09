@@ -4,9 +4,9 @@ export interface File_Type {
   created: string | Date;
   extension: string | null;
   image_id: number | null;
-  is_image: string | null;
+  is_image: 'NO' | 'YES';
   name: string;
-  updated: string;
+  updated: string | Date;
 }
 
 

@@ -5,7 +5,7 @@ export interface Item_Attribute {
   item_id: number;
   created: string | Date;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
   value: string;
 }
 

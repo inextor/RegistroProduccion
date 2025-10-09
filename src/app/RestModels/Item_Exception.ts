@@ -3,11 +3,11 @@ export interface Item_Exception {
   created: string | Date;
   description: string;
   item_id: number;
-  list_as_exception: string | null;
-  order_type: string | null;
+  list_as_exception: 'YES' | 'NO' | 'YES';
+  order_type: 'ALL' | 'TOGO' | 'IN_PLACE' | 'PICK_UP' | 'QUICK_SALE' | 'ALL';
   stock_item_id: number | null;
-  stock_qty: number | null;
-  updated: string;
+  stock_qty: number;
+  updated: string | Date;
 }
 
 

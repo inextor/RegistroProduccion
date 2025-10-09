@@ -6,7 +6,7 @@ export interface Storage_Serial {
   sort_weight: number;
   storage_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

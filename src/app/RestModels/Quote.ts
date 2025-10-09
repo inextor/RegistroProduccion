@@ -1,6 +1,6 @@
 export interface Quote {
-  approved_status: string | null;
-  approved_time: string | null;
+  approved_status: 'PENDING' | 'SENT' | 'DECLINED' | 'APPROVED' | 'CANCELLED';
+  approved_time: string | Date | null;
   attachment_id: number | null;
   client_user_id: number | null;
   created_by_user_id: number;
@@ -15,8 +15,8 @@ export interface Quote {
   sent_timestamp: string | Date | null;
   store_id: number;
   sync_id: string;
-  tax_percent: number | null;
-  updated: string;
+  tax_percent: number;
+  updated: string | Date;
   valid_until: string | null;
 }
 

@@ -4,13 +4,13 @@ export interface Price {
   created: string | Date;
   currency_id: string;
   item_id: number;
-  percent: number | null;
+  percent: number;
   price_list_id: number;
   price_type_id: number;
-  price: number | null;
-  tax_included: string | null;
+  price: number;
+  tax_included: 'NO' | 'YES' | 'NO';
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

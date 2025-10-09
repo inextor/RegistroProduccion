@@ -1,5 +1,5 @@
 export interface Requisition {
-  approved_status: string | null;
+  approved_status: 'PENDING' | 'APPROVED' | 'NOT_APPROVED' | 'PENDING';
   created_by_user_id: number | null;
   created: string | Date;
   date: string;
@@ -8,8 +8,8 @@ export interface Requisition {
   requested_to_store_id: number | null;
   required_by_store_id: number;
   required_by_timestamp: string | Date | null;
-  shipped_status: string | null;
-  status: string | null;
+  shipped_status: 'PENDING' | 'SHIPPED' | 'PENDING';
+  status: 'PENDING' | 'CANCELLED' | 'NOT_APPROVED' | 'SHIPPED' | 'CLOSED' | 'APPROVED' | 'PENDING';
   updated_by_user_id: number | null;
   updated: string | Date;
 }

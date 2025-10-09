@@ -4,7 +4,7 @@ export interface Pallet {
   created: string | Date;
   production_item_id: number | null;
   store_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

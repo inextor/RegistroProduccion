@@ -7,13 +7,13 @@ export interface Push_Notification {
   link: string | null;
   object_id: string | null;
   object_type: string;
-  priority: string | null;
+  priority: 'normal' | 'high' | 'normal';
   push_notification_id: string | null;
-  read_status: string | null;
+  read_status: 'PENDING' | 'READ';
   response: string | null;
   sent_status: number | null;
   title: string;
-  updated: string;
+  updated: string | Date;
   user_id: number;
 }
 

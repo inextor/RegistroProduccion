@@ -5,7 +5,7 @@ export interface Storage_Type {
   name: string | null;
   sort_weight: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

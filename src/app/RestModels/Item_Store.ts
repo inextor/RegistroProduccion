@@ -4,7 +4,7 @@ export interface Item_Store {
   created: string | Date;
   item_id: number;
   store_id: number;
-  pos_preference: string | null;
+  pos_preference: 'SHOW' | 'HIDE' | 'DEFAULT';
   updated_by_user_id: number;
   updated: string | Date;
 }

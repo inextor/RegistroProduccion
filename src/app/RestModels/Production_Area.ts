@@ -2,9 +2,9 @@ export interface Production_Area {
   id: number;
   created: string | Date;
   name: string;
-  status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
   store_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

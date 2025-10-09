@@ -5,7 +5,7 @@ export interface Keyboard_Shortcut {
   key_combination: string;
   name: string;
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

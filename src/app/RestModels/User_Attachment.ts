@@ -4,9 +4,9 @@ export interface User_Attachment {
   attachment_id: number;
   created_by_user_id: number;
   created: string | Date;
-  status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
   user_id: number;
 }
 

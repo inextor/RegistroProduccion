@@ -4,14 +4,14 @@ export interface Reservation {
   client_name: string;
   created: string | Date;
   created_by_user_id: number;
-  condition: string | null;
+  condition: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ACTIVE';
   currency_id: string;
   note: string | null;
   price_type_id: number;
-  start: string;
-  status: string | null;
+  start: string | Date;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
   store_id: number;
-  updated: string;
+  updated: string | Date;
   updated_by_user_id: number;
   user_id: number | null;
 }

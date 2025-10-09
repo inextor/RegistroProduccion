@@ -5,8 +5,8 @@ export interface Points_Log {
   created: string | Date;
   item_id: number;
   order_id: number;
-  points: number | null;
-  updated: string;
+  points: number;
+  updated: string | Date;
 }
 
 

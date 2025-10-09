@@ -8,7 +8,7 @@ export interface Item_Option {
   min_options: number;
   min_selections: number;
   name: string;
-  status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
 }
 
 

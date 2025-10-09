@@ -3,10 +3,10 @@ export interface Category_Store {
   category_id: number;
   created_by_user_id: number;
   created: string | Date;
-  pos_preference: string | null;
+  pos_preference: 'SHOW' | 'HIDE' | 'DEFAULT';
   store_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

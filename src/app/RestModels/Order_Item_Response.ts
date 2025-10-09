@@ -6,7 +6,7 @@ export interface Order_Item_Response {
   order_item_id: number;
   serial_id: number | null;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

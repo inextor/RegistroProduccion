@@ -10,7 +10,7 @@ export interface Printer {
   protocol: string;
   store_id: number | null;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

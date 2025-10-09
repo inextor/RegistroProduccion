@@ -15,10 +15,10 @@ export interface Address {
   sat_regimen_fiscal: string | null;
   sat_uso_cfdi: string | null;
   state: string | null;
-  status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
   suburb: string | null;
-  type: string | null;
-  updated: string;
+  type: 'BILLING' | 'SHIPPING' | 'BILLING_AND_SHIPPING';
+  updated: string | Date;
   user_id: number;
   zipcode: string | null;
 }

@@ -1,6 +1,6 @@
 export interface Check_In {
   created_by_user_id: number | null;
-  current: number;
+  current: any;
   date: string | null;
   id: number;
   end_timestamp: string | Date | null;

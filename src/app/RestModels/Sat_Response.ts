@@ -6,7 +6,7 @@ export interface Sat_Response {
   request: string | null;
   response: string | null;
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

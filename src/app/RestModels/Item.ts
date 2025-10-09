@@ -1,7 +1,7 @@
 export interface Item {
   id: number;
-  applicable_tax: string | null;
-  availability_type: string | null;
+  applicable_tax: 'DEFAULT' | 'EXEMPT' | 'PERCENT' | 'DEFAULT';
+  availability_type: 'ON_STOCK' | 'BY_ORDER' | 'ALWAYS' | 'ALWAYS';
   background: string;
   brand_id: number | null;
   category_id: number | null;
@@ -9,7 +9,7 @@ export interface Item {
   code: string | null;
   commanda_type_id: number | null;
   commission_currency_id: string;
-  commission_type: string | null;
+  commission_type: 'NONE' | 'AMOUNT' | 'PERCENT' | 'NONE';
   commission: number;
   created_by_user_id: number | null;
   created: string | Date;
@@ -17,35 +17,35 @@ export interface Item {
   description: string | null;
   extra_name: string | null;
   form_id: number | null;
-  response_requirement_qty: string | null;
-  for_reservation: string | null;
-  has_serial_number: string | null;
-  ieps_type: string | null;
-  ieps_value: number | null;
+  response_requirement_qty: 'ONCE_PER_CLIENT' | 'ONCE_PER_SALE' | 'EVERY_ITEM' | 'ONCE_PER_SALE';
+  for_reservation: 'YES' | 'NO' | 'NO';
+  has_serial_number: 'NO' | 'YES' | 'NO';
+  ieps_type: 'RATE' | 'AMOUNT' | 'RATE';
+  ieps_value: number;
   image_id: number | null;
-  image_style: string | null;
-  json_tags: string | null;
+  image_style: 'COVER' | 'CONTAIN' | 'CONTAIN';
+  json_tags: any | null;
   measurement_unit: string | null;
   name: string;
-  note_required: string | null;
-  on_sale: string | null;
-  stock_type: string | null;
-  partial_sale: string | null;
-  period_type: string | null;
+  note_required: 'NO' | 'YES' | 'NO';
+  on_sale: 'NO' | 'YES';
+  stock_type: 'NORMAL' | 'BATCH' | 'NORMAL';
+  partial_sale: 'NO' | 'YES' | 'NO';
+  period_type: 'BY_HOUR' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'MONTHLY';
   product_id: number | null;
   provider_user_id: number | null;
   reference_currency_id: string;
-  reference_price: number | null;
-  return_action: string | null;
+  reference_price: number;
+  return_action: 'RETURN_TO_STOCK' | 'ADD_TO_MERMA' | 'TRANSFORM_INTO_ITEM' | 'RETURN_TO_STOCK';
   shadow_color: string;
   sort_weight: number;
-  status: string | null;
-  tax_percent: number | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  tax_percent: number;
   text_color: string;
-  text_style: string | null;
+  text_style: 'NEVER' | 'CENTER' | 'DOWN' | 'CENTER';
   unidad_medida_sat_id: string;
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

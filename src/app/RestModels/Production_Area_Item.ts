@@ -3,8 +3,8 @@ export interface Production_Area_Item {
   created: string | Date;
   item_id: number;
   production_area_id: number;
-  status: string | null;
-  updated: string;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  updated: string | Date;
 }
 
 

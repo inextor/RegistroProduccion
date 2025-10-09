@@ -4,7 +4,7 @@ export interface Image {
   created: string | Date;
   filename: string;
   height: number;
-  is_private: number;
+  is_private: any;
   original_filename: string | null;
   size: number;
   uploader_user_id: number | null;

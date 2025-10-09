@@ -5,7 +5,7 @@ export interface Ecommerce_Item_Profile {
   id: number;
   profile_id: number;
   updated_by_user_id: number;
-  updated: string | null;
+  updated: string | Date | null;
 }
 
 

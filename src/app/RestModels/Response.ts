@@ -5,7 +5,7 @@ export interface Response {
   form_id: number;
   respondent_identifier: string | null;
   title: string | null;
-  updated: string;
+  updated: string | Date;
   updated_by_user_id: number;
   user_id: number | null;
 }

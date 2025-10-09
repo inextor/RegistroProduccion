@@ -1,16 +1,16 @@
 export interface Bank_Movement_Order {
   id: number;
-  amount: number | null;
+  amount: number;
   bank_movement_id: number;
   created_by_user_id: number | null;
   created: string | Date;
-  currency_amount: number | null;
+  currency_amount: number;
   currency_id: string;
-  exchange_rate: number | null;
+  exchange_rate: number;
   order_id: number;
-  status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

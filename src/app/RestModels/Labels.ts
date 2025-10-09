@@ -4,7 +4,7 @@ export interface Labels {
   production_area: string;
   ingredients: string;
   created: string | Date;
-  updated: string;
+  updated: string | Date;
 }
 
 

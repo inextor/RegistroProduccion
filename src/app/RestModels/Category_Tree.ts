@@ -7,7 +7,7 @@ export interface Category_Tree {
   parent_category_id: number;
   path: string | null;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

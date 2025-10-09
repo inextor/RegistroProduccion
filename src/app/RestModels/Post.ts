@@ -6,7 +6,7 @@ export interface Post {
   post: string;
   title: string;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

@@ -4,7 +4,7 @@ export interface Ledger_Category {
   created_by_user_id: number;
   description: string | null;
   name: string;
-  updated: string;
+  updated: string | Date;
   updated_by_user_id: number;
 }
 

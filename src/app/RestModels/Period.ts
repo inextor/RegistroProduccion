@@ -7,8 +7,8 @@ export interface Period {
   note: string | null;
   reservation_id: number;
   start_timestamp: string | Date;
-  status: string | null;
-  updated: string;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  updated: string | Date;
   updated_by_user_id: number;
 }
 

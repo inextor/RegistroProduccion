@@ -7,9 +7,9 @@ export interface Bank_Account {
   created: string | Date;
   currency: string;
   email: string | null;
-  is_a_payment_method: string | null;
+  is_a_payment_method: 'NO' | 'YES';
   name: string;
-  updated: string;
+  updated: string | Date;
   user_id: number | null;
 }
 

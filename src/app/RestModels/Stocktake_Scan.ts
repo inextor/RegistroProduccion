@@ -9,7 +9,7 @@ export interface Stocktake_Scan {
   created_by_user_id: number | null;
   updated_by_user_id: number | null;
   created: string | Date;
-  updated: string;
+  updated: string | Date;
 }
 
 

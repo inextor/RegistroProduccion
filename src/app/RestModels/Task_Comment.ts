@@ -3,8 +3,8 @@ export interface Task_Comment {
   comment: string;
   created: string | Date;
   task_id: number;
-  type: string | null;
-  updated: string;
+  type: 'SYSTEM' | 'USER' | 'SYSTEM';
+  updated: string | Date;
   user_id: number | null;
 }
 

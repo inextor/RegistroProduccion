@@ -5,7 +5,7 @@ export interface Item_Image {
   image_id: number;
   item_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

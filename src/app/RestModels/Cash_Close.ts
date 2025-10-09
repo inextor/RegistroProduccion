@@ -1,14 +1,14 @@
 export interface Cash_Close {
   id: number;
-  cash_on_hand: number | null;
+  cash_on_hand: number;
   created_by_user_id: number;
   created: string | Date;
-  end: string;
+  end: string | Date;
   note: string | null;
-  other_currencies: number | null;
+  other_currencies: number;
   since: string | Date | null;
-  start: string;
-  updated: string;
+  start: string | Date;
+  updated: string | Date;
 }
 
 

@@ -5,7 +5,7 @@ export interface Storage_Item {
   item_id: number;
   storage_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

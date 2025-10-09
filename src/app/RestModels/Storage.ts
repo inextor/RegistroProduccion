@@ -8,7 +8,7 @@ export interface Storage {
   store_id: number;
   storage_type_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

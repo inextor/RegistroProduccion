@@ -5,7 +5,7 @@ export interface Task {
   created: string | Date;
   description: string;
   in_charge_user_id: number | null;
-  is_done: number;
+  is_done: any;
   item_id: number | null;
   main_task_id: number | null;
   order_id: number | null;
@@ -16,8 +16,8 @@ export interface Task {
   production_area_id: number;
   qty: number;
   requisition_id: number | null;
-  status: string | null;
-  updated: string;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  updated: string | Date;
 }
 
 

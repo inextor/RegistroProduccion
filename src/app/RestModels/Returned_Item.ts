@@ -4,8 +4,8 @@ export interface Returned_Item {
   item_id: number;
   returned_qty: number;
   returns_id: number;
-  total: number | null;
-  updated: string;
+  total: number;
+  updated: string | Date;
 }
 
 

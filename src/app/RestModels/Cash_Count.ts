@@ -2,12 +2,12 @@ export interface Cash_Count {
   id: number;
   cash_close_id: number;
   currency_id: string;
-  denomination: number | null;
+  denomination: number;
   quantity: number;
-  type: string | null;
+  type: 'COIN' | 'BILL' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'CHECK' | 'TRANSFER' | 'Tipo de efectivo o método de pago';
   created: string | Date | null;
-  updated: string | null;
-  only_reference: number;
+  updated: string | Date | null;
+  only_reference: any;
 }
 
 

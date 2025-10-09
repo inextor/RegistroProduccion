@@ -5,7 +5,7 @@ export interface Ecommerce_Role_Item {
   id: number;
   role_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

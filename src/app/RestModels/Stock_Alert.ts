@@ -7,7 +7,7 @@ export interface Stock_Alert {
   min: number | null;
   store_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

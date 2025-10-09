@@ -5,13 +5,13 @@ export interface Purchase {
   order_id: number | null;
   provider_name: string | null;
   provider_user_id: number | null;
-  status: string | null;
-  stock_status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  stock_status: 'PENDING' | 'ADDED_TO_STOCK' | 'SHIPPING_CREATED' | 'PENDING';
   store_id: number;
-  total: number | null;
+  total: number;
   updated_by_user_id: number | null;
-  updated: string;
-  amount_paid: number | null;
+  updated: string | Date;
+  amount_paid: number;
   paid_timestamp: string | Date | null;
 }
 

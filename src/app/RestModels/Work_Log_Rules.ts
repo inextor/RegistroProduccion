@@ -1,6 +1,6 @@
 export interface Work_Log_Rules {
   id: number;
-  json_rules: string | null;
+  json_rules: any | null;
   store_id: number;
 }
 

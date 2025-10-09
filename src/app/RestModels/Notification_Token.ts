@@ -4,8 +4,8 @@ export interface Notification_Token {
   provider: string;
   token: string;
   created: string | Date;
-  updated: string;
-  status: string | null;
+  updated: string | Date;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
 }
 
 

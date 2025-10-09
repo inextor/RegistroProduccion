@@ -1,8 +1,8 @@
 export interface Preferences {
   id: number;
-  ask_for_guests_number: number;
+  ask_for_guests_number: any;
   background_image_id: number | null;
-  background_image_size: string | null;
+  background_image_size: 'repeat' | 'cover' | 'repeat';
   btn_primary_bg_color_hover: string | null;
   btn_primary_bg_color: string;
   btn_primary_border_color_hover: string;
@@ -27,22 +27,22 @@ export interface Preferences {
   charts_colors: string | null;
   chat_upload_attachment_image_id: number | null;
   chat_upload_image_id: number | null;
-  comex_enabled: number;
+  comex_enabled: any;
   created: string | Date;
-  currency_price_preference: string | null;
+  currency_price_preference: 'ONLY_DEFAULT_CURRENCY' | 'MULTIPLE_CURRENCY' | 'ONLY_DEFAULT_CURRENCY';
   default_cash_close_receipt: number;
   default_file_logo_image_id: number | null;
-  default_input_type: string | null;
-  default_pos_availability_type: string | null;
+  default_input_type: 'TACTILE' | 'KEYBOARD' | 'TACTILE';
+  default_pos_availability_type: 'ALWAYS' | 'ON_STOCK' | 'ALWAYS';
   default_price_type_id: number | null;
   default_print_receipt: number;
   default_product_image_id: number | null;
-  default_return_action: string | null;
+  default_return_action: 'RETURN_TO_STOCK' | 'ADD_TO_MERMA' | 'TRANSFORM_TO_PRODUCT' | 'ADD_TO_MERMA';
   default_ticket_format: number;
   default_ticket_image_id: number | null;
   default_user_logo_image_id: number | null;
-  display_categories_on_items: string | null;
-  ecommerce_enabled: number;
+  display_categories_on_items: 'YES' | 'NO' | 'NO';
+  ecommerce_enabled: any;
   header_background_color: string | null;
   header_text_color: string | null;
   item_selected_background_color: string;
@@ -50,26 +50,26 @@ export interface Preferences {
   link_color: string;
   link_hover: string;
   login_background_image_id: number | null;
-  login_background_image_size: string | null;
+  login_background_image_size: 'repeat' | 'cover' | 'cover';
   login_image_id: number | null;
   logo_image_id: number | null;
   menu_background_color: string;
   menu_background_image_id: number | null;
-  menu_background_image_size: string | null;
-  menu_background_type: string | null;
+  menu_background_image_size: 'cover' | 'repeat' | 'repeat';
+  menu_background_type: 'IMAGE' | 'COLOR' | 'IMAGE';
   menu_color_opacity: number;
   menu_icon_color: string;
   menu_text_color: string;
   menu_title_color: string;
   name: string;
-  offers_enabled: number;
+  offers_enabled: any;
   pv_bar_background_color: string;
   pv_bar_text_color: string;
   pv_bar_total_color: string;
-  pv_show_all_categories: string | null;
-  pv_show_orders: string | null;
+  pv_show_all_categories: 'NO' | 'YES' | 'NO';
+  pv_show_orders: 'ALL_OPEN' | 'OPEN_SAME_DAY' | 'OPEN_SAME_DAY';
   radius_style: string | null;
-  stock_negative_values_allowed: number;
+  stock_negative_values_allowed: any;
   submenu_background_color: string;
   submenu_color_opacity: number;
   submenu_icon_color: string;
@@ -83,9 +83,9 @@ export interface Preferences {
   production_enabled: number;
   reservations_enabled: number;
   restaurant_enabled: number;
-  updated: string;
-  user_attachments: string | null;
-  default_cash_close_type: string | null;
+  updated: string | Date;
+  user_attachments: 'ENABLED' | 'DISABLED' | 'DISABLED' | 'Es para si los usuario requieren archivos como foto de identificacion etc';
+  default_cash_close_type: 'SIMPLE' | 'DETAILED' | 'SIMPLE';
 }
 
 

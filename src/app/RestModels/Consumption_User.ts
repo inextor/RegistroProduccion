@@ -3,11 +3,11 @@ export interface Consumption_User {
   created_by_user_id: number;
   created: string | Date;
   currency_id: string;
-  price: number | null;
+  price: number;
   consumption_id: number;
-  total: number | null;
+  total: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
   user_id: number;
 }
 

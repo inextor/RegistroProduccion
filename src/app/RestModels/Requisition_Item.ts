@@ -1,12 +1,12 @@
 export interface Requisition_Item {
-  aproved_status: string | null;
+  aproved_status: 'NOT_APPROVED' | 'APPROVED' | 'NOT_APPROVED';
   created: string | Date;
   id: number;
   item_id: number;
   qty: number;
   requisition_id: number;
-  status: string | null;
-  updated: string;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  updated: string | Date;
 }
 
 

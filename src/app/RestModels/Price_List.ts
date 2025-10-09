@@ -4,7 +4,7 @@ export interface Price_List {
   created: string | Date;
   name: string;
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

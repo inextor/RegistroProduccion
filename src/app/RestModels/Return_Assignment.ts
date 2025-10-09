@@ -4,7 +4,7 @@ export interface Return_Assignment {
   created: string | Date;
   reservation_item_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
   user_id: number;
 }
 

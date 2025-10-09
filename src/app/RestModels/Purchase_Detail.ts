@@ -4,13 +4,13 @@ export interface Purchase_Detail {
   description: string | null;
   item_id: number;
   purchase_id: number;
-  qty: number | null;
+  qty: number;
   serial_number: string | null;
-  status: string | null;
-  stock_status: string | null;
+  status: 'ACTIVE' | 'DELETED' | 'ACTIVE';
+  stock_status: 'PENDING' | 'ADDED_TO_STOCK' | 'PENDING';
   total: number;
-  unitary_price: number | null;
-  updated: string;
+  unitary_price: number;
+  updated: string | Date;
 }
 
 

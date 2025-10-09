@@ -6,7 +6,7 @@ export interface Brand {
   image_id: number | null;
   name: string;
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

@@ -1,6 +1,6 @@
 export interface Serial {
   id: number;
-  available_status: string | null;
+  available_status: 'AVAILABLE' | 'RESERVED' | 'MAINTENANCE' | 'AVAILABLE';
   additional_data: string | null;
   created_by_user_id: number | null;
   created: string | Date;
@@ -9,10 +9,10 @@ export interface Serial {
   last_reservation_id: number | null;
   item_id: number;
   serial_number: string;
-  status: string | null;
+  status: 'ACTIVE' | 'INACTIVE';
   store_id: number;
   updated_by_user_id: number | null;
-  updated: string;
+  updated: string | Date;
 }
 
 

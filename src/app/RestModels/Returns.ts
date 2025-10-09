@@ -1,5 +1,5 @@
 export interface Returns {
-  amount_paid: number | null;
+  amount_paid: number;
   cashier_user_id: number;
   client_user_id: number | null;
   code: string;
@@ -9,9 +9,9 @@ export interface Returns {
   note: string | null;
   order_id: number;
   store_id: number;
-  total: number | null;
-  type: string | null;
-  updated: string;
+  total: number;
+  type: 'RETURN_COUPON' | 'RETURN_MONEY' | 'RETURN_COUPON';
+  updated: string | Date;
 }
 
 

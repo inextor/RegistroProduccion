@@ -3,10 +3,10 @@ export interface Role_Item_Price {
   created_by_user_id: number;
   created: string | Date;
   item_id: number;
-  price: number | null;
+  price: number;
   role_id: number;
   updated_by_user_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 

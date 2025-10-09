@@ -4,7 +4,7 @@ export interface Serial_Image {
   description: string | null;
   image_id: number;
   serial_id: number;
-  updated: string;
+  updated: string | Date;
 }
 
 
