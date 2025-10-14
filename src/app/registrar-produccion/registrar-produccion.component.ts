@@ -2,12 +2,12 @@ import { Component, OnInit, ElementRef, HostListener, OnDestroy } from '@angular
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
-import { GetEmpty } from '../classes/GetEmpty';
 import { RestProduction } from '../classes/RestProduction';
 import { ConfirmationService } from '../services/confirmation.service';
 import { filter, mergeMap, Subscription } from 'rxjs';
 import { Utils } from '../classes/DateUtils';
 import { ItemInfo } from '../ComplexModels/ItemInfo';
+import { GetEmpty3 } from '../classes/GetEmpty3';
 
 
 @Component({
@@ -32,7 +32,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	production: RestProduction;
 	extra_qty: number = 0; //pieces???
 	qty: number | '' = ''; //kilos
-	store: any = GetEmpty.store();
+	store: any = GetEmpty3.store();
 	production_role_prices: any;
 	alternate_qty: number | '' = '';
 	total_registrado: number = 0;

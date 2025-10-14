@@ -4,13 +4,13 @@ import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
 import { RestProduction } from '../classes/RestProduction';
 import { RestConsumption } from '../classes/RestConsumption';
-import { GetEmpty } from '../classes/GetEmpty';
 import { Consumption } from '../Models/Consumption'; // Import Consumption interface
 import { Consumption_User } from '../Models/Consumption_User'; // Import ConsumptionUser interface
 import { Production_Area } from '../Models/Production_Area'; // Import ProductionArea interface
 import { ConfirmationService } from '../services/confirmation.service';
 import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
 import { ConsumptionInfo } from '../ComplexModels/ConsumptionInfo';
+import { GetEmpty3 } from '../classes/GetEmpty3';
 
 @Component
 ({
@@ -33,7 +33,7 @@ export class RegistrarGasolinaComponent implements OnInit
 	error_message: string | null = null;
 	production: RestProduction;
 	consumption: RestConsumption;
-	store = GetEmpty.store();
+	store = GetEmpty3.store();
 	gas_item_info: any = null;
 	users: any[] = [];
 	role_list:any[] = [];

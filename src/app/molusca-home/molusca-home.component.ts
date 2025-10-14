@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { RestService } from '../rest.service';
 
 @Component({
   selector: 'app-molusca-home',
@@ -10,4 +11,6 @@ import { RouterLink } from '@angular/router';
 })
 export class MoluscaHomeComponent {
 
+	constructor(public rest_service: RestService) {
+	}
 }

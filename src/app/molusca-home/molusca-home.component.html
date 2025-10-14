@@ -1,2 +1,8 @@
-<h1>Mollusca</h1>
-<button routerLink="/registrar-produccion">Agregar Registro</button>
+<div class="text-center">
+	<h1>Mollusca</h1>
+
+	@if( rest_service.permission.add_stock )
+	{
+		<button routerLink="/registrar-produccion" class="btn btn-primary">Registrar Produccion</button>
+	}
+</div>

@@ -5,6 +5,7 @@ export interface Production_User
 	user_id:number;
 	price:number;
 	currency_id:string;
+	total:number;
 	created:Date;
 	updated:Date;
 }

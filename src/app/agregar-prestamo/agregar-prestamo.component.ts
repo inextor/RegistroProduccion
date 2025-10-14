@@ -2,14 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
-import { User } from '../Models/User';
-import { Item } from '../Models/Item';
-import { Ledger } from '../Models/Ledger';
 import { Rest } from '../classes/Rest';
 import { BaseComponent } from '../base/base.component';
 import { ActivatedRoute } from '@angular/router';
-import { Account } from '../Models/Account';
 import { Utils } from '../classes/DateUtils';
+import { GetEmpty3 } from '../classes/GetEmpty3';
+import { Account, Ledger, User } from '../RestModels';
 
 @Component({
 	selector: 'app-agregar-prestamo',
@@ -24,7 +22,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 	user_rest: Rest;
 	rest_account: Rest;
 	account: Account | null = null;
-	user: User = this.getEmptyUser();
+	user: User = GetEmpty3.user();
 	rest_ledger: Rest;
 
 	constructor(public rest_service: RestService, private route: ActivatedRoute) {
@@ -120,35 +118,5 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 				this.showError(error);
 			});
 		});
-	}
-
-	getEmptyUser(): User {
-		return {
-			id: 0,
-			name: '',
-			email: null,
-			phone: null,
-			status: 'ACTIVE',
-			store_id: null,
-			created: '',
-			updated: '',
-			created_by_user_id: null,
-			updated_by_user_id: null,
-			credit_days: null,
-			credit_limit: 0,
-			default_billing_address_id: null,
-			default_shipping_address_id: null,
-			image_id: null,
-			lat: null,
-			lng: null,
-			password: null,
-			platform_client_id: null,
-			points: 0,
-			price_type_id: null,
-			production_area_id: null,
-			type: 'USER',
-			username: null,
-			workshift_id: null
-		};
 	}
 }

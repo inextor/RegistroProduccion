@@ -52,6 +52,7 @@
 						<th>Litros</th>
 						<th>Precio por Litro</th>
 						<th>Costo Total</th>
+						<th>Acciones</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -62,6 +63,9 @@
 							<td>{{ consumption_info.consumption.qty | number:'1.2-2' }}</td>
 							<td>{{ consumption_info.consumption.price | currency:'USD':'symbol':'1.2-2' }}</td>
 							<td>{{ (consumption_info.consumption.qty * consumption_info.consumption.price) | currency:'USD':'symbol':'1.2-2' }}</td>
+							<td>
+								<button class="btn btn-danger btn-sm" (click)="removeConsumption(consumption_info)">Eliminar</button>
+							</td>
 						</tr>
 					}
 				</tbody>

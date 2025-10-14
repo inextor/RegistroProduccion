@@ -1,13 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { RestService } from '../rest.service';
-import { Payroll } from '../Models/Payroll';
-import { User } from '../Models/User';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Rest } from '../classes/Rest';
 import { Payroll_Value } from '../Models/Payroll_Value';
-import { GetEmpty } from '../classes/GetEmpty';
+import { GetEmpty3 } from '../classes/GetEmpty3';
+import { Payroll, User } from '../RestModels';
 
+interface PayrollInfo
+{
+	values: Payroll_Value[];
+	user: User;
+	payroll:Payroll;
+}
 
 @Component({
 	selector: 'app-view-payroll',
@@ -18,11 +23,10 @@ import { GetEmpty } from '../classes/GetEmpty';
 })
 export class ViewPayrollComponent implements OnInit {
 	payroll_id: number = 0;
-	payroll: Payroll | null = null;
 	user: User | null = null;
 	rest_payroll: Rest;
 	is_loading: boolean = false;
-	payroll_info = GetEmpty.payroll_info();
+	payroll_info:PayrollInfo = this.getEmptyPayrollInfo();
 	perceptions: Payroll_Value[] = [];
 	deductions: Payroll_Value[] = [];
 
@@ -52,5 +56,14 @@ export class ViewPayrollComponent implements OnInit {
 			.catch((error)=>this.rest_service.showError(error))
 			.finally(()=>{this.is_loading = false});
 
+	}
+
+	getEmptyPayrollInfo():PayrollInfo
+	{
+		return {
+			payroll: GetEmpty3.payroll(),
+			values: [],
+			user: GetEmpty3.user()
+		};
 	}
 }

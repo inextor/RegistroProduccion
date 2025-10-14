@@ -7,7 +7,6 @@ export interface Question {
   question: string;
   type: 'text' | 'textarea' | 'multiple_choice' | 'rating' | 'ranking' | 'date' | 'number' | 'tel';
   required: any | null;
+  status: 'ACTIVE' | 'DELETED';
   updated: string | Date;
 }
-
-

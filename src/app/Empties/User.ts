@@ -1,0 +1,42 @@
+import { User } from '../RestModels/User';
+
+export function user(): User {
+	return {
+        id: 0,
+        username: '',
+        password: '',
+        created: Date.toString().substring(0, 19).replace('T', ' '),
+        updated: Date.toString().substring(0, 19).replace('T', ' '),
+        created_by_user_id: 0,
+        updated_by_user_id: 0,
+        credit_days: 0,
+        credit_limit: 0,
+        default_billing_address_id: null,
+        default_shipping_address_id: null,
+        email: null,
+        image_id: null,
+        lat: null,
+        lng: null,
+        name: '',
+        phone: null,
+        platform_client_id: null,
+        points: 0,
+        price_type_id: 1,
+        production_area_id: null,
+        status: 'ACTIVE',
+        store_id: null,
+        type: 'CLIENT',
+        workshift_id: null,
+        birthday: null,
+        code: null,
+        created_by_store_id: null,
+        creation_store_id: null,
+        job_address: null,
+        job_name: null,
+        job_phone: null,
+        payment_address_id: null,
+        payment_option: 'ADDRESS',
+        preferred_store_id: null,
+        role_id: null
+    };
+}

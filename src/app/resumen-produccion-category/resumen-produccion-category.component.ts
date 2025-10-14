@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { RestProduction } from '../RestClases/RestProduction';
 import { RestService } from '../rest.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { combineLatest, Observable, startWith } from 'rxjs';
+import { RestProduction } from '../classes/RestProduction';
 
 
 interface ProductionByCategory

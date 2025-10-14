@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, take } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { User_Permission } from './RestModels/User_Permission';
+import { GetEmpty3 } from './classes/GetEmpty3';
+import { ConfirmationResult } from './services/confirmation.service';
 
 export class ErrorMessage
 {
@@ -43,7 +46,7 @@ export class RestService
 	private base_url = environment.base_url;
 	public user: any = null;
 	public session: any = null;
-	public permission: any = null;
+	public permission: User_Permission = GetEmpty3.user_permission();
 	public store: any = null;
 
 	constructor(private route: ActivatedRoute)
@@ -134,7 +137,7 @@ export class RestService
 			});
 	}
 
-	saveAuthDataToLocalStorage(user: any, session: any, permission: any, store: any): void
+	saveAuthDataToLocalStorage(user: any, session: any, permission:User_Permission , store: any): void
 	{
 		if (typeof localStorage !== 'undefined')
 		{
@@ -164,7 +167,7 @@ export class RestService
 
 			if (userStr) this.user = JSON.parse(userStr);
 			if (sessionStr) this.session = JSON.parse(sessionStr);
-			if (permissionStr) this.permission = JSON.parse(permissionStr);
+			if (permissionStr) this.permission = JSON.parse(permissionStr) as User_Permission;
 			if (storeStr) this.store = JSON.parse(storeStr);
 		}
 	}
@@ -212,7 +215,7 @@ export class RestService
 	{
 		this.user = null;
 		this.session = null;
-		this.permission = null;
+		this.permission = GetEmpty3.user_permission();
 		this.store = null;
 
 		localStorage.removeItem('user');

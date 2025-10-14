@@ -8,6 +8,7 @@ import { RestConsumption } from '../classes/RestConsumption';
 import { Utils } from '../classes/DateUtils';
 import { ConsumptionInfo } from '../ComplexModels/ConsumptionInfo';
 import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
+import { ConfirmationService } from '../services/confirmation.service';
 
 @Component({
 	selector: 'app-list-gasolina',
@@ -31,7 +32,7 @@ export class ListGasolinaComponent implements OnInit {
 	private rest_production: RestProduction;
 	private rest_consumption: RestConsumption;
 
-	constructor( public rest_service: RestService) {
+	constructor( public rest_service: RestService, private confirmation_service: ConfirmationService) {
 		this.rest_production = new RestProduction(rest_service);
 		this.rest_consumption = new RestConsumption(rest_service);
 
@@ -96,5 +97,24 @@ export class ListGasolinaComponent implements OnInit {
 			this.total_liters += consumption_info.consumption.qty;
 			this.total_cost += consumption_info.consumption.qty * consumption_info.consumption.price;
 		}
+	}
+
+	removeConsumption(consumption_info: ConsumptionInfo): void {
+		this.confirmation_service.showConfirmAlert(
+			consumption_info,
+			'Eliminar consumo',
+			'¿Está seguro de que desea eliminar este consumo?'
+		).subscribe(result => {
+			if (result.accepted) {
+				this.rest_consumption.remove(consumption_info.consumption.id)
+					.then(() => {
+						this.rest_service.showSuccess('Consumo eliminado correctamente');
+						this.loadConsumptions();
+					})
+					.catch(error => {
+						this.rest_service.showError(error);
+					});
+			}
+		});
 	}
 }

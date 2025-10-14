@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class LateralMenuComponent {
 
-  constructor(private rest_service: RestService, private router: Router) { }
+  constructor(public rest_service: RestService, private router: Router) { }
 
   logout() {
     this.rest_service.logout();

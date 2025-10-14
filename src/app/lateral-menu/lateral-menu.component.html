@@ -1,29 +1,42 @@
 <div class="lateral-menu">
-  <a routerLink="/registrar-produccion" routerLinkActive="active" class="menu-item">
-    <span>Home</span>
-  </a>
 
-  <a routerLink="/list-production-area" routerLinkActive="active" class="menu-item">
-    <span>Grupos</span>
-  </a>
+	@if( rest_service.permission.add_stock )
+	{
+		<a routerLink="/registrar-produccion" routerLinkActive="active" class="menu-item">
+			<span>Home</span>
+		</a>
+	}
 
-  <a routerLink="/resumen-production" routerLinkActive="active" class="menu-item">
-    <span>Resumen</span>
-  </a>
+	<a routerLink="/list-production-area" routerLinkActive="active" class="menu-item">
+		<span>Grupos</span>
+	</a>
 
-  <a routerLink="/list-gasolina" routerLinkActive="active" class="menu-item">
-    <span>Gasolina</span>
-  </a>
+	<a routerLink="/resumen-production" routerLinkActive="active" class="menu-item">
+		<span>Resumen</span>
+	</a>
 
-  <a routerLink="/listar-nominas" routerLinkActive="active" class="menu-item">
-    <span>Nóminas</span>
-  </a>
+	@if( rest_service.permission.add_consumptions )
+	{
+		<a routerLink="/list-gasolina" routerLinkActive="active" class="menu-item">
+			<span>Gasolina</span>
+		</a>
+	}
 
-  <a routerLink="/list-estados-cuenta" routerLinkActive="active" class="menu-item">
-    <span>Estados de Cuenta</span>
-  </a>
+	@if( rest_service.permission.add_payroll )
+	{
+		<a routerLink="/listar-nominas" routerLinkActive="active" class="menu-item">
+			Nominas
+		</a>
+	}
 
-  <a routerLinkActive="active" class="menu-item" (click)="logout()">
-    <span>Salir</span>
-  </a>
+	@if( rest_service.permission.add_accounts)
+	{
+		<a routerLink="/list-estados-cuenta" routerLinkActive="active" class="menu-item">
+			<span>Estados de Cuenta</span>
+		</a>
+	}
+
+	<a routerLinkActive="active" class="menu-item" (click)="logout()">
+		<span>Salir</span>
+	</a>
 </div>
