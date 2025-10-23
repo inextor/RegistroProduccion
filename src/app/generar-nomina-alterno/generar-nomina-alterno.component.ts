@@ -13,6 +13,10 @@ import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
 import { RestProduction } from '../classes/RestProduction';
 import { RestConsumption } from '../classes/RestConsumption';
 
+// Constant to indicate that the default/main account should be used
+// When account_id is set to this value, the backend will retrieve or create the user's main account
+const DEFAULT_ACCOUNT_ID = -1;
+
 interface PayrollInfo
 {
 	values: Payroll_Value[];
@@ -256,7 +260,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				}
 			}
 
-			// Consumos
+			// Process consumption deductions (items consumed by users during production)
+			// Items come from consumption_info fetched from database (item names from 'item' table)
 			for (const ci of this.consumption_info_list) {
 				for (const cu of ci.users) {
 					if (cu.user_id === user.id && cu.price && cu.price > 0) {
@@ -269,17 +274,23 @@ export class GenerarNominaAlternoComponent implements OnInit {
 							payroll_value = {
 								id: 0,
 								payroll_id: 0,
-								description: ci.item.name,
+								description: ci.consumption.description, // Use full consumption description (e.g., "Gasolina: 100 litros @ 20 MXN/litro")
 								type: 'DEDUCTION',
 								datetime: date,
 								value: 0,
 								status: 'ACTIVE',
 								created: date,
-								account_id: null
+								account_id: null // Default: null means it won't go to estado de cuenta
 							};
 
-							if (ci.item.name.toLowerCase() !== 'gasolina') {
-								payroll_value.account_id = this.user_account_map.get(user.id) || null;
+							// Special handling: Gasolina is ONLY deducted from nomina, NOT added to estado de cuenta
+							// Other consumption items (if any) WILL be added to estado de cuenta
+							// Check if description starts with "gasolina" (case-insensitive)
+							if (!ci.consumption.description.toLowerCase().startsWith('gasolina')) {
+								// Set account_id to user's account, or DEFAULT_ACCOUNT_ID if not found
+								// DEFAULT_ACCOUNT_ID tells backend to retrieve or create user's main account
+								// This ensures the deduction goes to the user's estado de cuenta
+								payroll_value.account_id = this.user_account_map.get(user.id) || DEFAULT_ACCOUNT_ID;
 							}
 							payroll_values_map.set(key, payroll_value as Payroll_Value);
 						}
@@ -492,7 +503,9 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			datetime: new Date().toISOString().slice(0, 10),
 			status: 'ACTIVE',
 			created: new Date().toISOString().slice(0, 10),
-			account_id: -1
+			// Manually added deductions (like "DESCUENTO PRESTAMO") always go to estado de cuenta
+			// DEFAULT_ACCOUNT_ID tells backend to use/create user's main account
+			account_id: DEFAULT_ACCOUNT_ID
 		};
 		this.is_adding_deduction = true;
 	}
@@ -514,7 +527,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 		this.new_deduction = {
 			id: 0,
-			account_id: -1,
+			account_id: DEFAULT_ACCOUNT_ID,
 			payroll_id: 0,
 			type: 'DEDUCTION',
 			description: '',

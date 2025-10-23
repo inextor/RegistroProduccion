@@ -2,6 +2,7 @@ export interface Payroll {
   id: number;
   created_by_user_id: number;
   created: string | Date;
+  currency_id: string;
   end_date: string;
   paid_status: 'PENDING' | 'PAID' | 'PENDING';
   paid_timestamp: string | Date | null;

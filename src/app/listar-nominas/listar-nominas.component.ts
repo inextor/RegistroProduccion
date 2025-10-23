@@ -87,15 +87,12 @@ export class ListarNominasComponent {
 			filter(response => response.accepted),
 			mergeMap(response => {
 				this.is_loading = true;
-				let payroll_info = { ...pi};
 				let payroll = { ...pi.payroll };
 
-				payroll_info.payroll = payroll;
-				payroll_info.values = pi.values;
-
 				payroll.paid_timestamp = (new Date()).toISOString().replace('T',' ').substring(0,19);
+				payroll.paid_status = 'PAID';
 
-				return this.rest_payroll_info.update(payroll_info);
+				return this.rest_payroll.update(payroll);
 			})
 		)
 		.subscribe({

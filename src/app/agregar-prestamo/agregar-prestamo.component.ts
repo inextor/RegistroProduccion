@@ -9,6 +9,10 @@ import { Utils } from '../classes/DateUtils';
 import { GetEmpty3 } from '../classes/GetEmpty3';
 import { Account, Ledger, User } from '../RestModels';
 
+// Constant to indicate that the default/main account should be used
+// When account_id is set to this value, the backend will retrieve or create the user's main account
+const DEFAULT_ACCOUNT_ID = -1;
+
 @Component({
 	selector: 'app-agregar-prestamo',
 	standalone: true,
@@ -24,6 +28,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 	account: Account | null = null;
 	user: User = GetEmpty3.user();
 	rest_ledger: Rest;
+    description: string  = '';
 
 	constructor(public rest_service: RestService, private route: ActivatedRoute) {
 		super(rest_service);
@@ -34,6 +39,8 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.is_loading = true;
+		this.description = 'Préstamo '+Utils.getDateString(this.date);
+
 		this.route.queryParamMap.subscribe(params =>
 		{
 			this.account = null;
@@ -77,9 +84,10 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 		this.is_loading = true;
 
 		const newLedger: Partial<Ledger> = {
-			account_id: this.account ? this.account.id : -1,
+			// Use DEFAULT_ACCOUNT_ID if account doesn't exist yet - backend will retrieve or create it
+			account_id: this.account ? this.account.id : DEFAULT_ACCOUNT_ID,
 			amount: Number(this.amount) * -1, // Los préstamos son un débito (negativo) en la cuenta
-			description: 'Préstamo '+Utils.getDateString(this.date),
+			description: this.description,
 			transaction_type: 'DEBIT',
 			source_document_type: null,
 			currency_id: 'MXN'
