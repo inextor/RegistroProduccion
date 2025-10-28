@@ -274,7 +274,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 							payroll_value = {
 								id: 0,
 								payroll_id: 0,
-								description: ci.consumption.description, // Use full consumption description (e.g., "Gasolina: 100 litros @ 20 MXN/litro")
+								description: ci.consumption.description || ci.item.name, // Use consumption description if available, otherwise use item name
 								type: 'DEDUCTION',
 								datetime: date,
 								value: 0,
@@ -286,8 +286,9 @@ export class GenerarNominaAlternoComponent implements OnInit {
 							// Special handling: Gasolina is ONLY deducted from nomina, NOT added to estado de cuenta
 							// Other consumption items (if any) WILL be added to estado de cuenta
 							// Check if description starts with "gasolina" (case-insensitive)
-							if (!ci.consumption.description.toLowerCase().startsWith('gasolina')) {
-								// Set account_id to user's account, or DEFAULT_ACCOUNT_ID if not found
+							// Set account_id to user's account, or DEFAULT_ACCOUNT_ID if not found
+							if( ci?.item?.id != 56 || !ci.consumption.description.toLowerCase().startsWith('gasolina'))
+							{
 								// DEFAULT_ACCOUNT_ID tells backend to retrieve or create user's main account
 								// This ensures the deduction goes to the user's estado de cuenta
 								payroll_value.account_id = this.user_account_map.get(user.id) || DEFAULT_ACCOUNT_ID;

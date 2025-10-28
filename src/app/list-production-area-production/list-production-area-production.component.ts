@@ -8,6 +8,12 @@ import { from } from 'rxjs';
 import { ConfirmationResult, ConfirmationService } from '../services/confirmation.service';
 import { CommonModule } from '@angular/common';
 
+interface CItem
+{
+	id: number;
+	name: string;
+}
+
 @Component
 ({
 	selector: 'app-list-production-area-production',
@@ -18,8 +24,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ListProductionAreaProductionComponent implements OnInit
 {
-
-
 	production_area_info_list: any[] = [];
 	production_area_info: any = {
 		production_area: { name: '' }
@@ -31,7 +35,7 @@ export class ListProductionAreaProductionComponent implements OnInit
 	date:string = '';
 	is_loading: boolean = false;
 	production_info_list: any[] = [];
-	item_array: any[] = [];
+	item_array: CItem[] = [];
 	selected_item_filter_id: number | '' = '';
 	filtered_production_info_list: any[] = [];
 
@@ -77,10 +81,10 @@ export class ListProductionAreaProductionComponent implements OnInit
 			this.rest_production.getProductionInfoByProductionAreaId(production_area_id, date),
 			this.rest_production.getProductionAreaItems(production_area_id)
 		])
-		.then(([production_area_info, production_info_list, item_array]) =>
+		.then(([production_area_info, production_info_list, x]) =>
 		{
 			this.is_loading = false;
-			console.log('Received',production_area_info, production_info_list, item_array);
+			console.log('Received',production_area_info, production_info_list, x);
 
 			if( !production_area_info )
 			{
@@ -90,7 +94,14 @@ export class ListProductionAreaProductionComponent implements OnInit
 
 			this.production_area_info = production_area_info;
 			this.production_info_list = production_info_list;
-			this.item_array = item_array;
+
+			let citem_map = new Map<number,CItem>();
+
+			let citems = production_info_list.forEach(pi =>{
+				citem_map.set(pi.item.id, {id:pi.item.id, name: pi.item.name});
+			});
+
+			this.item_array = Array.from(citem_map.values());
 
 			if (this.production_info_list.length > 0)
 			{

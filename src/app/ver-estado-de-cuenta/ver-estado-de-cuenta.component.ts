@@ -7,6 +7,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Ledger } from '../Models/Ledger';
 import { GetEmpty3 } from '../classes/GetEmpty3';
 import { Account, User } from '../RestModels';
+import { LocalDatePipe } from "../pipes/local-date.pipe";
 
 interface CData
 {
@@ -18,7 +19,7 @@ interface CData
 @Component({
 	selector: 'app-ver-estado-de-cuenta',
 	standalone: true,
-	imports: [CommonModule, RouterModule],
+	imports: [CommonModule, RouterModule, LocalDatePipe],
 	templateUrl: './ver-estado-de-cuenta.component.html',
 	styleUrl: './ver-estado-de-cuenta.component.css'
 })

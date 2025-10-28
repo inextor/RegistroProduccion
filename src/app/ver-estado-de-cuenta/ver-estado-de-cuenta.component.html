@@ -43,11 +43,11 @@
 							<tr>
 								<td>{{ ledger.id }}</td>
 								<td>{{ ledger.description }}</td>
-								<td>{{ ledger.created | date:'short' }}</td>
-								<td class="text-end">
+								<td>{{ ledger.created | localDate | date:'short' }}</td>
+								<td class="text-end" [class.text-danger]="ledger.transaction_type == 'DECREMENT'">
 									{{ ledger.amount | currency:'USD':'symbol':'1.2-2' }}
 								</td>
-								<td class="text-end" [class.text-danger]="ledger.transaction_type == 'CREDIT'">
+								<td class="text-end" [class.text-danger]="ledger.final_balance < 0">
 										{{ ledger.final_balance| currency:'USD':'symbol':'1.2-2' }}
 								</td>
 							</tr>

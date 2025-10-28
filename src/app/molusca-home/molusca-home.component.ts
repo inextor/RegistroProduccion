@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RestService } from '../rest.service';
 
 @Component({
@@ -9,8 +9,24 @@ import { RestService } from '../rest.service';
   templateUrl: './molusca-home.component.html',
   styleUrl: './molusca-home.component.css'
 })
-export class MoluscaHomeComponent {
+export class MoluscaHomeComponent implements OnInit {
 
-	constructor(public rest_service: RestService) {
+	constructor(public rest_service: RestService,private route:ActivatedRoute,private router:Router) {
+
+	}
+
+	ngOnInit()
+	{
+		this.route.queryParamMap.subscribe
+		({
+			error:(error:any) => console.error(error),
+			next: (params:any) =>
+			{
+				if( !this.rest_service.isLoggedIn() )
+				{
+					this.router.navigate(['/login']);
+				}
+			}
+		});
 	}
 }

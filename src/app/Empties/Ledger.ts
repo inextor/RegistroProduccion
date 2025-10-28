@@ -16,7 +16,7 @@ export function ledger(): Ledger {
 		previous_balance: 0, 
 		source_document_id: null, 
 		source_document_type: null, 
-		transaction_type: 'DEBIT', 
+		transaction_type: 'INCREMENT', 
 		updated: new Date(), 
 		updated_by_user_id: 0, 
 	};

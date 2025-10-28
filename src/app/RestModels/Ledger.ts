@@ -13,7 +13,7 @@ export interface Ledger {
   previous_balance: number;
   source_document_id: string | null;
   source_document_type: string | null;
-  transaction_type: 'DEBIT' | 'CREDIT' | 'DEBIT incrementa el adeudo, CREDIT lo reduce.';
+  transaction_type: 'INCREMENT' | 'DECREMENT';
   updated: string | Date;
   updated_by_user_id: number;
 }

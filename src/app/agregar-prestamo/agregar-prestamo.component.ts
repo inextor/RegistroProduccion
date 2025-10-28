@@ -86,9 +86,9 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 		const newLedger: Partial<Ledger> = {
 			// Use DEFAULT_ACCOUNT_ID if account doesn't exist yet - backend will retrieve or create it
 			account_id: this.account ? this.account.id : DEFAULT_ACCOUNT_ID,
-			amount: Number(this.amount) * -1, // Los préstamos son un débito (negativo) en la cuenta
+			amount: Number(this.amount), // Positive amount for loan
 			description: this.description,
-			transaction_type: 'DEBIT',
+			transaction_type: 'DECREMENT', // DECREMENT = worker receives loan (balance becomes negative/owes company)
 			source_document_type: null,
 			currency_id: 'MXN'
 		};
