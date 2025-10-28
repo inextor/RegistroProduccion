@@ -13,6 +13,7 @@ import { filter, mergeMap } from 'rxjs';
 import { Utils } from '../classes/DateUtils';
 import { ShortDatePipe } from '../pipes/short-date.pipe';
 import { LocalDatePipe } from '../pipes/local-date.pipe';
+import { PaginationComponent } from '../components/pagination/pagination.component';
 
 interface PayrollInfo{
 	payroll:Payroll;
@@ -23,19 +24,22 @@ interface PayrollInfo{
 @Component({
 	selector: 'app-listar-nominas',
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe, LocalDatePipe],
+	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe, LocalDatePipe, PaginationComponent],
 	templateUrl: './listar-nominas.component.html',
 	styleUrls: ['./listar-nominas.component.css']
 })
 export class ListarNominasComponent {
 
 	search_from_date: string = this.getDefaultStartDate();
-	search_to_date: string = this.getDefaultEndDate();
 
 	rest_payroll_info:Rest;
 	is_loading:boolean	= false;
 	payroll_list: PayrollInfo[] = [];
     rest_payroll:Rest;
+	page: number = 0;
+	limit: number = 20;
+	total: number = 0;
+	total_pages: number = 0;
 
 	constructor(public rest_service: RestService, public route: ActivatedRoute, public router:Router, public confirmation: ConfirmationService) {
 		this.rest_payroll_info = new Rest(rest_service,'payroll_info');
@@ -44,21 +48,20 @@ export class ListarNominasComponent {
 
 	ngOnInit(): void {
 
-		this.searchData();
-
 		this.route.queryParamMap.subscribe
 		(
 			(query:ParamMap)=>{
 				let sfd = 'search_from_date';
-				let std = 'search_to_date';
 
 				this.search_from_date = query.has( sfd )
 					? query.get( sfd ) as string
 					: this.getDefaultStartDate();
 
-				this.search_to_date = query.has( std )
-					? query.get( std) as string
-					: this.getDefaultEndDate();
+				let page_str = query.get('page');
+				this.page = page_str ? parseInt(page_str) : 0;
+
+				let limit_str = query.get('limit');
+				this.limit = limit_str ? parseInt(limit_str) : 20;
 
 				this.searchData();
 			}
@@ -73,11 +76,6 @@ export class ListarNominasComponent {
 		return Utils.getLocalMysqlStringFromDate( start_date ).substring(0, 10 );
 	}
 
-	getDefaultEndDate()
-	{
-		let end_date = new Date();
-		return Utils.getLocalMysqlStringFromDate( end_date ).substring( 0, 10);
-	}
 
 	markAsPaid(pi: PayrollInfo) {
 
@@ -111,15 +109,17 @@ export class ListarNominasComponent {
 
 		this.is_loading = true;
 
-		//'_custom' => 'start_date <= "'.$payroll->end_date.'" AND end_date >= "'.$payroll->start_date.'"'
-
 		this.rest_payroll_info.search({
-			'start_date<~': this.search_to_date,
 			'end_date>~': this.search_from_date,
-			'status':'ACTIVE'
+			'status':'ACTIVE',
+			'page': this.page,
+			'limit': this.limit,
+			'_sort': 'id_DESC'
 		})
 		.then((response:RestResponse<PayrollInfo>)=>{
 			this.payroll_list = response.data;
+			this.total = response.total;
+			this.total_pages = Math.ceil(this.total / this.limit);
 			this.is_loading = false;
 		})
 		.catch((error)=>this.rest_service.showError(error))
@@ -130,7 +130,7 @@ export class ListarNominasComponent {
 	{
 		let queryParams = {
 			search_from_date : this.search_from_date,
-			search_to_date: this.search_to_date
+			page: 0
 		};
 
 		this.router.navigate(['/listar-nominas'],{queryParams});

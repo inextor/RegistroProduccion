@@ -1,4 +1,6 @@
 import { RestService } from "../rest.service";
+import { SearchObject } from "./SearchObject";
+import { ParamMap } from "@angular/router";
 
 export interface RestResponse<T>
 {
@@ -52,9 +54,23 @@ export class Rest
 			});
 	}
 
-	search(p: URLSearchParams | Object):Promise<RestResponse<any>>
+	search(p: URLSearchParams | SearchObject<any> | Object):Promise<RestResponse<any>>
 	{
-		const params = p instanceof URLSearchParams ? p : this.getUrlParams(p);
+		let params: URLSearchParams;
+
+		if( p instanceof URLSearchParams )
+		{
+			params = p;
+		}
+		else if( p instanceof SearchObject )
+		{
+			params = p.getBackendParams();
+		}
+		else
+		{
+			params = this.getUrlParams(p);
+		}
+
 		const url = new URL(`${this.rest_service.getBaseUrl()}/${this.path}.php`);
 		url.search = params.toString(); // Handles '?' and encoding
 
@@ -68,16 +84,25 @@ export class Rest
 
 	getUrlParams(obj:any):URLSearchParams
 	{
-		if (obj === null || obj === undefined) {
-			obj = {};
-		}
 		const params = new URLSearchParams();
 
-		for (const key in obj)
-		{
-			if (obj.hasOwnProperty(key))
+		if (obj && typeof obj === 'object' && 'keys' in obj && Array.isArray(obj.keys)) {
+			(obj as ParamMap).keys.forEach((key: string) => {
+				const value = (obj as ParamMap).get(key);
+				if (value !== null) {
+					params.set(key, value);
+				}
+			});
+		} else {
+			if (obj === null || obj === undefined) {
+				obj = {};
+			}
+			for (const key in obj)
 			{
-				params.set(key, String(obj[key]));
+				if (obj.hasOwnProperty(key))
+				{
+					params.set(key, String(obj[key]));
+				}
 			}
 		}
 		return params;
