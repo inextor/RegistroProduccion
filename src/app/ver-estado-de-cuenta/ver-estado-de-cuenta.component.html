@@ -16,9 +16,14 @@
 			<p>
 				<strong>Moneda:</strong> {{ account.currency_id }}
 			</p>
-			<a [routerLink]="['/agregar-prestamo']" [queryParams]="{ user_id: user.id }" class="btn btn-primary">
-				Agregar Préstamo
-			</a>
+			<div class="d-flex gap-2">
+				<a [routerLink]="['/agregar-prestamo']" [queryParams]="{ user_id: user.id }" class="btn btn-primary">
+					Agregar Préstamo
+				</a>
+				<a [routerLink]="['/agregar-abono']" [queryParams]="{ user_id: user.id }" class="btn btn-success">
+					Agregar Abono
+				</a>
+			</div>
 		</div>
 	</div>
 

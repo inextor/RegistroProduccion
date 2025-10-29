@@ -84,5 +84,9 @@ export const routes: Routes = [
 	{
 		path: 'agregar-prestamo',
 		loadComponent: () => import('./agregar-prestamo/agregar-prestamo.component').then(m => m.AgregarPrestamoComponent),
+	},
+	{
+		path: 'agregar-abono',
+		loadComponent: () => import('./agregar-abono/agregar-abono.component').then(m => m.AgregarAbonoComponent),
 	}
 ];
