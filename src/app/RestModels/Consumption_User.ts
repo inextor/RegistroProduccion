@@ -1,14 +1,15 @@
 export interface Consumption_User {
-  id: number;
-  created_by_user_id: number;
-  created: string | Date;
-  currency_id: string;
-  price: number;
-  consumption_id: number;
-  total: number;
-  updated_by_user_id: number;
-  updated: string | Date;
-  user_id: number;
+	id: number;
+	created_by_user_id: number;
+	created: string | Date;
+	account_id: number | null;
+	currency_id: string;
+	price: number;
+	consumption_id: number;
+	total: number;
+	updated_by_user_id: number;
+	updated: string | Date;
+	user_id: number;
 }
 
 
