@@ -17,6 +17,7 @@ export interface User{
 	points:number;
 	price_type_id:number | null;
 	production_area_id:number | null;
+	role_id:number | null;
 	status:'ACTIVE'|'DELETED';
 	store_id:number | null;
 	type:'CLIENT'|'USER';
