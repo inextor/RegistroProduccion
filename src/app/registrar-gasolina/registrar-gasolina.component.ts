@@ -223,7 +223,7 @@ export class RegistrarGasolinaComponent implements OnInit
 						name: 'Gasolina',
 						currency_id: 'MXN',
 						balance: 0,
-						is_main: false,
+						is_main: null,
 						created_by_user_id: currentUserId,
 						updated_by_user_id: currentUserId,
 						status: 'ACTIVE'

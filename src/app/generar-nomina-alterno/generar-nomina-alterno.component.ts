@@ -57,6 +57,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	rest_account: Rest;
 	user_account_map: Map<number, number> = new Map();
 	user_account_balance_map: Map<number, number> = new Map();
+	user_gasolina_account_map: Map<number, number> = new Map(); // Map user_id -> gasolina_account_id
 	user_accounts: Account[] = []; // All accounts for the current user being edited
 	selected_account_id: number = DEFAULT_ACCOUNT_ID;
 	production_area_list: any[] = [];
@@ -213,6 +214,9 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	processProductionAndConsumption() {
 		this.payroll_info_list = [];
 
+		// Check if we're in review mode (existing payroll found)
+		const is_review_mode = this.current_payroll_info_list.length > 0;
+
 		for (const user of this.user_list) {
 			const payroll: Payroll = {
 				id: 0,
@@ -266,54 +270,58 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				}
 			}
 
-			// Process consumption deductions based on user role
-			// Role-based logic:
-			// - role_id = 3 (Buzo): NO consumption deductions
-			// - Other roles: Add 25% of total consumption as deduction
-			const BUZO_ROLE_ID = 3;
-
-			if (user.role_id !== BUZO_ROLE_ID) {
-				// Calculate 25% of total consumption for non-Buzo users
-				for (const ci of this.consumption_info_list) {
-					const date = ci.consumption.consumed.substring(0, 10);
-					const key = `${ci.item.name}-${date}`;
-
-					let payroll_value:Payroll_Value | undefined = payroll_values_map.get(key);
-
-					// Calculate 25% of the total consumption (price * qty)
-					const total_consumption = ci.consumption.price * ci.consumption.qty;
-					const deduction_value = total_consumption * 0.25;
-
-					if (payroll_value == undefined) {
-						payroll_value = {
-							id: 0,
-							payroll_id: 0,
-							description: ci.consumption.description || ci.item.name, // Use consumption description if available, otherwise use item name
-							type: 'DEDUCTION',
-							datetime: date,
-							value: deduction_value,
-							status: 'ACTIVE',
-							created: date,
-							account_id: null // Default: null means it won't go to estado de cuenta
-						};
-
-						// Special handling: Gasolina is ONLY deducted from nomina, NOT added to estado de cuenta
-						// Other consumption items (if any) WILL be added to estado de cuenta
-						// Check if description starts with "gasolina" (case-insensitive)
-						// Set account_id to user's account, or DEFAULT_ACCOUNT_ID if not found
-						if( ci?.item?.id != 56 && !ci.consumption.description.toLowerCase().startsWith('gasolina'))
-						{
-							// DEFAULT_ACCOUNT_ID tells backend to retrieve or create user's main account
-							// This ensures the deduction goes to the user's estado de cuenta
-							payroll_value.account_id = this.user_account_map.get(user.id) || DEFAULT_ACCOUNT_ID;
-						}
-						payroll_values_map.set(key, payroll_value as Payroll_Value);
-					} else {
-						// If the payroll_value already exists, add to it
-						payroll_value.value += deduction_value;
-					}
-				}
+		// Process consumption deductions based on user-specific consumption_user records
+		// Skip this in review mode - use saved payroll values instead
+		// Each consumption has a users array with per-user amounts already calculated
+		if (!is_review_mode) {
+			for (const ci of this.consumption_info_list) {
+			// Skip if no users array
+			if (!ci.users || !Array.isArray(ci.users)) {
+				continue;
 			}
+
+			// Find the consumption_user record for this specific user
+			const cu = ci.users.find((consumption_user: any) => consumption_user.user_id === user.id);
+
+			// Skip if no record for this user or if total is 0 (e.g., Buzo role)
+			if (!cu || cu.total === 0) {
+				continue;
+			}
+
+			const date = ci.consumption.consumed.substring(0, 10);
+			const key = `${ci.item.name}-${date}`;
+
+			let payroll_value: Payroll_Value | undefined = payroll_values_map.get(key);
+
+			if (payroll_value == undefined) {
+				// Determine the account_id for this deduction
+				let deduction_account_id = cu.account_id || null;
+
+				// For gasoline deductions without account_id, use the gasolina account from map
+				const is_gasolina = ci.item?.id === 56 || ci.consumption.description?.toLowerCase().includes('gasolina');
+				if (!deduction_account_id && is_gasolina) {
+					deduction_account_id = this.user_gasolina_account_map.get(user.id) || null;
+				}
+
+				payroll_value = {
+					id: 0,
+					payroll_id: 0,
+					description: ci.consumption.description || ci.item.name,
+					type: 'DEDUCTION',
+					datetime: date,
+					value: cu.total, // Use the user-specific deduction amount from consumption_user
+					status: 'ACTIVE',
+					created: date,
+					account_id: deduction_account_id // Use account_id (creates "abono" to that account)
+				};
+
+				payroll_values_map.set(key, payroll_value as Payroll_Value);
+			} else {
+				// If the payroll_value already exists, add the user-specific amount to it
+				payroll_value.value += cu.total;
+			}
+			}
+		} // End if (!is_review_mode)
 
 			const payroll_values = Array.from(payroll_values_map.values());
 			payroll_values.sort((a, b) => {
@@ -372,20 +380,14 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.payroll_info_list.push(payroll_info);
 		}
 
-		if (this.current_payroll_info_list.length > 0) {
+		if (is_review_mode) {
+			// In review mode, use the saved payroll values entirely
 			for (const current_payroll_info of this.current_payroll_info_list) {
 				const new_payroll_info = this.payroll_info_list.find(p => p.user.id === current_payroll_info.user.id);
 				if (new_payroll_info) {
-					for (const value of current_payroll_info.values) {
-						if (value.type === 'DEDUCTION') {
-							const existing_deduction = new_payroll_info.values.find(
-								v => v.type === 'DEDUCTION' && v.description === value.description && v.datetime === value.datetime
-							);
-							if (!existing_deduction) {
-								new_payroll_info.values.push(value);
-							}
-						}
-					}
+					// Replace calculated values with saved values (which include all deductions)
+					new_payroll_info.values = current_payroll_info.values;
+					new_payroll_info.payroll = current_payroll_info.payroll;
 					this.updatePayrollInfoTotal(new_payroll_info);
 				}
 			}
@@ -455,23 +457,73 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		this.super_total = super_total;
 	}
 
-	agruparYCalcularTotales() {
+	async agruparYCalcularTotales() {
 		const user_ids = this.user_list.map(u => u.id);
 		if (user_ids.length > 0) {
-			this.rest_account.search({ 'user_id,': user_ids.join(','), limit: 99999 })
-				.then(response => {
-					const accounts = response.data;
-					// Create a map of user_id -> account_id
-					for (const account of accounts) {
-						if (!this.user_account_map.has(account.user_id)) {
-							this.user_account_map.set(account.user_id, account.id);
-							this.user_account_balance_map.set(account.user_id, account.balance);
-						}
+			try {
+				const response = await this.rest_account.search({ 'user_id,': user_ids.join(','), limit: 99999 });
+				const accounts = response.data;
+
+				// Create a map of user_id -> account_id (main accounts)
+				for (const account of accounts) {
+					if (account.is_main && !this.user_account_map.has(account.user_id)) {
+						this.user_account_map.set(account.user_id, account.id);
+						this.user_account_balance_map.set(account.user_id, account.balance);
 					}
-					this.processProductionAndConsumption();
-				});
+
+					// Track Gasolina accounts
+					if (account.name === 'Gasolina') {
+						this.user_gasolina_account_map.set(account.user_id, account.id);
+					}
+				}
+
+				// Ensure all users have a Gasolina account (create if missing)
+				await this.ensureGasolinaAccounts();
+
+				this.processProductionAndConsumption();
+			} catch (error) {
+				this.rest_service.showError(error);
+			}
 		} else {
 			this.processProductionAndConsumption();
+		}
+	}
+
+	async ensureGasolinaAccounts() {
+		const users_without_gasolina: number[] = [];
+
+		// Find users without Gasolina account
+		for (const user of this.user_list) {
+			if (!this.user_gasolina_account_map.has(user.id)) {
+				users_without_gasolina.push(user.id);
+			}
+		}
+
+		// Create Gasolina accounts for users that don't have one
+		if (users_without_gasolina.length > 0) {
+			const currentUserId = this.rest_service.session.user_id;
+			const accounts_to_create = users_without_gasolina.map(user_id => ({
+				user_id: user_id,
+				name: 'Gasolina',
+				currency_id: 'MXN',
+				balance: 0,
+				is_main: null, // Gasolina accounts are not main accounts
+				created_by_user_id: currentUserId,
+				updated_by_user_id: currentUserId,
+				status: 'ACTIVE'
+			}));
+
+			try {
+				const created_accounts = await this.rest_account.createMultiple(accounts_to_create);
+
+				// Add the newly created accounts to the map
+				for (const account of created_accounts) {
+					this.user_gasolina_account_map.set(account.user_id, account.id);
+				}
+			} catch (error) {
+				console.error('Error creating Gasolina accounts:', error);
+				this.rest_service.showError('Error al crear cuentas de Gasolina: ' + error);
+			}
 		}
 	}
 

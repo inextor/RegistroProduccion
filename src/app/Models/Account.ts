@@ -3,7 +3,7 @@ export interface Account {
 	balance: number;
 	created: string;
 	created_by_user_id: number;
-	is_main: boolean;
+	is_main: boolean | null;
 	currency_id: string;
 	name: string;
 	status: 'ACTIVE' | 'DELETED';

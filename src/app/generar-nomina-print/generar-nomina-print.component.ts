@@ -131,8 +131,9 @@ all_users_total_abono: any;
 		if (!user_resume.deductions) {
 			return 0;
 		}
+		// Any deduction with an account_id (not null) creates an abono to that account
 		return user_resume.deductions
-			.filter(d => d.account_id === -1)
+			.filter(d => d.account_id != null && d.account_id !== 0)
 			.reduce((total, deduction) => total + deduction.value, 0);
 	}
 
