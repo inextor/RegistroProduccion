@@ -2,7 +2,7 @@
   <div *ngIf="is_loading" class="loading-indicator">Cargando...</div>
 
   <div *ngIf="!is_loading">
-    <h2>Agregar Préstamo para {{ user.name }}</h2>
+    <h2>Agregar Cargo para {{ user.name }}</h2>
     <div class="alert alert-info">
       <p><strong>Cuenta:</strong> {{ account.name || 'Sin nombre' }}</p>
       <p><strong>Saldo Actual:</strong> {{ account.balance | currency:'USD':'symbol':'1.2-2' }}</p>

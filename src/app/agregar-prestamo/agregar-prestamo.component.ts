@@ -39,7 +39,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.is_loading = true;
-		this.description = 'Préstamo '+Utils.getDateString(this.date);
+		this.description = 'Cargo '+Utils.getDateString(this.date);
 
 		this.route.queryParamMap.subscribe(params =>
 		{
@@ -94,7 +94,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 		.then(() =>
 		{
 			this.is_loading = false;
-			this.showSuccess('Préstamo registrado exitosamente.');
+			this.showSuccess('Cargo registrado exitosamente.');
 			this.amount = '';
 		})
 		.catch(error => {
