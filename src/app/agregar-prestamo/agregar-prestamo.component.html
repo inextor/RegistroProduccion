@@ -3,6 +3,11 @@
 
   <div *ngIf="!is_loading">
     <h2>Agregar Préstamo para {{ user.name }}</h2>
+    <div class="alert alert-info">
+      <p><strong>Cuenta:</strong> {{ account.name || 'Sin nombre' }}</p>
+      <p><strong>Saldo Actual:</strong> {{ account.balance | currency:'USD':'symbol':'1.2-2' }}</p>
+      <p><strong>Moneda:</strong> {{ account.currency_id }}</p>
+    </div>
 
     <form (ngSubmit)="onGuardar()">
       <div class="form-group">

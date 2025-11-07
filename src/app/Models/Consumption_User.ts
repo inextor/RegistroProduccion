@@ -9,4 +9,5 @@ export interface Consumption_User {
   updated_by_user_id: number;
   updated: string;
   user_id: number;
+  account_id: number | null;
 }

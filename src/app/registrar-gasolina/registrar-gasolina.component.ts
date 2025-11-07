@@ -11,6 +11,9 @@ import { ConfirmationService } from '../services/confirmation.service';
 import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
 import { ConsumptionInfo } from '../ComplexModels/ConsumptionInfo';
 import { GetEmpty3 } from '../classes/GetEmpty3';
+import { Rest } from '../classes/Rest';
+import { Account } from '../Models/Account';
+import { SearchObject } from '../classes/SearchObject';
 
 @Component
 ({
@@ -37,10 +40,13 @@ export class RegistrarGasolinaComponent implements OnInit
 	gas_item_info: any = null;
 	users: any[] = [];
 	role_list:any[] = [];
+	rest_account: Rest;
+	user_accounts: Map<number, Account | null> = new Map(); // Map of user_id to their main account
 
 	constructor(public rest_service: RestService, private confirmation_service: ConfirmationService) {
 		this.production = new RestProduction(rest_service);
 		this.consumption = new RestConsumption(rest_service);
+		this.rest_account = new Rest(rest_service, 'account');
 	}
 
 	ngOnInit(): void
@@ -153,9 +159,106 @@ export class RegistrarGasolinaComponent implements OnInit
 
 		let prices = await this.production.getGasolinaPrice(role_ids, this.gas_item_info.item.id);
 
-		let consumption_users = this.users
-		.filter(u=>role_ids.includes(u.role_id))
-		.map(user =>
+		// Filter users by role
+		const filtered_users = this.users.filter(u => role_ids.includes(u.role_id));
+
+		// Collect users who need a Gasolina account created (total > 0 and no account)
+		const users_needing_accounts: number[] = [];
+		for (const user of filtered_users) {
+			let total = Math.round(Number(this.precio) * Number(this.litros)*100)/400;
+
+			// Check if user is buzo (total = 0)
+			if (user.role.name.toLowerCase() === 'buzo') {
+				total = 0;
+			}
+
+			// If total > 0 and user doesn't have a Gasolina account, add to list
+			if (total > 0 && !this.user_accounts.get(user.id)) {
+				users_needing_accounts.push(user.id);
+			}
+		}
+
+		// Create all Gasolina accounts in one batch request
+		if (users_needing_accounts.length > 0) {
+			try {
+				console.log('Users needing accounts:', users_needing_accounts);
+
+				// Double-check: search again for these specific users to avoid duplicates
+				// Use SearchObject with csv syntax
+				const recheck_search = new SearchObject<Account>(['id', 'user_id', 'name', 'balance', 'currency_id', 'status', 'is_main']);
+				recheck_search.csv.user_id = users_needing_accounts; // This will become user_id,=1,2,3
+				recheck_search.eq.name = 'Gasolina';
+				recheck_search.limit = 999999;
+
+				const recheck_response = await this.rest_account.search(recheck_search);
+
+				// Validate recheck response
+				if (!recheck_response || !recheck_response.data) {
+					console.error('Invalid response from recheck search:', recheck_response);
+					this.rest_service.showError('Error al verificar cuentas existentes');
+					return;
+				}
+
+				const existing_accounts: Account[] = recheck_response.data;
+				console.log('Recheck found existing accounts:', existing_accounts);
+
+				// Filter out users who already have accounts
+				const final_users_to_create = users_needing_accounts.filter(user_id => {
+					const exists = existing_accounts.find(acc => acc.user_id === user_id && acc.name === 'Gasolina');
+					if (exists) {
+						console.log(`User ${user_id} already has Gasolina account, skipping creation`);
+						this.user_accounts.set(user_id, exists);
+						return false;
+					}
+					return true;
+				});
+
+				console.log('Final users to create accounts for:', final_users_to_create);
+
+				// Only create if there are users without accounts
+				if (final_users_to_create.length > 0) {
+					const currentUserId = this.rest_service.session.user_id;
+					const accounts_to_create = final_users_to_create.map(user_id => ({
+						user_id: user_id,
+						name: 'Gasolina',
+						currency_id: 'MXN',
+						balance: 0,
+						is_main: false,
+						created_by_user_id: currentUserId,
+						updated_by_user_id: currentUserId,
+						status: 'ACTIVE'
+					}));
+
+					console.log('Creating accounts:', accounts_to_create);
+
+					// Create all accounts in one request
+					const created_accounts = await this.rest_account.createMultiple(accounts_to_create);
+
+					// Validate creation response
+					if (!created_accounts || !Array.isArray(created_accounts)) {
+						console.error('Invalid response from createMultiple:', created_accounts);
+						this.rest_service.showError('Error al crear cuentas: respuesta inválida');
+						return;
+					}
+
+					// Map the created accounts to users
+					for (const account of created_accounts) {
+						this.user_accounts.set(account.user_id, account);
+					}
+
+					console.log(`Created ${created_accounts.length} Gasolina accounts successfully`);
+				} else {
+					console.log('All accounts already exist, no creation needed');
+				}
+			} catch (error: any) {
+				console.error('Error creating Gasolina accounts:', error);
+				this.rest_service.showError('Error al crear cuentas de Gasolina: ' + (error.message || error));
+				return;
+			}
+		}
+
+		// Now create consumption_user objects with the correct account_id
+		let consumption_users = filtered_users.map(user =>
 		{
 			let total = Math.round(Number(this.precio) * Number(this.litros)*100)/400;
 			let price = Number(this.precio)/4;
@@ -164,6 +267,11 @@ export class RegistrarGasolinaComponent implements OnInit
 				total = 0;
 				price = 0;
 			}
+
+			// Get the user's "Gasolina" account (should exist now if total > 0)
+			// Only assign account_id if the total is greater than zero
+			const user_account = this.user_accounts.get(user.id);
+			const account_id = (total > 0 && user_account) ? user_account.id : null;
 
 			let consumption_user: Consumption_User =
 			{
@@ -177,6 +285,7 @@ export class RegistrarGasolinaComponent implements OnInit
 				updated_by_user_id: 0,
 				updated: '',
 				user_id: user.id,
+				account_id: account_id, // Assigned when total > 0
 			};
 
 			return consumption_user;
@@ -215,6 +324,57 @@ export class RegistrarGasolinaComponent implements OnInit
 			u.role = this.role_list.find(r=>r.id == u.role_id) || {name:'Sin Rol'};
 			return u;
 		});
+		this.loadUserAccounts();
+	}
+
+	/**
+	 * Load "Gasolina" accounts for all users in the current production area
+	 * Searches for accounts with name='Gasolina' and currency_id='MXN' for each user
+	 */
+	async loadUserAccounts(): Promise<void>
+	{
+		if (this.users.length === 0) {
+			return;
+		}
+
+		try {
+			// Get all user IDs
+			const user_ids = this.users.map(u => u.id);
+
+			// Create SearchObject to use csv syntax for multiple user_ids
+			const search = new SearchObject<Account>(['id', 'user_id', 'name', 'balance', 'currency_id', 'status', 'is_main']);
+			search.csv.user_id = user_ids; // This will become user_id,=1,2,3
+			search.eq.name = 'Gasolina';
+			search.limit = 999999;
+
+			// Search for "Gasolina" accounts
+			const response = await this.rest_account.search(search);
+
+			// Validate response
+			if (!response || !response.data) {
+				console.error('Invalid response from account search:', response);
+				this.rest_service.showError('Error al buscar cuentas: respuesta inválida');
+				return;
+			}
+
+			const accounts: Account[] = response.data;
+			console.log('Found Gasolina accounts:', accounts);
+
+			// Map each user to their Gasolina account (or null if they don't have one yet)
+			this.user_accounts.clear();
+			for (const user of this.users) {
+				const gasolina_account = accounts.find(acc =>
+					acc.user_id === user.id &&
+					acc.name === 'Gasolina'
+				);
+				this.user_accounts.set(user.id, gasolina_account || null);
+			}
+
+			console.log('User Gasolina accounts loaded:', this.user_accounts);
+		} catch (error: any) {
+			console.error('Error loading user Gasolina accounts:', error);
+			this.rest_service.showError('Error al buscar cuentas de Gasolina: ' + (error.message || error));
+		}
 	}
 
 	last_consumptions: ConsumptionInfo[] = [];
@@ -234,6 +394,7 @@ export class RegistrarGasolinaComponent implements OnInit
 		});
 		console.log('Selected production area:', production_area_info);
 		console.log('Users:', this.users);
+		this.loadUserAccounts(); // Load accounts for the selected users
 		this.loadLastConsumptions();
 	}
 

@@ -25,7 +25,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 	date: string = new Date().toISOString().split('T')[0];
 	user_rest: Rest;
 	rest_account: Rest;
-	account: Account | null = null;
+	account: Account = GetEmpty3.account();
 	user: User = GetEmpty3.user();
 	rest_ledger: Rest;
     description: string  = '';
@@ -43,26 +43,24 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 
 		this.route.queryParamMap.subscribe(params =>
 		{
-			this.account = null;
-
-			const userIdFromParams = params.get('user_id');
-			if (!userIdFromParams) {
+			const accountIdFromParams = params.get('account_id');
+			if (!accountIdFromParams) {
 				this.is_loading = false;
-				this.showError("No se proporcionó un ID de usuario.");
+				this.showError("No se proporcionó un ID de cuenta.");
 				return;
 			}
 
-			const user_id = Number(userIdFromParams);
+			const account_id = Number(accountIdFromParams);
 
-			Promise.all
-			([
-				this.user_rest.get(user_id),
-				this.rest_account.search({ user_id: user_id, limit: 1 })
-			])
-			.then(([user_response, account_response]) => {
+			// Load account and then user
+			this.rest_account.get(account_id)
+			.then((account: Account) => {
+				this.account = account;
+				return this.user_rest.get(account.user_id);
+			})
+			.then((user: User) => {
+				this.user = user;
 				this.is_loading = false;
-				this.user = user_response;
-				this.account = account_response.data.length > 0 ? account_response.data[0] : null;
 			})
 			.catch(error => {
 				this.is_loading = false;
@@ -72,8 +70,8 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 	}
 
 	onGuardar(): void {
-		if (!this.user || !this.user.id) {
-			this.showError('No se ha cargado la información del usuario.');
+		if (!this.account || !this.account.id) {
+			this.showError('No se ha cargado la información de la cuenta.');
 			return;
 		}
 		if (this.amount === '' || this.amount <= 0) {
@@ -84,47 +82,24 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 		this.is_loading = true;
 
 		const newLedger: Partial<Ledger> = {
-			// Use DEFAULT_ACCOUNT_ID if account doesn't exist yet - backend will retrieve or create it
-			account_id: this.account ? this.account.id : DEFAULT_ACCOUNT_ID,
+			account_id: this.account.id,
 			amount: Number(this.amount), // Positive amount for loan
 			description: this.description,
 			transaction_type: 'DECREMENT', // DECREMENT = worker receives loan (balance becomes negative/owes company)
 			source_document_type: null,
-			currency_id: 'MXN'
+			currency_id: this.account.currency_id
 		};
 
-
-		let p_account = this.account
-			? Promise.resolve(this.account)
-			: this.rest_account.create
-			({
-				user_id: this.user.id,
-				currency_id: 'MXN',
-				is_main: true,
-				balance: 0,
-				created: this.date,
-				updated: this.date,
-				created_by_user_id: this.user.id,
-				updated_by_user_id: this.user.id
-			});
-
-		Promise.all([p_account,Promise.resolve(newLedger)])
-		.then(([account, newLedger]) =>
+		this.rest_ledger.create(newLedger)
+		.then(() =>
 		{
-			newLedger.account_id = account.id;
-			this.account = account;
-
-			this.rest_ledger.create(newLedger)
-			.then(() =>
-			{
-				this.is_loading = false;
-				this.showSuccess('Préstamo registrado exitosamente.');
-				this.amount = '';
-			})
-			.catch(error => {
-				this.is_loading = false;
-				this.showError(error);
-			});
+			this.is_loading = false;
+			this.showSuccess('Préstamo registrado exitosamente.');
+			this.amount = '';
+		})
+		.catch(error => {
+			this.is_loading = false;
+			this.showError(error);
 		});
 	}
 }

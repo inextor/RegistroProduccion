@@ -43,39 +43,35 @@ export class VerEstadoDeCuentaComponent implements OnInit {
 		{
 			let page = params.has('page') ? parseInt(params.get('page') as string) : 0;
 			let limit = params.has('limit') ? parseInt(params.get('limit') as string) : 100;
-			let user_id = params.has('user_id') ? parseInt(params.get('user_id') as string) : 0;
+			let account_id = params.has('account_id') ? parseInt(params.get('account_id') as string) : 0;
 
-			this.getData(user_id, page, limit)
-			.then((response)=>{
-				this.user = response.user;
-				this.account =  response.account;
-				this.ledgers = response.ledgers;
-			})
-			.catch((error) =>
-			{
+			if (account_id > 0) {
+				this.getDataByAccountId(account_id, page, limit)
+				.then((response)=>{
+					this.user = response.user;
+					this.account =  response.account;
+					this.ledgers = response.ledgers;
+				})
+				.catch((error) =>
+				{
 					this.rest_service.showError(error);
-			});
+				});
+			} else {
+				this.rest_service.showError('Se requiere account_id en la URL');
+			}
 		});
 	}
 
 
-	getData(user_id:number, page:number, limit:number):Promise<CData>
+	getDataByAccountId(account_id:number, page:number, limit:number):Promise<CData>
 	{
-		return Promise.all
-		([
-			this.rest_user.get(user_id),
-			this.rest_account.search({user_id:user_id, currency_id:'MXN', limit:999999})
-		])
-		.then(([user,response]:[User,RestResponse<Account>])=>
+		return this.rest_account.get(account_id)
+		.then((account:Account)=>
 		{
-			response.data.sort((_a,b)=>b.is_main ? 1 : -1);
-
-			if( response.data.length )
-			{
-				return Promise.all([user, response.data[0]]);
-			}
-
-			return Promise.resolve([ user, GetEmpty3.account() ]) as Promise<[User,Account]>;
+			return Promise.all([
+				this.rest_user.get(account.user_id),
+				Promise.resolve(account)
+			]);
 		})
 		.then(([user,account]:[User,Account])=>
 		{

@@ -88,5 +88,9 @@ export const routes: Routes = [
 	{
 		path: 'agregar-abono',
 		loadComponent: () => import('./agregar-abono/agregar-abono.component').then(m => m.AgregarAbonoComponent),
+	},
+	{
+		path: 'list-account',
+		loadComponent: () => import('./list-account/list-account.component').then(m => m.ListAccountComponent),
 	}
 ];

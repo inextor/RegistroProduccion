@@ -25,12 +25,10 @@ export class AgregarAbonoComponent extends BaseComponent implements OnInit {
 	date: string = new Date().toISOString().split('T')[0];
 	user_rest: Rest;
 	rest_account: Rest;
-	accounts: Account[] = [];
-	selected_account_id: number = DEFAULT_ACCOUNT_ID;
+	account: Account = GetEmpty3.account();
 	user: User = GetEmpty3.user();
 	rest_ledger: Rest;
     description: string  = '';
-	show_account_selector: boolean = false;
 
 	constructor(public rest_service: RestService, private route: ActivatedRoute, private router: Router) {
 		super(rest_service);
@@ -45,40 +43,24 @@ export class AgregarAbonoComponent extends BaseComponent implements OnInit {
 
 		this.route.queryParamMap.subscribe(params =>
 		{
-			const userIdFromParams = params.get('user_id');
-			if (!userIdFromParams) {
+			const accountIdFromParams = params.get('account_id');
+			if (!accountIdFromParams) {
 				this.is_loading = false;
-				this.showError("No se proporcionó un ID de usuario.");
+				this.showError("No se proporcionó un ID de cuenta.");
 				return;
 			}
 
-			const user_id = Number(userIdFromParams);
+			const account_id = Number(accountIdFromParams);
 
-			Promise.all
-			([
-				this.user_rest.get(user_id),
-				this.rest_account.search({ user_id: user_id, limit: 999999 })
-			])
-			.then(([user_response, account_response]) => {
+			// Load account and then user
+			this.rest_account.get(account_id)
+			.then((account: Account) => {
+				this.account = account;
+				return this.user_rest.get(account.user_id);
+			})
+			.then((user: User) => {
+				this.user = user;
 				this.is_loading = false;
-				this.user = user_response;
-				this.accounts = account_response.data;
-
-				// Logic for automatic account selection
-				if (this.accounts.length === 0) {
-					// No accounts: use DEFAULT_ACCOUNT_ID (backend will create)
-					this.selected_account_id = DEFAULT_ACCOUNT_ID;
-					this.show_account_selector = false;
-				} else if (this.accounts.length === 1) {
-					// Single account: use it automatically
-					this.selected_account_id = this.accounts[0].id;
-					this.show_account_selector = false;
-				} else {
-					// Multiple accounts: show selector, preselect main account
-					this.show_account_selector = true;
-					const main_account = this.accounts.find(acc => acc.is_main);
-					this.selected_account_id = main_account ? main_account.id : this.accounts[0].id;
-				}
 			})
 			.catch(error => {
 				this.is_loading = false;
@@ -88,8 +70,8 @@ export class AgregarAbonoComponent extends BaseComponent implements OnInit {
 	}
 
 	onGuardar(): void {
-		if (!this.user || !this.user.id) {
-			this.showError('No se ha cargado la información del usuario.');
+		if (!this.account || !this.account.id) {
+			this.showError('No se ha cargado la información de la cuenta.');
 			return;
 		}
 		if (this.amount === '' || this.amount <= 0) {
@@ -100,12 +82,12 @@ export class AgregarAbonoComponent extends BaseComponent implements OnInit {
 		this.is_loading = true;
 
 		const newLedger: Partial<Ledger> = {
-			account_id: this.selected_account_id,
+			account_id: this.account.id,
 			amount: Number(this.amount), // Positive amount for payment
 			description: this.description,
 			transaction_type: 'INCREMENT', // INCREMENT = worker makes payment (balance increases/less negative)
 			source_document_type: null,
-			currency_id: 'MXN'
+			currency_id: this.account.currency_id
 		};
 
 		this.rest_ledger.create(newLedger)
@@ -114,30 +96,11 @@ export class AgregarAbonoComponent extends BaseComponent implements OnInit {
 			this.is_loading = false;
 			this.showSuccess('Abono registrado exitosamente.');
 			// Redirect to estado de cuenta after successful save
-			this.router.navigate(['/ver-estado-de-cuenta'], { queryParams: { user_id: this.user.id } });
+			this.router.navigate(['/ver-estado-de-cuenta'], { queryParams: { account_id: this.account.id } });
 		})
 		.catch(error => {
 			this.is_loading = false;
 			this.showError(error);
 		});
-	}
-
-	getCurrentBalance(): number {
-		if (this.accounts.length === 0) {
-			return 0;
-		}
-
-		if (this.accounts.length === 1) {
-			return this.accounts[0].balance;
-		}
-
-		// If multiple accounts, return the balance of the selected account
-		const selected = this.accounts.find(acc => acc.id === this.selected_account_id);
-		return selected ? selected.balance : 0;
-	}
-
-	onAccountChange(): void {
-		// Method called when account selection changes
-		// The balance display will automatically update via getCurrentBalance()
 	}
 }

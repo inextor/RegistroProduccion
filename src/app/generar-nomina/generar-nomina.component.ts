@@ -47,7 +47,6 @@ export class GenerarNominaComponent implements OnInit
 	consumption_info_list: any[] = [];
 	rest_ledger:Rest;
 	start_date: string = '';
-	ledger_info_list:any[] = [];
 	end_date: string = '';
 	rest_consumption_user: Rest;
 	consumption_user_list: any[] = []

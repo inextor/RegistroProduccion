@@ -6,6 +6,7 @@ export interface Account {
   created_by_user_id: number;
   currency_id: string;
   is_main: any | null;
+  name: string;
   updated: string | Date;
   updated_by_user_id: number;
   user_id: number;

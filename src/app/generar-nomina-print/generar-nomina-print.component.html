@@ -78,7 +78,10 @@
 		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
 			<thead>
 				<tr>
-					<th style="width: 40%; border: 1px solid #ddd; padding: 4px;">Nombre: {{ur.role.name}}</th>
+					<th style="width: 40%; border: 1px solid #ddd; padding: 4px;">
+						Nombre: {{ur.role.name}}
+						<span *ngIf="ur.prices && ur.prices.length > 0"> ({{ ur.prices.join(', ') }})</span>
+					</th>
 					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Efectivo</th>
 					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Consumos</th>
 					<th style="width: 15%; border: 1px solid #ddd; padding: 4px; text-align: right;">Abono</th>

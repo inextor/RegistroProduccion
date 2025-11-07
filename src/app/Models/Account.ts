@@ -5,6 +5,8 @@ export interface Account {
 	created_by_user_id: number;
 	is_main: boolean;
 	currency_id: string;
+	name: string;
+	status: 'ACTIVE' | 'DELETED';
 	updated: string;
 	updated_by_user_id: number;
 	user_id: number;

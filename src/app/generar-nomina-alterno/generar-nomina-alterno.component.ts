@@ -12,6 +12,8 @@ import { Rest } from '../classes/Rest';
 import { ProductionAreaInfo } from '../ComplexModels/ProductionAreaInfo';
 import { RestProduction } from '../classes/RestProduction';
 import { RestConsumption } from '../classes/RestConsumption';
+import { Account } from '../Models/Account';
+import { SearchObject } from '../classes/SearchObject';
 
 // Constant to indicate that the default/main account should be used
 // When account_id is set to this value, the backend will retrieve or create the user's main account
@@ -22,6 +24,8 @@ interface PayrollInfo
 	values: Payroll_Value[];
 	user: User;
 	payroll:Payroll;
+	role?: any;
+	prices: number[];
 }
 
 
@@ -53,6 +57,8 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	rest_account: Rest;
 	user_account_map: Map<number, number> = new Map();
 	user_account_balance_map: Map<number, number> = new Map();
+	user_accounts: Account[] = []; // All accounts for the current user being edited
+	selected_account_id: number = DEFAULT_ACCOUNT_ID;
 	production_area_list: any[] = [];
 	production_area_id: number | '' = '';
 	production_info_list: any[] = [];
@@ -164,7 +170,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				'end_date>~': this.start_date,
 				'user_id,' : user_ids.join(','),
 				'status' : 'ACTIVE',
-				limit : 1
+				limit : user_ids.length
 			};
 
 			return Promise.all
@@ -260,42 +266,51 @@ export class GenerarNominaAlternoComponent implements OnInit {
 				}
 			}
 
-			// Process consumption deductions (items consumed by users during production)
-			// Items come from consumption_info fetched from database (item names from 'item' table)
-			for (const ci of this.consumption_info_list) {
-				for (const cu of ci.users) {
-					if (cu.user_id === user.id && cu.price && cu.price > 0) {
-						const date = ci.consumption.consumed.substring(0, 10);
-						const key = `${ci.item.name}-${date}`;
+			// Process consumption deductions based on user role
+			// Role-based logic:
+			// - role_id = 3 (Buzo): NO consumption deductions
+			// - Other roles: Add 25% of total consumption as deduction
+			const BUZO_ROLE_ID = 3;
 
-						let payroll_value:Payroll_Value | undefined = payroll_values_map.get(key);
+			if (user.role_id !== BUZO_ROLE_ID) {
+				// Calculate 25% of total consumption for non-Buzo users
+				for (const ci of this.consumption_info_list) {
+					const date = ci.consumption.consumed.substring(0, 10);
+					const key = `${ci.item.name}-${date}`;
 
-						if (payroll_value == undefined) {
-							payroll_value = {
-								id: 0,
-								payroll_id: 0,
-								description: ci.consumption.description || ci.item.name, // Use consumption description if available, otherwise use item name
-								type: 'DEDUCTION',
-								datetime: date,
-								value: 0,
-								status: 'ACTIVE',
-								created: date,
-								account_id: null // Default: null means it won't go to estado de cuenta
-							};
+					let payroll_value:Payroll_Value | undefined = payroll_values_map.get(key);
 
-							// Special handling: Gasolina is ONLY deducted from nomina, NOT added to estado de cuenta
-							// Other consumption items (if any) WILL be added to estado de cuenta
-							// Check if description starts with "gasolina" (case-insensitive)
-							// Set account_id to user's account, or DEFAULT_ACCOUNT_ID if not found
-							if( ci?.item?.id != 56 || !ci.consumption.description.toLowerCase().startsWith('gasolina'))
-							{
-								// DEFAULT_ACCOUNT_ID tells backend to retrieve or create user's main account
-								// This ensures the deduction goes to the user's estado de cuenta
-								payroll_value.account_id = this.user_account_map.get(user.id) || DEFAULT_ACCOUNT_ID;
-							}
-							payroll_values_map.set(key, payroll_value as Payroll_Value);
+					// Calculate 25% of the total consumption (price * qty)
+					const total_consumption = ci.consumption.price * ci.consumption.qty;
+					const deduction_value = total_consumption * 0.25;
+
+					if (payroll_value == undefined) {
+						payroll_value = {
+							id: 0,
+							payroll_id: 0,
+							description: ci.consumption.description || ci.item.name, // Use consumption description if available, otherwise use item name
+							type: 'DEDUCTION',
+							datetime: date,
+							value: deduction_value,
+							status: 'ACTIVE',
+							created: date,
+							account_id: null // Default: null means it won't go to estado de cuenta
+						};
+
+						// Special handling: Gasolina is ONLY deducted from nomina, NOT added to estado de cuenta
+						// Other consumption items (if any) WILL be added to estado de cuenta
+						// Check if description starts with "gasolina" (case-insensitive)
+						// Set account_id to user's account, or DEFAULT_ACCOUNT_ID if not found
+						if( ci?.item?.id != 56 && !ci.consumption.description.toLowerCase().startsWith('gasolina'))
+						{
+							// DEFAULT_ACCOUNT_ID tells backend to retrieve or create user's main account
+							// This ensures the deduction goes to the user's estado de cuenta
+							payroll_value.account_id = this.user_account_map.get(user.id) || DEFAULT_ACCOUNT_ID;
 						}
-						payroll_value.value+= cu.total;
+						payroll_values_map.set(key, payroll_value as Payroll_Value);
+					} else {
+						// If the payroll_value already exists, add to it
+						payroll_value.value += deduction_value;
 					}
 				}
 			}
@@ -335,10 +350,23 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			payroll.subtotal = subtotal;
 			payroll.total = subtotal - deductions;
 
+			// Collect unique prices for this user from production
+			const user_prices_set = new Set<number>();
+			for (const pi of this.production_info_list) {
+				for (const pu of pi.users) {
+					if (pu.user_id === user.id && pu.price > 0) {
+						user_prices_set.add(pu.price);
+					}
+				}
+			}
+			const user_prices = Array.from(user_prices_set).sort((a, b) => b - a);
+
 			const payroll_info: PayrollInfo = {
 				user: user,
 				payroll: payroll,
-				values: payroll_values
+				values: payroll_values,
+				role: user.role,
+				prices: user_prices
 			};
 
 			this.payroll_info_list.push(payroll_info);
@@ -492,9 +520,32 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		});
 	}
 
-	showAddExtraDeduction(payroll_info: any) {
+	async showAddExtraDeduction(payroll_info: any) {
 		this.editing_payroll_info = payroll_info;
 		this.editing_user_balance = this.user_account_balance_map.get(payroll_info.user.id) || 0;
+
+		// Load all accounts for this user
+		try {
+			const search = new SearchObject<Account>(['id', 'user_id', 'name', 'balance', 'currency_id', 'status', 'is_main']);
+			search.eq.user_id = payroll_info.user.id;
+			search.limit = 999999;
+
+			const response = await this.rest_account.search(search);
+			this.user_accounts = response.data || [];
+
+			// Default to the main account or first account
+			if (this.user_accounts.length > 0) {
+				const main_account = this.user_accounts.find(acc => acc.is_main);
+				this.selected_account_id = main_account ? main_account.id : this.user_accounts[0].id;
+			} else {
+				this.selected_account_id = DEFAULT_ACCOUNT_ID;
+			}
+		} catch (error) {
+			console.error('Error loading user accounts:', error);
+			this.user_accounts = [];
+			this.selected_account_id = DEFAULT_ACCOUNT_ID;
+		}
+
 		this.new_deduction = {
 			id: 0,
 			payroll_id: payroll_info.payroll.id,
@@ -504,11 +555,41 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			datetime: new Date().toISOString().slice(0, 10),
 			status: 'ACTIVE',
 			created: new Date().toISOString().slice(0, 10),
-			// Manually added deductions (like "DESCUENTO PRESTAMO") always go to estado de cuenta
-			// DEFAULT_ACCOUNT_ID tells backend to use/create user's main account
-			account_id: DEFAULT_ACCOUNT_ID
+			account_id: this.selected_account_id
 		};
 		this.is_adding_deduction = true;
+	}
+
+	onAccountSelectionChange() {
+		// Check if Gasolina account is selected
+		const selected_account = this.user_accounts.find(acc => acc.id === this.selected_account_id);
+
+		if (selected_account && selected_account.name === 'Gasolina' && this.editing_payroll_info) {
+			// Calculate gasolina debt (negative balance becomes positive debt)
+			const gasolina_debt = selected_account.balance < 0 ? Math.abs(selected_account.balance) : 0;
+
+			// Get the user's current payroll total (salary after existing deductions)
+			const payroll_total = this.editing_payroll_info.payroll.total;
+
+			// Auto-populate with the lesser of gasolina debt or salary
+			const deduction_amount = Math.min(gasolina_debt, payroll_total);
+
+			// Format date as readable string
+			const date_str = this.formatDate(this.new_deduction.datetime || new Date().toISOString().slice(0, 10));
+
+			// Update the deduction
+			this.new_deduction.value = deduction_amount;
+			this.new_deduction.description = `Abono de Gasolina ${date_str}`;
+		}
+	}
+
+	formatDate(dateString: string): string {
+		// Convert ISO date to readable format (e.g., "2025-11-04" -> "04/11/2025")
+		const date = new Date(dateString);
+		const day = String(date.getDate()).padStart(2, '0');
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const year = date.getFullYear();
+		return `${day}/${month}/${year}`;
 	}
 
 	saveNewDeduction() {
@@ -524,11 +605,14 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			return;
 		}
 
+		// Update the deduction with the selected account
+		this.new_deduction.account_id = this.selected_account_id;
+
 		this.editing_payroll_info.values.push({...this.new_deduction});
 
 		this.new_deduction = {
 			id: 0,
-			account_id: DEFAULT_ACCOUNT_ID,
+			account_id: this.selected_account_id,
 			payroll_id: 0,
 			type: 'DEDUCTION',
 			description: '',

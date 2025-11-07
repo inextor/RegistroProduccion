@@ -35,7 +35,7 @@
           } @else {
             <div class="list-group">
               @for (user of users_of_selected_area; track user.id) {
-                <a [routerLink]="['/ver-estado-de-cuenta']" [queryParams]="{ user_id: user.id }" class="list-group-item list-group-item-action" (click)="closeModal()">
+                <a [routerLink]="['/list-account']" [queryParams]="{ user_id: user.id }" class="list-group-item list-group-item-action" (click)="closeModal()">
                   {{ user.name }}
                 </a>
               }

@@ -10,6 +10,9 @@
 				<strong>Usuario:</strong> {{ user.name }}
 			</p>
 			<p>
+				<strong>Cuenta:</strong> {{ account.name || 'Sin nombre' }}
+			</p>
+			<p>
 				<strong>Balance Actual:</strong>
 				{{ account.balance | currency:'USD':'symbol':'1.2-2' }}
 			</p>
@@ -17,10 +20,10 @@
 				<strong>Moneda:</strong> {{ account.currency_id }}
 			</p>
 			<div class="d-flex gap-2">
-				<a [routerLink]="['/agregar-prestamo']" [queryParams]="{ user_id: user.id }" class="btn btn-primary">
+				<a [routerLink]="['/agregar-prestamo']" [queryParams]="{ account_id: account.id }" class="btn btn-primary">
 					Agregar Préstamo
 				</a>
-				<a [routerLink]="['/agregar-abono']" [queryParams]="{ user_id: user.id }" class="btn btn-success">
+				<a [routerLink]="['/agregar-abono']" [queryParams]="{ account_id: account.id }" class="btn btn-success">
 					Agregar Abono
 				</a>
 			</div>

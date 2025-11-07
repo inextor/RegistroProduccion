@@ -39,6 +39,7 @@ interface UserResume{
 	total_consumo_total: number;
 	deductions: any[];
 	total_abono: number;
+	prices: number[]; // Array of unique prices used
 };
 
 @Component({
@@ -60,7 +61,6 @@ export class GenerarNominaPrintComponent implements OnInit
 	rest_ledger:Rest;
 	rest_payroll_info: Rest;
 	start_date: string = '';
-	ledger_info_list:any[] = [];
 	end_date: string = '';
 	rest_consumption_user: Rest;
 	consumption_user_list: any[] = []
@@ -132,7 +132,7 @@ all_users_total_abono: any;
 			return 0;
 		}
 		return user_resume.deductions
-			.filter(d => d.description.toLowerCase() !== 'gasolina')
+			.filter(d => d.account_id === -1)
 			.reduce((total, deduction) => total + deduction.value, 0);
 	}
 
@@ -364,6 +364,7 @@ all_users_total_abono: any;
 
 			let price = 0;
 			let count = 0;
+			let prices_set = new Set<number>(); // Track unique prices
 
 
 			for(let pi of this.production_info_list)
@@ -383,6 +384,7 @@ all_users_total_abono: any;
 						total_to_pay += pi.production.qty * pu.price;
 						this.all_users_total_to_pay += pi.production.qty * pu.price;
 						price = pu.price;
+						prices_set.add(pu.price); // Add price to set
 						console.log
 						console.log('se conto'+u.name+' '+pi.production.id+' '+pi.production.qty );
 					}
@@ -437,7 +439,8 @@ all_users_total_abono: any;
 				total_consumo_total,
 				price,
 				total_abono:0,
-				deductions: []
+				deductions: [],
+				prices: Array.from(prices_set).sort((a, b) => b - a) // Convert set to sorted array (highest first)
 			});
 		}
 
@@ -505,5 +508,17 @@ all_users_total_abono: any;
 			return area ? area.name : '';
 		}
 		return '';
+	}
+
+	// Format prices for display: "137 x ($172.5, $49.00)"
+	formatPricesDisplay(ur: UserResume): string {
+		if (!ur.prices || ur.prices.length === 0) {
+			return '';
+		}
+
+		const kgs = ur.total_kgs.toFixed(2);
+		const pricesStr = ur.prices.map(p => '$' + p.toFixed(2)).join(', ');
+
+		return `${kgs} x (${pricesStr})`;
 	}
 }
