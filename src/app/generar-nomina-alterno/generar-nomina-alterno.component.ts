@@ -598,11 +598,20 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			this.selected_account_id = DEFAULT_ACCOUNT_ID;
 		}
 
+		// Get default description based on selected account
+		let default_description = '';
+		const selected_account = this.user_accounts.find(acc => acc.id === this.selected_account_id);
+		if (selected_account) {
+			default_description = `Abono ${selected_account.name}`;
+		} else if (this.selected_account_id === DEFAULT_ACCOUNT_ID) {
+			default_description = 'Abono Cuenta Principal';
+		}
+
 		this.new_deduction = {
 			id: 0,
 			payroll_id: payroll_info.payroll.id,
 			type: 'DEDUCTION',
-			description: '',
+			description: default_description,
 			value: 0,
 			datetime: new Date().toISOString().slice(0, 10),
 			status: 'ACTIVE',
@@ -613,25 +622,30 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	}
 
 	onAccountSelectionChange() {
-		// Check if Gasolina account is selected
+		// Get the selected account
 		const selected_account = this.user_accounts.find(acc => acc.id === this.selected_account_id);
 
-		if (selected_account && selected_account.name === 'Gasolina' && this.editing_payroll_info) {
-			// Calculate gasolina debt (negative balance becomes positive debt)
-			const gasolina_debt = selected_account.balance < 0 ? Math.abs(selected_account.balance) : 0;
+		if (selected_account && this.editing_payroll_info) {
+			// Set default description for all accounts
+			this.new_deduction.description = `Abono ${selected_account.name}`;
 
-			// Get the user's current payroll total (salary after existing deductions)
-			const payroll_total = this.editing_payroll_info.payroll.total;
+			// Special handling for Gasolina account
+			if (selected_account.name.toLowerCase().includes('gasolina')) {
+				// Calculate gasolina debt (negative balance becomes positive debt)
+				const gasolina_debt = selected_account.balance < 0 ? Math.abs(selected_account.balance) : 0;
 
-			// Auto-populate with the lesser of gasolina debt or salary
-			const deduction_amount = Math.min(gasolina_debt, payroll_total);
+				// Get the user's current payroll total (salary after existing deductions)
+				const payroll_total = this.editing_payroll_info.payroll.total;
 
-			// Format date as readable string
-			const date_str = this.formatDate(this.new_deduction.datetime || new Date().toISOString().slice(0, 10));
+				// Auto-populate with the lesser of gasolina debt or salary
+				const deduction_amount = Math.min(gasolina_debt, payroll_total);
 
-			// Update the deduction
-			this.new_deduction.value = deduction_amount;
-			this.new_deduction.description = `Abono de Gasolina ${date_str}`;
+				// Update the deduction amount
+				this.new_deduction.value = deduction_amount;
+			}
+		} else if (this.selected_account_id === DEFAULT_ACCOUNT_ID) {
+			// Default account (main account)
+			this.new_deduction.description = 'Abono Cuenta Principal';
 		}
 	}
 

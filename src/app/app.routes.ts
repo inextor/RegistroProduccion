@@ -92,5 +92,9 @@ export const routes: Routes = [
 	{
 		path: 'list-account',
 		loadComponent: () => import('./list-account/list-account.component').then(m => m.ListAccountComponent),
+	},
+	{
+		path: 'detalle-nomina-usuario',
+		loadComponent: () => import('./detalle-nomina-usuario/detalle-nomina-usuario.component').then(m => m.DetalleNominaUsuarioComponent),
 	}
 ];

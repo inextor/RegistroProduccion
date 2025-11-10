@@ -129,10 +129,15 @@
 
 	<div *ngFor="let payroll_info of payroll_info_list">
 		<div class="row">
-			<div class="col-10 fw-bold">
+			<div class="col-8 fw-bold">
 				{{ payroll_info.user.name }}
 				<span *ngIf="payroll_info.role"> - {{ payroll_info.role.name }}</span>
 				<span *ngIf="payroll_info.prices && payroll_info.prices.length > 0"> ({{ payroll_info.prices.join(', ') }})</span>
+			</div>
+			<div class="col-2 fw-bold">
+				<a [routerLink]="['/detalle-nomina-usuario']" [queryParams]="{user_id: payroll_info.user.id, start_date: start_date, end_date: end_date}" class="btn btn-sm btn-info text-white">
+					Ver Detalle
+				</a>
 			</div>
 			<div class="col-2 fw-bold">
 				@if( this.current_payroll_info_list.length == 0)
@@ -211,10 +216,6 @@
 			}
 			<div class="modal-body">
 				<div class="form-group">
-					<label>Descripción</label>
-					<input type="text" class="form-control" name="description" [(ngModel)]="new_deduction.description">
-				</div>
-				<div class="form-group">
 					<label>Cuenta</label>
 					<select class="form-control" name="account" [(ngModel)]="selected_account_id" (ngModelChange)="onAccountSelectionChange()">
 						<option *ngFor="let account of user_accounts" [value]="account.id">
@@ -223,6 +224,10 @@
 						</option>
 						<option [value]="-1" *ngIf="user_accounts.length === 0">Cuenta Principal (se creará)</option>
 					</select>
+				</div>
+				<div class="form-group">
+					<label>Descripción</label>
+					<input type="text" class="form-control" name="description" [(ngModel)]="new_deduction.description">
 				</div>
 				<div class="row">
 					<div class="col-6 form-group">
