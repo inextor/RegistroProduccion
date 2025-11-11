@@ -1,0 +1,112 @@
+<div class="d-print-none">
+	<button (click)="generatePDF()">Generar PDF</button>
+</div>
+
+<div id="pdf_container" style="font-family: sans-serif; padding: 20px;">
+	<div *ngIf="is_loading" style="text-align: center;">
+		<div style="border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3498db; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;">
+		</div>
+		<span>Cargando...</span>
+	</div>
+
+	<div *ngIf="!is_loading && user">
+		<!-- Header con nombre y periodo -->
+		<div style="margin-bottom: 20px;">
+			<h2 style="margin: 0; font-size: 24px; font-weight: bold;">{{ user.name }}</h2>
+			<p style="color: #6c757d; margin: 5px 0 0 0;">
+				Periodo: {{ start_date | shortDate }} - {{ end_date | shortDate }}
+			</p>
+		</div>
+
+		<!-- Cuentas del Usuario -->
+		<div *ngIf="accounts.length > 0" style="border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 20px;">
+			<div style="padding: 12px 16px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+				<h5 style="margin: 0; font-size: 18px; font-weight: bold;">Cuentas del Usuario</h5>
+			</div>
+			<div style="padding: 16px;">
+				<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+					<a *ngFor="let account of accounts"
+					   [routerLink]="['/ver-estado-de-cuenta']"
+					   [queryParams]="{user_id: user.id, account_id: account.id}"
+					   style="display: inline-block; padding: 8px 16px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; transition: background-color 0.3s;">
+						{{ account.name }}
+						<span *ngIf="account.is_main" style="font-weight: bold;"> (Principal)</span>
+						- Balance: {{ account.balance | currency:'USD':'symbol':'1.2-2' }}
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Tabla de producción detallada -->
+		<div style="border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 20px;">
+			<div style="padding: 12px 16px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+				<h5 style="margin: 0; font-size: 18px; font-weight: bold;">Producción Detallada</h5>
+			</div>
+			<div style="padding: 16px;">
+				<div *ngIf="production_details.length === 0" style="padding: 12px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
+					No hay producción registrada para este usuario en el periodo seleccionado.
+				</div>
+
+				<div *ngIf="production_details.length > 0">
+					<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+						<thead>
+							<tr style="background-color: #f2f2f2;">
+								<th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Producto</th>
+								<th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Fecha</th>
+								<th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Piezas</th>
+								<th style="border: 1px solid #ddd; padding: 8px; text-align: right;">kg</th>
+								<th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Precio</th>
+								<th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let detail of production_details" style="background-color: #fff;">
+								<td style="border: 1px solid #ddd; padding: 8px;">{{ detail.product }}</td>
+								<td style="border: 1px solid #ddd; padding: 8px;">{{ detail.date | shortDate }}</td>
+								<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ detail.pieces | number:'1.0-0' }}</td>
+								<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ detail.kg | number:'1.2-2' }}</td>
+								<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ detail.price | currency:'USD':'symbol':'1.2-2' }}</td>
+								<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">{{ detail.total | currency:'USD':'symbol':'1.2-2' }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<!-- Resumen de totales -->
+		<div style="border: 1px solid #dee2e6; border-radius: 4px;">
+			<div style="padding: 12px 16px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+				<h5 style="margin: 0; font-size: 18px; font-weight: bold;">Resumen</h5>
+			</div>
+			<div style="padding: 16px;">
+				<table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+					<tbody>
+						<tr>
+							<td style="padding: 8px; text-align: right; font-weight: bold;">Subtotal:</td>
+							<td style="padding: 8px; text-align: right;">{{ subtotal | currency:'USD':'symbol':'1.2-2' }}</td>
+						</tr>
+						<tr *ngIf="gasolina_deduction > 0">
+							<td style="padding: 8px; text-align: right; font-weight: bold;">
+								<a *ngIf="gasolina_account" [routerLink]="['/ver-estado-de-cuenta']" [queryParams]="{user_id: user.id, account_id: gasolina_account.id}" style="color: inherit; text-decoration: underline;">Gasolina:</a>
+								<span *ngIf="!gasolina_account">Gasolina:</span>
+							</td>
+							<td style="padding: 8px; text-align: right; color: #dc3545;">- {{ gasolina_deduction | currency:'USD':'symbol':'1.2-2' }}</td>
+						</tr>
+						<tr *ngIf="prestamo_deduction > 0">
+							<td style="padding: 8px; text-align: right; font-weight: bold;">
+								<a *ngIf="main_account" [routerLink]="['/ver-estado-de-cuenta']" [queryParams]="{user_id: user.id, account_id: main_account.id}" style="color: inherit; text-decoration: underline;">Préstamo:</a>
+								<span *ngIf="!main_account">Préstamo:</span>
+							</td>
+							<td style="padding: 8px; text-align: right; color: #dc3545;">- {{ prestamo_deduction | currency:'USD':'symbol':'1.2-2' }}</td>
+						</tr>
+						<tr style="border-top: 2px solid #dee2e6;">
+							<td style="padding: 8px; text-align: right; font-weight: bold; font-size: 16px;">Total a Pagar:</td>
+							<td style="padding: 8px; text-align: right; font-weight: bold; font-size: 16px;">{{ total | currency:'USD':'symbol':'1.2-2' }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

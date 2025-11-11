@@ -58,6 +58,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 	user_account_map: Map<number, number> = new Map();
 	user_account_balance_map: Map<number, number> = new Map();
 	user_gasolina_account_map: Map<number, number> = new Map(); // Map user_id -> gasolina_account_id
+	account_map: Map<number, Account> = new Map(); // Map account_id -> Account object
 	user_accounts: Account[] = []; // All accounts for the current user being edited
 	selected_account_id: number = DEFAULT_ACCOUNT_ID;
 	production_area_list: any[] = [];
@@ -303,10 +304,19 @@ export class GenerarNominaAlternoComponent implements OnInit {
 					deduction_account_id = this.user_gasolina_account_map.get(user.id) || null;
 				}
 
+				// Build description with "Abono" prefix if there's an account_id
+				let description = ci.consumption.description || ci.item.name;
+				if (deduction_account_id) {
+					// Look up the actual account name from the account_map
+					const account = this.account_map.get(deduction_account_id);
+					const account_name = account ? account.name : 'Cuenta';
+					description = `${description} (Abono ${account_name})`;
+				}
+
 				payroll_value = {
 					id: 0,
 					payroll_id: 0,
-					description: ci.consumption.description || ci.item.name,
+					description: description,
 					type: 'DEDUCTION',
 					datetime: date,
 					value: cu.total, // Use the user-specific deduction amount from consumption_user
@@ -461,24 +471,158 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		const user_ids = this.user_list.map(u => u.id);
 		if (user_ids.length > 0) {
 			try {
-				const response = await this.rest_account.search({ 'user_id,': user_ids.join(','), limit: 99999 });
+				// Fetch ALL accounts for these users in a single query
+				const response = await this.rest_account.search({
+					'user_id,': user_ids.join(','),
+					currency_id: 'MXN',
+					status: 'ACTIVE',
+					limit: 99999
+				});
 				const accounts = response.data;
 
-				// Create a map of user_id -> account_id (main accounts)
+				console.log('Total accounts loaded:', accounts.length);
+				console.log('Raw accounts data:', accounts);
+
+				// Single pass: Map accounts based on name content
 				for (const account of accounts) {
-					if (account.is_main && !this.user_account_map.has(account.user_id)) {
+					console.log('Processing account:', account);
+					const account_name_lower = account.name ? account.name.toLowerCase() : '';
+
+					// Store in account_map for name lookup
+					this.account_map.set(account.id, account);
+
+					// If name contains "gasolina" -> Gasolina account
+					if (account_name_lower.includes('gasolina')) {
+						console.log(`✓ Mapping Gasolina account for user ${account.user_id}: account_id=${account.id}, name="${account.name}"`);
+						this.user_gasolina_account_map.set(account.user_id, account.id);
+					}
+					// If name does NOT contain "gasolina" -> Main account
+					else {
+						console.log(`✓ Mapping Main account for user ${account.user_id}: account_id=${account.id}, name="${account.name}", balance=${account.balance}`);
 						this.user_account_map.set(account.user_id, account.id);
 						this.user_account_balance_map.set(account.user_id, account.balance);
 					}
+				}
 
-					// Track Gasolina accounts
-					if (account.name === 'Gasolina') {
-						this.user_gasolina_account_map.set(account.user_id, account.id);
+				console.log('=== FINAL MAPS ===');
+				console.log('User main account map size:', this.user_account_map.size);
+				console.log('User main account map entries:', Array.from(this.user_account_map.entries()));
+				console.log('User gasolina account map size:', this.user_gasolina_account_map.size);
+				console.log('User gasolina account map entries:', Array.from(this.user_gasolina_account_map.entries()));
+				console.log('Users in list:', this.user_list.map(u => ({ id: u.id, name: u.name })));
+
+				// Check which users need accounts
+				const users_without_principal: number[] = [];
+				for (const user of this.user_list) {
+					if (!this.user_account_map.has(user.id)) {
+						users_without_principal.push(user.id);
 					}
 				}
 
-				// Ensure all users have a Gasolina account (create if missing)
-				await this.ensureGasolinaAccounts();
+				const users_without_gasolina: number[] = [];
+				for (const user of this.user_list) {
+					if (!this.user_gasolina_account_map.has(user.id)) {
+						users_without_gasolina.push(user.id);
+					}
+				}
+
+				console.log('Users without Principal account:', users_without_principal);
+				console.log('Users without Gasolina account:', users_without_gasolina);
+
+				// For users without Principal, search for ANY non-Gasolina account
+				if (users_without_principal.length > 0) {
+					console.log('Searching for existing non-Gasolina accounts...');
+					const all_accounts_response = await this.rest_account.search({
+						'user_id,': users_without_principal.join(','),
+						currency_id: 'MXN',
+						status: 'ACTIVE',
+						limit: 99999
+					});
+
+					console.log('Found accounts for users without Principal:', all_accounts_response.data);
+
+					// Map any non-Gasolina accounts as Principal
+					for (const account of all_accounts_response.data) {
+						// Store in account_map for name lookup
+						this.account_map.set(account.id, account);
+
+						const account_name_lower = account.name ? account.name.toLowerCase() : '';
+						if (!account_name_lower.includes('gasolina')) {
+							console.log(`Found existing non-Gasolina account for user ${account.user_id}: ${account.name} (${account.id})`);
+							this.user_account_map.set(account.user_id, account.id);
+							this.user_account_balance_map.set(account.user_id, account.balance);
+
+							// Remove from users_without_principal
+							const index = users_without_principal.indexOf(account.user_id);
+							if (index > -1) {
+								users_without_principal.splice(index, 1);
+							}
+						}
+					}
+
+					console.log('Users still needing Principal after search:', users_without_principal);
+				}
+
+				// Create missing accounts only for users that truly don't have any
+				const accounts_to_create: any[] = [];
+				const currentUserId = this.rest_service.session.user_id;
+
+				// Principal accounts (only for users without ANY non-Gasolina account)
+				for (const user_id of users_without_principal) {
+					accounts_to_create.push({
+						user_id: user_id,
+						name: 'Principal',
+						currency_id: 'MXN',
+						balance: 0,
+						is_main: 1,
+						created_by_user_id: currentUserId,
+						updated_by_user_id: currentUserId,
+						status: 'ACTIVE'
+					});
+				}
+
+				// Gasolina accounts
+				for (const user_id of users_without_gasolina) {
+					accounts_to_create.push({
+						user_id: user_id,
+						name: 'Gasolina',
+						currency_id: 'MXN',
+						balance: 0,
+						is_main: null,
+						created_by_user_id: currentUserId,
+						updated_by_user_id: currentUserId,
+						status: 'ACTIVE'
+					});
+				}
+
+				if (accounts_to_create.length > 0) {
+					console.log('Creating accounts:', accounts_to_create);
+
+					try {
+						const created_accounts = await this.rest_account.createMultiple(accounts_to_create);
+						console.log('Created accounts:', created_accounts);
+
+						// Add the newly created accounts to the maps
+						for (const account of created_accounts) {
+							// Store in account_map for name lookup
+							this.account_map.set(account.id, account);
+
+							const account_name_lower = account.name.toLowerCase();
+							if (account_name_lower.includes('gasolina')) {
+								this.user_gasolina_account_map.set(account.user_id, account.id);
+							} else {
+								this.user_account_map.set(account.user_id, account.id);
+								this.user_account_balance_map.set(account.user_id, account.balance);
+							}
+						}
+
+						console.log('Updated main account map:', Array.from(this.user_account_map.entries()));
+						console.log('Updated gasolina account map:', Array.from(this.user_gasolina_account_map.entries()));
+					} catch (error) {
+						console.error('Error creating accounts:', error);
+						this.rest_service.showError('Error al crear cuentas: ' + error);
+					}
+				}
 
 				this.processProductionAndConsumption();
 			} catch (error) {
@@ -486,44 +630,6 @@ export class GenerarNominaAlternoComponent implements OnInit {
 			}
 		} else {
 			this.processProductionAndConsumption();
-		}
-	}
-
-	async ensureGasolinaAccounts() {
-		const users_without_gasolina: number[] = [];
-
-		// Find users without Gasolina account
-		for (const user of this.user_list) {
-			if (!this.user_gasolina_account_map.has(user.id)) {
-				users_without_gasolina.push(user.id);
-			}
-		}
-
-		// Create Gasolina accounts for users that don't have one
-		if (users_without_gasolina.length > 0) {
-			const currentUserId = this.rest_service.session.user_id;
-			const accounts_to_create = users_without_gasolina.map(user_id => ({
-				user_id: user_id,
-				name: 'Gasolina',
-				currency_id: 'MXN',
-				balance: 0,
-				is_main: null, // Gasolina accounts are not main accounts
-				created_by_user_id: currentUserId,
-				updated_by_user_id: currentUserId,
-				status: 'ACTIVE'
-			}));
-
-			try {
-				const created_accounts = await this.rest_account.createMultiple(accounts_to_create);
-
-				// Add the newly created accounts to the map
-				for (const account of created_accounts) {
-					this.user_gasolina_account_map.set(account.user_id, account.id);
-				}
-			} catch (error) {
-				console.error('Error creating Gasolina accounts:', error);
-				this.rest_service.showError('Error al crear cuentas de Gasolina: ' + error);
-			}
 		}
 	}
 
@@ -580,6 +686,7 @@ export class GenerarNominaAlternoComponent implements OnInit {
 		try {
 			const search = new SearchObject<Account>(['id', 'user_id', 'name', 'balance', 'currency_id', 'status', 'is_main']);
 			search.eq.user_id = payroll_info.user.id;
+			search.eq.status = 'ACTIVE';
 			search.limit = 999999;
 
 			const response = await this.rest_account.search(search);

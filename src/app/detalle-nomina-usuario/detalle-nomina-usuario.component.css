@@ -1,0 +1,46 @@
+.header-section {
+	border-bottom: 2px solid #dee2e6;
+	padding-bottom: 1rem;
+}
+
+.header-section h2 {
+	margin-bottom: 0.5rem;
+	color: #212529;
+}
+
+.summary-table {
+	margin-bottom: 0;
+}
+
+.summary-table td {
+	padding: 0.75rem 1rem;
+	font-size: 1.1rem;
+}
+
+.summary-table .border-top {
+	border-top: 2px solid #212529 !important;
+	padding-top: 1rem;
+}
+
+.summary-table .border-top td {
+	padding-top: 1rem;
+}
+
+.text-danger {
+	color: #dc3545 !important;
+}
+
+.table-responsive {
+	overflow-x: auto;
+}
+
+@media print {
+	.header-section {
+		page-break-after: avoid;
+	}
+
+	.card {
+		border: 1px solid #dee2e6;
+		page-break-inside: avoid;
+	}
+}
