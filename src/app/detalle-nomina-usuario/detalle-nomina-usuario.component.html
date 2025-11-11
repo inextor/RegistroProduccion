@@ -1,22 +1,26 @@
-<div class="d-print-none">
-	<button (click)="generatePDF()">Generar PDF</button>
-</div>
-
-<!-- Cuentas del Usuario (no incluidas en PDF) -->
-<div *ngIf="!is_loading && user && accounts.length > 0" class="d-print-none" style="border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 20px;">
-	<div style="padding: 12px 16px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
-		<h5 style="margin: 0; font-size: 18px; font-weight: bold;">Cuentas del Usuario</h5>
-	</div>
-	<div style="padding: 16px;">
-		<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-			<a *ngFor="let account of accounts"
-			   [routerLink]="['/ver-estado-de-cuenta']"
-			   [queryParams]="{user_id: user.id, account_id: account.id}"
-			   style="display: inline-block; padding: 8px 16px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; transition: background-color 0.3s;">
-				{{ account.name }}
-				<span *ngIf="account.is_main" style="font-weight: bold;"> (Principal)</span>
-				- Balance: {{ account.balance | currency:'USD':'symbol':'1.2-2' }}
-			</a>
+<div class="container-fluid d-print-none">
+	<div class="row align-middle">
+		<div class="col-md-4">
+			<h4 class="my-3">Detalle de Nómina</h4>
+		</div>
+		<div class="col-md-8 text-end">
+			<div class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2">
+				<button (click)="generatePDF()" class="btn btn-primary">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-pdf me-1" viewBox="0 0 16 16">
+						<path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"/>
+					</svg>
+					Generar PDF
+				</button>
+				<ng-container *ngIf="user">
+					<a *ngFor="let account of accounts"
+					   [routerLink]="['/ver-estado-de-cuenta']"
+					   [queryParams]="{user_id: user.id, account_id: account.id}"
+					   class="btn btn-info"
+					   [title]="'Ver estado de cuenta de ' + account.name">
+						{{ account.name }}: {{ account.balance | currency:'USD':'symbol':'1.2-2' }}
+					</a>
+				</ng-container>
+			</div>
 		</div>
 	</div>
 </div>
