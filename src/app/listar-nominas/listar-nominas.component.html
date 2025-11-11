@@ -53,6 +53,9 @@
 						<a [routerLink]="['/view-payroll', pi.payroll.id]" class="btn btn-secondary" title="Ver detalles de la nómina">
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12q-1.65 0-2.825-1.175T8 8t1.175-2.825T12 4t2.825 1.175T16 8t-1.175 2.825T12 12m-8 8v-2.8q0-.85.438-1.562T5.6 14.55q1.55-.775 3.15-1.162T12 13t3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20z"/></svg>
 						</a>
+						<a [routerLink]="['/detalle-nomina-usuario']" [queryParams]="{user_id: pi.user.id, start_date: pi.payroll.start_date, end_date: pi.payroll.end_date}" class="btn btn-primary mx-1" title="Ver detalle de nómina del usuario">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M9 17H7v-7h2zm4 0h-2V7h2zm4 0h-2v-4h2z"/></svg>
+						</a>
 						<a [routerLink]="['/ver-estado-de-cuenta']" [queryParams]="{user_id:pi.user.id}" class="btn btn-info mx-1" title="Ver estado de cuenta">
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm0 2h7v5h5v11H6zm2 8v2h8v-2zm0 4v2h5v-2z"/></svg>
 						</a>
