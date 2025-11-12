@@ -3,9 +3,16 @@
 		<div class="col-12">
 			<div>
 				<span>Ubicación</span>
-				<select class="input-select" name="selected_store_id" [(ngModel)]="selected_store_id" (ngModelChange)="onStoreSelected($event)">
-					<option *ngFor="let s of stores" [value]="s.id">{{s.name}}</option>
-				</select>
+				@if(rest_service.permission.global_add_stock)
+				{
+					<select class="input-select" name="selected_store_id" [(ngModel)]="selected_store_id" (ngModelChange)="onStoreSelected($event)">
+						<option *ngFor="let s of stores" [value]="s.id">{{s.name}}</option>
+					</select>
+				}
+				@else
+				{
+					<div class="store-name">{{store.name}}</div>
+				}
 			</div>
 		</div>
 	</div>
