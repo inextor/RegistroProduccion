@@ -1,24 +1,9 @@
 <div class="container mt-4">
-  <h2>Lista de Cuentas</h2>
-
-  <div class="row mb-3">
-    <div class="col-md-4">
-      <label for="user_filter">Filtrar por Usuario</label>
-      <select id="user_filter" class="form-control" [(ngModel)]="selected_user_id" (ngModelChange)="onFilterChange()">
-        <option value="">Todos los usuarios</option>
-        <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
-      </select>
-    </div>
-    <div class="col-md-4">
-      <label for="search_text">Buscar por Nombre</label>
-      <input type="text" id="search_text" class="form-control" [(ngModel)]="search_text" placeholder="Nombre de cuenta..." (keyup.enter)="onSearch()">
-    </div>
-    <div class="col-md-4">
-      <label>&nbsp;</label>
-      <div>
-        <button class="btn btn-primary" (click)="onSearch()">Buscar</button>
-      </div>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Lista de Cuentas</h2>
+    <button class="btn btn-primary" (click)="openModal()">
+      <i class="bi bi-plus-circle"></i> Nueva Cuenta
+    </button>
   </div>
 
   <div *ngIf="is_loading" class="text-center">
@@ -74,6 +59,53 @@
 
     <div *ngIf="accounts.length === 0" class="alert alert-info">
       No se encontraron cuentas.
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear nueva cuenta -->
+<div *ngIf="is_modal_open" class="modal fade show" style="display: block;" tabindex="-1">
+  <div class="modal-backdrop fade show" (click)="closeModal()"></div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Nueva Cuenta</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="user_id" class="form-label">Usuario *</label>
+            <select id="user_id" class="form-control" [(ngModel)]="new_account.user_id" name="user_id" required>
+              <option [value]="0">Seleccione un usuario</option>
+              <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre de la Cuenta *</label>
+            <input type="text" id="name" class="form-control" [(ngModel)]="new_account.name" name="name" placeholder="Ej: Cuenta Principal" required>
+          </div>
+          <div class="mb-3">
+            <label for="currency_id" class="form-label">Moneda</label>
+            <select id="currency_id" class="form-control" [(ngModel)]="new_account.currency_id" name="currency_id">
+              <option value="MXN">MXN - Peso Mexicano</option>
+              <option value="USD">USD - Dólar</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="balance" class="form-label">Balance Inicial</label>
+            <input type="number" id="balance" class="form-control" [(ngModel)]="new_account.balance" name="balance" step="0.01" placeholder="0.00">
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" id="is_main" class="form-check-input" [(ngModel)]="new_account.is_main" name="is_main" [value]="1">
+            <label for="is_main" class="form-check-label">¿Es cuenta principal?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="saveAccount()">Crear Cuenta</button>
+      </div>
     </div>
   </div>
 </div>

@@ -24,6 +24,16 @@ export class ListAccountComponent implements OnInit {
   selected_user_id: number | '' = '';
   users: any[] = [];
 
+  // New account modal
+  is_modal_open: boolean = false;
+  new_account: Partial<Account> = {
+    name: '',
+    user_id: 0,
+    currency_id: 'MXN',
+    is_main: 0,
+    balance: 0
+  };
+
   constructor(public rest_service: RestService, private route: ActivatedRoute) {
     this.rest_account = new Rest(rest_service, 'account');
     this.rest_user = new Rest(rest_service, 'user');
@@ -62,14 +72,9 @@ export class ListAccountComponent implements OnInit {
     try {
       const search = new SearchObject<Account>(['id', 'user_id', 'name', 'balance', 'currency_id', 'status', 'is_main']);
 
-      // Filter by user if selected
+      // Filter by user if selected from query params
       if (this.selected_user_id !== '') {
         search.eq.user_id = this.selected_user_id;
-      }
-
-      // Filter by name if search text provided
-      if (this.search_text.trim()) {
-        search.lk.name = this.search_text.trim();
       }
 
       search.limit = 999999;
@@ -93,11 +98,57 @@ export class ListAccountComponent implements OnInit {
     return user ? user.name : 'Usuario desconocido';
   }
 
-  onSearch(): void {
-    this.loadAccounts();
+  openModal(): void {
+    this.new_account = {
+      name: '',
+      user_id: this.selected_user_id !== '' ? this.selected_user_id : 0,
+      currency_id: 'MXN',
+      is_main: 0,
+      balance: 0
+    };
+    this.is_modal_open = true;
   }
 
-  onFilterChange(): void {
-    this.loadAccounts();
+  closeModal(): void {
+    this.is_modal_open = false;
+    this.new_account = {
+      name: '',
+      user_id: 0,
+      currency_id: 'MXN',
+      is_main: 0,
+      balance: 0
+    };
+  }
+
+  async saveAccount(): Promise<void> {
+    try {
+      // Validate required fields
+      if (!this.new_account.name || !this.new_account.name.trim()) {
+        this.rest_service.showError('El nombre de la cuenta es requerido');
+        return;
+      }
+
+      if (!this.new_account.user_id || this.new_account.user_id === 0) {
+        this.rest_service.showError('Debe seleccionar un usuario');
+        return;
+      }
+
+      const account_to_save = {
+        name: this.new_account.name.trim(),
+        user_id: this.new_account.user_id,
+        currency_id: this.new_account.currency_id || 'MXN',
+        is_main: this.new_account.is_main || 0,
+        balance: this.new_account.balance || 0,
+        status: 'ACTIVE' as const
+      };
+
+      await this.rest_account.create(account_to_save);
+      this.rest_service.showSuccess('Cuenta creada exitosamente');
+      this.closeModal();
+      this.loadAccounts();
+    } catch (error: any) {
+      console.error('Error creating account:', error);
+      this.rest_service.showError('Error al crear la cuenta: ' + (error.message || error));
+    }
   }
 }
