@@ -52,6 +52,11 @@
 				</div>
 
 				<div *ngIf="production_details.length > 0">
+					<!-- Warning message for zero-price production -->
+					<div *ngIf="has_zero_price_production" style="padding: 12px; margin-bottom: 16px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
+						<strong>⚠️ Advertencia:</strong> Este usuario no tiene precio asignado para algunos productos registrados en la producción.
+					</div>
+
 					<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
 						<thead>
 							<tr style="background-color: #f2f2f2;">

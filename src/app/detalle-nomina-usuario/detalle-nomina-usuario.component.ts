@@ -45,6 +45,8 @@ export class DetalleNominaUsuarioComponent implements OnInit {
 	prestamo_deduction: number = 0;
 	total: number = 0;
 
+	has_zero_price_production: boolean = false;
+
 	rest_user: Rest;
 	rest_account: Rest;
 	rest_payroll: Rest;
@@ -119,6 +121,9 @@ export class DetalleNominaUsuarioComponent implements OnInit {
 			return;
 		}
 
+		// Reset the zero-price flag
+		this.has_zero_price_production = false;
+
 		const search_params: any = {
 			status: 'ACTIVE',
 			limit: 999999
@@ -141,7 +146,12 @@ export class DetalleNominaUsuarioComponent implements OnInit {
 			// Find if this user participated in this production
 			const production_user = pi.users.find(pu => pu.user_id === this.user_id);
 
-			if (production_user && production_user.price > 0) {
+			if (production_user && production_user.price >= 0) {
+				// Track if there are zero-price production records
+				if (production_user.price === 0) {
+					this.has_zero_price_production = true;
+				}
+
 				const date = pi.production.produced.substring(0, 10);
 				const key = `${date}-${pi.item.name}-${production_user.price}`;
 
