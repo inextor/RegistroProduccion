@@ -1,0 +1,8 @@
+{
+	"permissions": {
+		"allow": [
+			"Read(/home/nextor/Projects/**)",
+			"Read(/var/www/html/**)"
+		]
+	}
+}

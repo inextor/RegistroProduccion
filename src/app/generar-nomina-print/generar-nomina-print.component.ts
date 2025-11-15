@@ -131,6 +131,16 @@ all_users_total_abono: any;
 		if (!user_resume.deductions) {
 			return 0;
 		}
+		console.log('getAbono - Todas las deducciones:', JSON.stringify(user_resume.deductions, null, 2));
+		user_resume.deductions.forEach((d, i) => {
+			console.log(`Deducción ${i}:`, {
+				description: d.description,
+				value: d.value,
+				account_id: d.account_id,
+				type: d.type
+			});
+		});
+		console.log('getAbono - Deducciones con account_id:', user_resume.deductions.filter(d => d.account_id != null && d.account_id !== 0));
 		// Any deduction with an account_id (not null) creates an abono to that account
 		return user_resume.deductions
 			.filter(d => d.account_id != null && d.account_id !== 0)
@@ -450,15 +460,24 @@ all_users_total_abono: any;
 		console.log('user_resume_list',this.user_resume_list);
 
 		let total_abono = 0;
+		console.log('===== DEBUG ABONOS =====');
+		console.log('current_payroll_info_list:', this.current_payroll_info_list);
 		for (const ur of this.user_resume_list) {
 			const payroll_info = this.current_payroll_info_list.find(p => p.user.id === ur.user.id);
+			console.log(`\nUsuario: ${ur.user.name} (ID: ${ur.user.id})`);
+			console.log('payroll_info encontrado:', payroll_info);
 			if (payroll_info) {
 				ur.deductions = payroll_info.values.filter(v => v.type === 'DEDUCTION');
+				console.log('Deducciones encontradas:', ur.deductions);
+			} else {
+				console.log('NO se encontró payroll_info para este usuario');
 			}
 			ur.total_abono = this.getAbono(ur);
+			console.log('Total abono calculado:', ur.total_abono);
 			total_abono += ur.total_abono;
 		}
 		this.all_users_total_abono = total_abono;
+		console.log('===== FIN DEBUG ABONOS =====');
 	}
 
 

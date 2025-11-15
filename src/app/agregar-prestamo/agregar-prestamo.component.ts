@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RestService } from '../rest.service';
 import { Rest } from '../classes/Rest';
 import { BaseComponent } from '../base/base.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Utils } from '../classes/DateUtils';
 import { GetEmpty3 } from '../classes/GetEmpty3';
 import { Account, Ledger, User } from '../RestModels';
@@ -30,7 +30,7 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 	rest_ledger: Rest;
     description: string  = '';
 
-	constructor(public rest_service: RestService, private route: ActivatedRoute) {
+	constructor(public rest_service: RestService, private route: ActivatedRoute, private router: Router) {
 		super(rest_service);
 		this.user_rest = new Rest(rest_service, 'user');
 		this.rest_account = new Rest(rest_service, 'account');
@@ -95,7 +95,8 @@ export class AgregarPrestamoComponent extends BaseComponent implements OnInit {
 		{
 			this.is_loading = false;
 			this.showSuccess('Cargo registrado exitosamente.');
-			this.amount = '';
+			// Redirect to estado de cuenta after successful save
+			this.router.navigate(['/ver-estado-de-cuenta'], { queryParams: { account_id: this.account.id } });
 		})
 		.catch(error => {
 			this.is_loading = false;

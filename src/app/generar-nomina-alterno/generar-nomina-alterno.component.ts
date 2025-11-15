@@ -814,8 +814,21 @@ export class GenerarNominaAlternoComponent implements OnInit {
 
 	async save()
 	{
+		console.log('===== DEBUG SAVE =====');
+		console.log('user_gasolina_account_map:', Array.from(this.user_gasolina_account_map.entries()));
+		console.log('payroll_info_list:', this.payroll_info_list);
 
 		let to_save = this.payroll_info_list.filter(p => p.values.length > 0);
+
+		console.log('to_save:', to_save);
+		console.log('Deducciones en to_save:');
+		to_save.forEach(pi => {
+			console.log(`Usuario ${pi.user.name}:`);
+			pi.values.filter(v => v.type === 'DEDUCTION').forEach(d => {
+				console.log(`  - ${d.description}: $${d.value}, account_id: ${d.account_id}`);
+			});
+		});
+		console.log('===== FIN DEBUG SAVE =====');
 
 		this.rest_payroll_info.create( to_save ).then(()=>
 		{
