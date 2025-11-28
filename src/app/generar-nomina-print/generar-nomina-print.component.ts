@@ -45,7 +45,7 @@ interface UserResume{
 @Component({
 	selector: 'app-generar-nomina-print',
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, ShortDatePipe],
+	imports: [CommonModule, FormsModule, RouterModule ],
 	templateUrl: './generar-nomina-print.component.html',
 	styleUrl: './generar-nomina-print.component.css'
 })
@@ -71,10 +71,10 @@ export class GenerarNominaPrintComponent implements OnInit
 	user_resume_list: UserResume[] = [];
 	total_pieces: number = 0;
 	total_kgs: number = 0;
-    total_kgs_muerta: number = 0;
+	total_kgs_muerta: number = 0;
 	total_pieces_muerta: number = 0;
-    all_users_total_consumption: number = 0;
-    all_users_total_to_pay: number = 0;
+	all_users_total_consumption: number = 0;
+	all_users_total_to_pay: number = 0;
 	is_modal_open:boolean = false;
 	deducciones:number = 0;
 	is_deduction_modal_open:boolean = false;
@@ -82,7 +82,7 @@ export class GenerarNominaPrintComponent implements OnInit
 	deduction_amount:number = 0;
 	deduction_description:string = '';
 	current_payroll_info_list: PayrollInfo[] = [];
-all_users_total_abono: any;
+	all_users_total_abono: any;
 
 	openModal()
 	{
