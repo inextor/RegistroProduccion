@@ -23,19 +23,14 @@ const DEFAULT_ACCOUNT_ID = -1;
 export class AgregarAbonoComponent extends BaseComponent implements OnInit {
 	amount: number | '' = '';
 	date: string = new Date().toISOString().split('T')[0];
-	user_rest: Rest;
-	rest_account: Rest;
 	account: Account = GetEmpty3.account();
 	user: User = GetEmpty3.user();
-	rest_ledger: Rest;
     description: string  = '';
 
-	constructor(public rest_service: RestService, private route: ActivatedRoute, private router: Router) {
-		super(rest_service);
-		this.user_rest = new Rest(rest_service, 'user');
-		this.rest_account = new Rest(rest_service, 'account');
-		this.rest_ledger = new Rest(rest_service, 'ledger');
-	}
+	user_rest = new Rest(this.rest, 'user');
+	rest_account = new Rest(this.rest, 'account');
+	rest_ledger = new Rest(this.rest, 'ledger');
+
 
 	ngOnInit(): void {
 		this.is_loading = true;
