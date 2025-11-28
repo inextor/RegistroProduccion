@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { RestService, ErrorMessage } from '../rest.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SubSink } from 'subsink';
 
 @Component({
 	template: ''
 })
-export class BaseComponent {
+export class BaseComponent implements OnDestroy {
 	public is_loading: boolean = false;
 
-	constructor(public rest: RestService) {}
+	subsink = new SubSink();
+
+	constructor(public rest: RestService, public route: ActivatedRoute, Router: Router) {}
 
 	public showError(error: any, auto_hide: boolean = true): void {
 		this.is_loading = false;
@@ -23,4 +27,14 @@ export class BaseComponent {
 		this.is_loading = false;
 		this.rest.showErrorMessage(new ErrorMessage(message, 'alert-success', true));
 	}
+
+	public set sink(val:any)
+	{
+		this.subsink.add(val);
+	}
+
+    public ngOnDestroy(): void {
+        throw new Error('Method not implemented.');
+    }
+
 }
