@@ -1,6 +1,7 @@
 import { Payroll } from "../Models/Payroll";
 import { Payroll_Value } from "../Models/Payroll_Value";
 import { User } from "../Models/User";
+import { Production_Area } from "../RestModels";
 
 export interface PayrollInfo
 {
@@ -12,6 +13,17 @@ export interface PayrollInfo
 
 export class GetEmpty
 {
+    static production_area(): Production_Area {
+		return {
+			id: 0,
+  			created: new Date(),
+  			name: '',
+  			status: 'ACTIVE',
+  			store_id: 0,
+  			updated: new Date()
+		} as Production_Area;
+    }
+
 	static payroll_info():PayrollInfo
 	{
 		return {
