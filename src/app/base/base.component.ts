@@ -11,9 +11,10 @@ export class BaseComponent implements OnDestroy {
 
 	subsink = new SubSink();
 
-	constructor(public rest: RestService, public route: ActivatedRoute, Router: Router) {}
+	constructor(public rest: RestService, public route: ActivatedRoute, public router: Router) {}
 
-	public showError(error: any, auto_hide: boolean = true): void {
+	public showError(error: any, auto_hide: boolean = true): void
+	{
 		this.is_loading = false;
 		if (error instanceof ErrorMessage) {
 			this.rest.showErrorMessage(error);
@@ -36,5 +37,4 @@ export class BaseComponent implements OnDestroy {
     public ngOnDestroy(): void {
         throw new Error('Method not implemented.');
     }
-
 }
