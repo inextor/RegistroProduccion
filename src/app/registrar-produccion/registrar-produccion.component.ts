@@ -57,6 +57,7 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 	total_loss=0;
 	sink: Subscription | null = null;
     total_reported: number = 0;
+	add_stock: 'SI' | 'NO' = 'SI';
 
 	constructor(public rest_service: RestService, private elementRef: ElementRef, private confirmation: ConfirmationService)
 	{
@@ -518,7 +519,8 @@ export class RegistrarProduccionComponent implements OnInit, OnDestroy
 				control: ""+this.control,
 				is_out_of_range: is_out_of_range,
 				produced: this.produced_date,
-				merma_qty: loss_qty
+				merma_qty: loss_qty,
+				verified_by_user_id: this.add_stock == 'SI' ? this.rest_service.user.id : null
 			}
 		};
 
