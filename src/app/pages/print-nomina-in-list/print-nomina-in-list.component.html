@@ -4,29 +4,31 @@
 	</div>
 
 	<h2>Resumen Produccion</h2>
-	<ng-container *ngFor="let r of resume; trackBy: trackByDate">
-		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+		<thead>
 			<tr style="background-color: #f2f2f2;">
-				<th [attr.colspan]="r.production_info_list.length*2" style="border: 1px solid #ddd; padding: 4px;">
-					Producto({{r.date}})
-				</th>
-			</tr>
-			<tr style="background-color: #f2f2f2;">
-				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">
-						Piezas {{pi.item.name}}
-					</th>
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Kgs {{pi.item.name}}</th>
+				<th rowspan="2" style="border: 1px solid #ddd; padding: 4px; vertical-align: middle;">Fecha</th>
+				<ng-container *ngFor="let item of unique_items">
+					<th colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: center;">{{item.name}}</th>
 				</ng-container>
 			</tr>
-			<tr>
-				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.alternate_qty | number }}</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.qty | number:'1.2-2'}}</td>
+			<tr style="background-color: #f2f2f2;">
+				<ng-container *ngFor="let item of unique_items">
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Piezas</th>
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Kgs</th>
 				</ng-container>
 			</tr>
-		</table>
-	</ng-container>
+		</thead>
+		<tbody>
+			<tr *ngFor="let row of resume">
+				<td style="border: 1px solid #ddd; padding: 4px;">{{row.date | date:'shortDate'}}</td>
+				<ng-container *ngFor="let item of unique_items">
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{row.totals[item.id]?.pieces || 0 | number}}</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{row.totals[item.id]?.qty || 0 | number:'1.2-2'}}</td>
+				</ng-container>
+			</tr>
+		</tbody>
+	</table>
 	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
 		<tr style="background-color: #f2f2f2;">
 			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas</th>
@@ -57,6 +59,7 @@
 				<!-- Perceptions -->
 				<tr *ngFor="let perception of ur.perceptions">
 					<td style="border: 1px solid #ddd; padding: 4px;">
+						{{perception | json }}
 						{{perception.description}}
 					</td>
 					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
@@ -67,6 +70,7 @@
 				<!-- Discounts -->
 				<tr *ngFor="let deduction of ur.deductions">
 					<td style="border: 1px solid #ddd; padding: 4px; color: #d9534f;">
+						{{deduction | json }}
 						{{deduction.description}}
 					</td>
 					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;"></td>

@@ -66,7 +66,6 @@ export class PrintNominaInListComponent extends BaseComponent
 	end_date: string = '';
 
 	user_resume_list: UserResume[] = [];
-	resume: any[] = [];
 	total_pieces: number = 0;
 	total_kgs: number = 0;
 	total_kgs_muerta: number = 0;
@@ -154,26 +153,60 @@ export class PrintNominaInListComponent extends BaseComponent
 		})
 	}
 
+	unique_items: any[] = [];
+	resume: any[] = [];
+
 	generateReumenDays()
 	{
 		this.total_pieces = 0;
 		this.total_pieces_muerta = 0;
 		this.total_kgs = 0;
 		this.total_kgs_muerta = 0;
-		//Generarcion resumen usuario
 
+		// 1. Generate Production Summary Matrix (Resumen Produccion)
 		this.resume = [];
-		let dates = new Set(this.production_info_list.map(pi => pi.production.produced.substring(0, 10)));
-		let sorted_dates = Array.from(dates).sort();
+		this.unique_items = [];
+		let item_map = new Map<number, any>();
+		let date_map = new Map<string, any>(); // date -> { date: string, totals: { [itemId: number]: { qty: number, pieces: number } } }
 
-		for(let date of sorted_dates)
+		for(let pi of this.production_info_list)
 		{
-			let production_info_list = this.production_info_list.filter(pi => pi.production.produced.startsWith(date));
-			this.resume.push({ date, production_info_list });
+			// Collect unique items
+			if(!item_map.has(pi.item.id))
+			{
+				item_map.set(pi.item.id, pi.item);
+			}
+
+			// Aggregate by date
+			let date = pi.production.produced.substring(0, 10);
+			if(!date_map.has(date))
+			{
+				date_map.set(date, { date: date, totals: {} });
+			}
+			let day_entry = date_map.get(date);
+
+			if(!day_entry.totals[pi.item.id])
+			{
+				day_entry.totals[pi.item.id] = { qty: 0, pieces: 0 };
+			}
+
+			day_entry.totals[pi.item.id].qty += pi.production.qty;
+			day_entry.totals[pi.item.id].pieces += pi.production.alternate_qty;
+
+			// Global totals
+			this.total_pieces += pi.production.alternate_qty;
+			this.total_kgs += pi.production.qty;
 		}
 
-		let user_resume_list = [];
+		// Sort items by name (or any other criteria)
+		this.unique_items = Array.from(item_map.values()).sort((a, b) => a.name.localeCompare(b.name));
 
+		// Sort dates
+		this.resume = Array.from(date_map.values()).sort((a, b) => a.date.localeCompare(b.date));
+
+
+		// 2. Generate User Resume (Nominas por Usuario)
+		let user_resume_list = [];
 		this.all_users_total_to_pay = 0;
 		this.all_users_total_consumption = 0;
 
@@ -184,7 +217,7 @@ export class PrintNominaInListComponent extends BaseComponent
 			let total_kgs = 0;
 			let total_to_pay = 0;
 			let prices_set = new Set<number>();
-			let perceptions: Perception[] = []; // Initialize perceptions array
+			let perceptions_map = new Map<string, Perception>(); // Aggregate by description
 
 			for(let pi of this.production_info_list)
 			{
@@ -196,12 +229,20 @@ export class PrintNominaInListComponent extends BaseComponent
 					if( pu.price > 0 )
 					{
 						const amount = pi.production.qty * pu.price;
-						perceptions.push({
-							description: pi.item.name,
-							qty_kgs: pi.production.qty,
-							qty_pieces: pi.production.alternate_qty,
-							amount: amount
-						});
+						const description = pi.item.name;
+
+						if (!perceptions_map.has(description)) {
+							perceptions_map.set(description, {
+								description: description,
+								qty_kgs: 0,
+								qty_pieces: 0,
+								amount: 0
+							});
+						}
+						const perception = perceptions_map.get(description)!;
+						perception.qty_kgs += pi.production.qty;
+						perception.qty_pieces += pi.production.alternate_qty;
+						perception.amount += amount;
 
 						total_pieces += pi.production.alternate_qty;
 						total_kgs += pi.production.qty;
@@ -239,12 +280,12 @@ export class PrintNominaInListComponent extends BaseComponent
 				role,
 				total_consumo_liters,
 				total_consumo_total,
-				total_pieces_muerta:0, // Not used with granular perceptions for now
-				total_kgs_muerta:0, // Not used with granular perceptions for now
-				price: 0, // Not used with granular perceptions for now
+				total_pieces_muerta:0,
+				total_kgs_muerta:0,
+				price: 0,
 				total_abono:0,
 				deductions: [],
-				perceptions: perceptions, // Assign the granular perceptions
+				perceptions: Array.from(perceptions_map.values()), // Convert map to array
 				prices: Array.from(prices_set).sort((a, b) => b - a)
 			});
 		}
