@@ -96,5 +96,9 @@ export const routes: Routes = [
 	{
 		path: 'detalle-nomina-usuario',
 		loadComponent: () => import('./detalle-nomina-usuario/detalle-nomina-usuario.component').then(m => m.DetalleNominaUsuarioComponent),
+	},
+	{
+		path: 'print-nomina-in-list',
+		loadComponent: () => import('./pages/print-nomina-in-list/print-nomina-in-list.component').then(m => m.PrintNominaInListComponent),
 	}
 ];

@@ -1,1 +1,110 @@
+<div id="pdf_container" style="font-family: sans-serif;">
+	<div style="text-align: center;font-family: sans-serif;">
+		<h1>{{production_area.name}}</h1>
+	</div>
 
+	<h2>Resumen Produccion</h2>
+	<ng-container *ngFor="let r of resume; trackBy: trackByDate">
+		<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+			<tr style="background-color: #f2f2f2;">
+				<th [attr.colspan]="r.production_info_list.length*2" style="border: 1px solid #ddd; padding: 4px;">
+					Producto({{r.date}})
+				</th>
+			</tr>
+			<tr style="background-color: #f2f2f2;">
+				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+						Piezas {{pi.item.name}}
+					</th>
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Kgs {{pi.item.name}}</th>
+				</ng-container>
+			</tr>
+			<tr>
+				<ng-container *ngFor="let pi of r.production_info_list; trackBy: trackByProductionId">
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.alternate_qty | number }}</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{pi.production.qty | number:'1.2-2'}}</td>
+				</ng-container>
+			</tr>
+		</table>
+	</ng-container>
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;margin-bottom:20px;">
+		<tr style="background-color: #f2f2f2;">
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas</th>
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Kgs</th>
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Piezas Muerta</th>
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total Kgs Muerta</th>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_pieces | number}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_kgs | number:'1.2-2'}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_pieces_muerta | number:'1.2-2'}}</td>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{total_kgs_muerta | number:'1.2-2'}}</td>
+		</tr>
+	</table>
+
+	<h2>Nominas por Usuario</h2>
+	<div *ngFor="let ur of user_resume_list; trackBy: trackByUserId" style="margin-bottom: 30px; page-break-inside: avoid;">
+		<h3 style="margin-bottom: 5px;">{{ur.user.name}} <span style="font-size: 0.8em; font-weight: normal;">({{ur.role.name}})</span></h3>
+		<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+			<thead>
+				<tr style="background-color: #f2f2f2;">
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: left; width: 45%;">Descripción</th>
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right; width: 20%;">Cant.</th>
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: right; width: 20%;">Monto</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- Perceptions -->
+				<tr *ngFor="let perception of ur.perceptions">
+					<td style="border: 1px solid #ddd; padding: 4px;">
+						{{perception.description}}
+					</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+						({{perception.qty_pieces}} pz) {{perception.qty_kgs | number:'1.2-2'}} kgs
+					</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{perception.amount | currency}}</td>
+				</tr>
+				<!-- Discounts -->
+				<tr *ngFor="let deduction of ur.deductions">
+					<td style="border: 1px solid #ddd; padding: 4px; color: #d9534f;">
+						{{deduction.description}}
+					</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;"></td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right; color: #d9534f;">-{{deduction.value | currency}}</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr style="font-weight: bold; background-color: #e9ecef;">
+					<td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total a Pagar</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
+						{{ (ur.total_to_pay - (ur.total_abono || 0)) | currency }}
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	<h2 style="margin-top: 30px;">Totales Generales</h2>
+	<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+		<tr style="background-color: #f2f2f2;">
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Total Ingresos (Producción)</th>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{all_users_total_to_pay | currency}}</td>
+		</tr>
+		<tr style="background-color: #f2f2f2;">
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Total Deducciones (Abonos)</th>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{all_users_total_abono | currency}}</td>
+		</tr>
+		<tr style="font-weight: bold;">
+			<th style="border: 1px solid #ddd; padding: 4px; text-align: left;">Gran Total</th>
+			<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{all_users_total_to_pay - all_users_total_abono | currency}} </td>
+		</tr>
+	</table>
+</div>
+
+<div class="mt-4 mb-5 d-print-none" style="width: 100%;">
+	<div class="d-flex justify-content-end">
+		<button class="btn btn-primary btn-lg me-3" (click)="generatePDF()">
+			<i class="bi bi-file-pdf"></i> Generar PDF
+		</button>
+	</div>
+</div>

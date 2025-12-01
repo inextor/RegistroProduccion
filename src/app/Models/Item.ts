@@ -6,4 +6,5 @@ export interface Item {
     background: any;
     item_category_id: any;
     unit_id: any;
+	sort_weight: number;
 }
