@@ -12,13 +12,6 @@ import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { PayrollInfo } from '../../ComplexModels/PayrollInfo';
 
-interface Perception {
-    description: string;
-    qty_kgs: number;
-    qty_pieces: number;
-    amount: number;
-}
-
 interface UserResume{
 	price: number;
 	user: any;
@@ -30,10 +23,10 @@ interface UserResume{
 	role: any;
 	total_consumo_liters: number;
 	total_consumo_total: number;
-	deductions: Payroll_Value[]; // Now explicitly Payroll_Value to ensure datetime is present
-	perceptions: Perception[];
+	deductions: Payroll_Value[];
+	perceptions: Payroll_Value[];
 	total_abono: number;
-	prices: number[]; // Array of unique prices used
+	prices: number[];
 };
 
 
@@ -213,46 +206,24 @@ export class PrintNominaInListComponent extends BaseComponent
 		for(let u of this.user_list)
 		{
 			let role = this.role_list.find(r=>r.id == u.role_id);
-			let total_pieces = 0;
-			let total_kgs = 0;
 			let total_to_pay = 0;
-			let prices_set = new Set<number>();
-			let perceptions_map = new Map<string, Perception>(); // Aggregate by description
+			let perceptions: Payroll_Value[] = [];
 
-			for(let pi of this.production_info_list)
-			{
-				for(let pu of pi.users)
-				{
-					if( pu.user_id != u.id )
-						continue;
-
-					if( pu.price > 0 )
-					{
-						const amount = pi.production.qty * pu.price;
-						const description = pi.item.name;
-
-						if (!perceptions_map.has(description)) {
-							perceptions_map.set(description, {
-								description: description,
-								qty_kgs: 0,
-								qty_pieces: 0,
-								amount: 0
-							});
-						}
-						const perception = perceptions_map.get(description)!;
-						perception.qty_kgs += pi.production.qty;
-						perception.qty_pieces += pi.production.alternate_qty;
-						perception.amount += amount;
-
-						total_pieces += pi.production.alternate_qty;
-						total_kgs += pi.production.qty;
-						total_to_pay += amount;
-						this.all_users_total_to_pay += amount;
-						prices_set.add(pu.price);
-					}
-				}
+			const payroll_info = this.current_payroll_info_list.find(p => p.user.id === u.id);
+			if (payroll_info) {
+				perceptions = payroll_info.values.filter((v:any) => v.type === 'PERCEPTION');
+				total_to_pay = perceptions.reduce((sum, p) => sum + p.value, 0);
 			}
+			
+			this.all_users_total_to_pay += total_to_pay;
 
+
+			// Calculate consumption totals (if needed for other purposes, or if it affects total to pay? 
+			// Usually consumption is a deduction, but here we are just calculating totals for display maybe?)
+			// The original code didn't seem to subtract consumption from total_to_pay in the resume loop, 
+			// but maybe it's handled in deductions? 
+			// Let's keep consumption calculation just in case, but it's not affecting total_to_pay directly here.
+			
 			let total_consumo_liters = 0;
 			let total_consumo_total = 0;
 
@@ -274,8 +245,8 @@ export class PrintNominaInListComponent extends BaseComponent
 
 			user_resume_list.push({
 				user:u,
-				total_pieces,
-				total_kgs,
+				total_pieces: 0, // Not used
+				total_kgs: 0, // Not used
 				total_to_pay,
 				role,
 				total_consumo_liters,
@@ -285,8 +256,8 @@ export class PrintNominaInListComponent extends BaseComponent
 				price: 0,
 				total_abono:0,
 				deductions: [],
-				perceptions: Array.from(perceptions_map.values()), // Convert map to array
-				prices: Array.from(prices_set).sort((a, b) => b - a)
+				perceptions: perceptions,
+				prices: []
 			});
 		}
 

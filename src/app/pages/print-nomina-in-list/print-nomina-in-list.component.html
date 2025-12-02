@@ -21,7 +21,7 @@
 		</thead>
 		<tbody>
 			<tr *ngFor="let row of resume">
-				<td style="border: 1px solid #ddd; padding: 4px;">{{row.date | date:'shortDate'}}</td>
+				<td style="border: 1px solid #ddd; padding: 4px;">{{row.date | date:'yyyy-MM-dd'}}</td>
 				<ng-container *ngFor="let item of unique_items">
 					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{row.totals[item.id]?.pieces || 0 | number}}</td>
 					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{row.totals[item.id]?.qty || 0 | number:'1.2-2'}}</td>
@@ -50,8 +50,7 @@
 		<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
 			<thead>
 				<tr style="background-color: #f2f2f2;">
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: left; width: 45%;">Descripción</th>
-					<th style="border: 1px solid #ddd; padding: 4px; text-align: right; width: 20%;">Cant.</th>
+					<th style="border: 1px solid #ddd; padding: 4px; text-align: left; width: 80%;">Descripción</th>
 					<th style="border: 1px solid #ddd; padding: 4px; text-align: right; width: 20%;">Monto</th>
 				</tr>
 			</thead>
@@ -59,27 +58,21 @@
 				<!-- Perceptions -->
 				<tr *ngFor="let perception of ur.perceptions">
 					<td style="border: 1px solid #ddd; padding: 4px;">
-						{{perception | json }}
 						{{perception.description}}
 					</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
-						({{perception.qty_pieces}} pz) {{perception.qty_kgs | number:'1.2-2'}} kgs
-					</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{perception.amount | currency}}</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">{{perception.value | currency}}</td>
 				</tr>
 				<!-- Discounts -->
 				<tr *ngFor="let deduction of ur.deductions">
 					<td style="border: 1px solid #ddd; padding: 4px; color: #d9534f;">
-						{{deduction | json }}
 						{{deduction.description}}
 					</td>
-					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;"></td>
 					<td style="border: 1px solid #ddd; padding: 4px; text-align: right; color: #d9534f;">-{{deduction.value | currency}}</td>
 				</tr>
 			</tbody>
 			<tfoot>
 				<tr style="font-weight: bold; background-color: #e9ecef;">
-					<td colspan="2" style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total a Pagar</td>
+					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">Total a Pagar</td>
 					<td style="border: 1px solid #ddd; padding: 4px; text-align: right;">
 						{{ (ur.total_to_pay - (ur.total_abono || 0)) | currency }}
 					</td>
