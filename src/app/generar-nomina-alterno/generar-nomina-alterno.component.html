@@ -30,7 +30,7 @@
 			<div class="col-12 col-md-2 text-end">
 				@if( production_detail_list.length )
 				{
-					<a [routerLink]="['/generar-nomina-print']" [queryParams]="{start_date,end_date,production_area_id}">
+					<a [routerLink]="['/print-nomina-in-list']" [queryParams]="{start_date,end_date,production_area_id}">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/></svg>
 					</a>
 				}
@@ -193,7 +193,7 @@
 		{
 			<button type="button" class="btn btn-primary" (click)="save()" [disabled]="!production_area_id || payroll_info_list.length ==0">Guardar Nominas</button>
 		}
-		<a [routerLink]="['/generar-nomina-print']" [queryParams]="{start_date: start_date, end_date: end_date, production_area_id: production_area_id}" class="btn btn-secondary">Imprimir</a>
+		<a [routerLink]="['/print-nomina-in-list']" [queryParams]="{start_date: start_date, end_date: end_date, production_area_id: production_area_id}" class="btn btn-secondary">Imprimir</a>
 	</div>
 </div>
 
