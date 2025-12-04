@@ -214,16 +214,16 @@ export class PrintNominaInListComponent extends BaseComponent
 				perceptions = payroll_info.values.filter((v:any) => v.type === 'PERCEPTION');
 				total_to_pay = perceptions.reduce((sum, p) => sum + p.value, 0);
 			}
-			
+
 			this.all_users_total_to_pay += total_to_pay;
 
 
-			// Calculate consumption totals (if needed for other purposes, or if it affects total to pay? 
+			// Calculate consumption totals (if needed for other purposes, or if it affects total to pay?
 			// Usually consumption is a deduction, but here we are just calculating totals for display maybe?)
-			// The original code didn't seem to subtract consumption from total_to_pay in the resume loop, 
-			// but maybe it's handled in deductions? 
+			// The original code didn't seem to subtract consumption from total_to_pay in the resume loop,
+			// but maybe it's handled in deductions?
 			// Let's keep consumption calculation just in case, but it's not affecting total_to_pay directly here.
-			
+
 			let total_consumo_liters = 0;
 			let total_consumo_total = 0;
 
@@ -253,7 +253,7 @@ export class PrintNominaInListComponent extends BaseComponent
 				total_consumo_total,
 				total_pieces_muerta:0,
 				total_kgs_muerta:0,
-				price: 0,
+				price:  this.getPrices(u.id,this.production_info_list),
 				total_abono:0,
 				deductions: [],
 				perceptions: perceptions,
@@ -338,5 +338,15 @@ export class PrintNominaInListComponent extends BaseComponent
 		return `${kgs} x (${pricesStr})`;
 	}
 
+	getPrices(user_id:number,production_info_list: ProductionInfo[]): number {
+		let production_info = production_info_list.find(p => p.users.find(u => u.user_id === user_id));
+		if (!production_info) {
+			return 0;
+		}
+
+		let production_user = production_info.users.find(u => u.user_id === user_id);
+
+		return production_user?.price || 0;
+	}
 }
 

@@ -46,7 +46,7 @@
 
 	<h2>Nominas por Usuario</h2>
 	<div *ngFor="let ur of user_resume_list; trackBy: trackByUserId" style="margin-bottom: 30px; page-break-inside: avoid;">
-		<h3 style="margin-bottom: 5px;">{{ur.user.name}} <span style="font-size: 0.8em; font-weight: normal;">({{ur.role.name}})</span></h3>
+		<h3 style="margin-bottom: 5px;">{{ur.user.name}} <span style="font-size: 0.8em; font-weight: normal;">({{ur.role.name}} {{ur.price}})</span></h3>
 		<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
 			<thead>
 				<tr style="background-color: #f2f2f2;">
