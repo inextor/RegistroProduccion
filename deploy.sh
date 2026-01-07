@@ -24,10 +24,10 @@ fi
 echo "Deploying to $1.integranet.xyz";
 
 # Check if dist directory exists
-if [[ ! -e ~/Projects/RegistroProduccion/dist/myapp/browser/ ]]; then
+if [[ ! -e dist/myapp/browser/ ]]; then
 	echo "Dist directory not found";
 	exit 1;
 fi
 
 # Deploy to the specified subdomain
-rsync -av ~/Projects/RegistroProduccion/dist/myapp/browser/* pos:/var/www/html/integranet.xyz/subdomains/$1/
+rsync -av dist/myapp/browser/* pos:/var/www/html/integranet.xyz/subdomains/$1/
